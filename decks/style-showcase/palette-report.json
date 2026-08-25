@@ -1,0 +1,1632 @@
+{
+  "total": 92,
+  "styles": [
+    {
+      "id": "glassmorphism",
+      "title": "Glassmorphism",
+      "index": 1,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "asymmetric",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#1A1A4E",
+        "surface": "#2A2A5A",
+        "text": "#FFFFFF",
+        "muted": "#CDCDD8",
+        "accent": "#E0E0F0",
+        "border": "#4C4C75"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "neo-brutalism",
+      "title": "Neo-Brutalism",
+      "index": 2,
+      "typeAxis": "mono",
+      "layoutAxis": "asymmetric",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F5F500",
+        "surface": "#E4E400",
+        "text": "#000000",
+        "muted": "#363600",
+        "accent": "#000000",
+        "border": "#000000"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "bento-grid",
+      "title": "Bento Grid",
+      "index": 3,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F8F8F2",
+        "surface": "#E8E8E4",
+        "text": "#1A1A2E",
+        "muted": "#4B4B59",
+        "accent": "#FF6B6B",
+        "border": "#C7C7C7"
+      },
+      "substitutions": [
+        "accent #E8FF3B → #FF6B6B (contrast 1.05:1 on #F8F8F2)"
+      ]
+    },
+    {
+      "id": "dark-academia",
+      "title": "Dark Academia",
+      "index": 4,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#1A1208",
+        "surface": "#261D0D",
+        "text": "#C9A84C",
+        "muted": "#A3873D",
+        "accent": "#8A7340",
+        "border": "#3D2E10"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "gradient-mesh",
+      "title": "Gradient Mesh",
+      "index": 5,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "full-bleed",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FF6EC7",
+        "surface": "#EE67BA",
+        "text": "#0A0A0A",
+        "muted": "#402034",
+        "accent": "#FFFFFF",
+        "border": "#C9589D"
+      },
+      "substitutions": [
+        "text #FFFFFF → #0A0A0A (contrast 2.53:1 on #FF6EC7)"
+      ]
+    },
+    {
+      "id": "claymorphism",
+      "title": "Claymorphism",
+      "index": 6,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FFECD2",
+        "surface": "#EEDCC4",
+        "text": "#0A0A0A",
+        "muted": "#403C36",
+        "accent": "#070707",
+        "border": "#C9BAA6"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "swiss-international-style",
+      "title": "Swiss International Style",
+      "index": 7,
+      "typeAxis": "mono",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EEEEEE",
+        "text": "#111111",
+        "muted": "#444444",
+        "accent": "#111111",
+        "border": "#CBCBCB"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "aurora-neon-glow",
+      "title": "Aurora Neon Glow",
+      "index": 8,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#050510",
+        "surface": "#131320",
+        "text": "#D0D0F0",
+        "muted": "#A3A3BF",
+        "accent": "#00FF88",
+        "border": "#323241"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "retro-y2k",
+      "title": "Retro Y2K",
+      "index": 9,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#000080",
+        "surface": "#121289",
+        "text": "#FFFFFF",
+        "muted": "#C7C7E3",
+        "accent": "#FFFF00",
+        "border": "#38389C"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "nordic-minimalism",
+      "title": "Nordic Minimalism",
+      "index": 10,
+      "typeAxis": "mono",
+      "layoutAxis": "strict-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F4F1EC",
+        "surface": "#E7E4DF",
+        "text": "#3D3530",
+        "muted": "#655E59",
+        "accent": "#3D3530",
+        "border": "#CCC8C3"
+      },
+      "substitutions": [
+        "muted #8A7A6A → #655E59 (contrast 3.67:1 on #F4F1EC)"
+      ]
+    },
+    {
+      "id": "typographic-bold",
+      "title": "Typographic Bold",
+      "index": 11,
+      "typeAxis": "mono",
+      "layoutAxis": "strict-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F0EDE8",
+        "surface": "#E1DEDA",
+        "text": "#1A1A1A",
+        "muted": "#494847",
+        "accent": "#1A1A1A",
+        "border": "#C1BFBB"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "duotone-color-split",
+      "title": "Duotone / Color Split",
+      "index": 12,
+      "typeAxis": "mono",
+      "layoutAxis": "asymmetric",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FF4500",
+        "surface": "#EF4203",
+        "text": "#1A1A2E",
+        "muted": "#4C2324",
+        "accent": "#FFFFFF",
+        "border": "#CD3C0A"
+      },
+      "substitutions": [
+        "text #FFFFFF → #1A1A2E (contrast 3.44:1 on #FF4500)"
+      ]
+    },
+    {
+      "id": "monochrome-minimal",
+      "title": "Monochrome Minimal",
+      "index": 13,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FAFAFA",
+        "surface": "#EAEAEA",
+        "text": "#1A1A1A",
+        "muted": "#4B4B4B",
+        "accent": "#888888",
+        "border": "#E0E0E0"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "cyberpunk-outline",
+      "title": "Cyberpunk Outline",
+      "index": 14,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0D0D0D",
+        "surface": "#1E1E1E",
+        "text": "#FFFFFF",
+        "muted": "#CACACA",
+        "accent": "#FFFFFF",
+        "border": "#424242"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "editorial-magazine",
+      "title": "Editorial Magazine",
+      "index": 15,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EFEFEF",
+        "text": "#1A1A1A",
+        "muted": "#4C4C4C",
+        "accent": "#E63030",
+        "border": "#E63030"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "pastel-soft-ui",
+      "title": "Pastel Soft UI",
+      "index": 16,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FCE4F3",
+        "surface": "#EBD5E3",
+        "text": "#0A0A0A",
+        "muted": "#3F3A3D",
+        "accent": "#A28197",
+        "border": "#C7B4C0"
+      },
+      "substitutions": [
+        "accent #F9C6E8 → #A28197 (contrast 1.23:1 on #FCE4F3)"
+      ]
+    },
+    {
+      "id": "dark-neon-miami",
+      "title": "Dark Neon Miami",
+      "index": 17,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0A0014",
+        "surface": "#1B0716",
+        "text": "#FF6B35",
+        "muted": "#C9532E",
+        "accent": "#FF9F7C",
+        "border": "#40181B"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "hand-crafted-organic",
+      "title": "Hand-crafted Organic",
+      "index": 18,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FDF6EE",
+        "surface": "#F3EAE0",
+        "text": "#6B4C2A",
+        "muted": "#8B7155",
+        "accent": "#A87850",
+        "border": "#DDD1C3"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "isometric-3d-flat",
+      "title": "Isometric 3D Flat",
+      "index": 19,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#1E1E2E",
+        "surface": "#27263D",
+        "text": "#A594FF",
+        "muted": "#877AD1",
+        "accent": "#A594FF",
+        "border": "#3C385C"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "vaporwave",
+      "title": "Vaporwave",
+      "index": 20,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#1A0533",
+        "surface": "#2A1034",
+        "text": "#FF9F43",
+        "muted": "#CD7D3F",
+        "accent": "#FFC185",
+        "border": "#4C2737"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "art-deco-luxe",
+      "title": "Art Deco Luxe",
+      "index": 21,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0E0A05",
+        "surface": "#1C1508",
+        "text": "#D4AA2A",
+        "muted": "#A88722",
+        "accent": "#B8960C",
+        "border": "#B8960C"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "brutalist-newspaper",
+      "title": "Brutalist Newspaper",
+      "index": 22,
+      "typeAxis": "mono",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F2EFE8",
+        "surface": "#E5E2DA",
+        "text": "#3A3020",
+        "muted": "#625A4C",
+        "accent": "#1A1208",
+        "border": "#CAC5BC"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "stained-glass-mosaic",
+      "title": "Stained Glass Mosaic",
+      "index": 23,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0A0A12",
+        "surface": "#1A1813",
+        "text": "#F5D020",
+        "muted": "#C1A41D",
+        "accent": "#E63030",
+        "border": "#3E3615"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "liquid-blob-morphing",
+      "title": "Liquid Blob Morphing",
+      "index": 24,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0F2027",
+        "surface": "#1F3036",
+        "text": "#F0FFFE",
+        "muted": "#BFCECF",
+        "accent": "#F5FFFE",
+        "border": "#415156"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "memphis-pop-pattern",
+      "title": "Memphis Pop Pattern",
+      "index": 25,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FFF5E0",
+        "surface": "#EEE5D1",
+        "text": "#0A0A0A",
+        "muted": "#403E39",
+        "accent": "#E8344A",
+        "border": "#C9C1B1"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "dark-forest-nature",
+      "title": "Dark Forest Nature",
+      "index": 26,
+      "typeAxis": "mono",
+      "layoutAxis": "asymmetric",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0D2B14",
+        "surface": "#1B391F",
+        "text": "#D4F0B0",
+        "muted": "#A8C58E",
+        "accent": "#E3F5CC",
+        "border": "#395636"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "architectural-blueprint",
+      "title": "Architectural Blueprint",
+      "index": 27,
+      "typeAxis": "mono",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0D2240",
+        "surface": "#1E314D",
+        "text": "#FFFFFF",
+        "muted": "#CACED5",
+        "accent": "#FFFFFF",
+        "border": "#42536A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "maximalist-collage",
+      "title": "Maximalist Collage",
+      "index": 28,
+      "typeAxis": "mono",
+      "layoutAxis": "asymmetric",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#E8DDD0",
+        "surface": "#DACFC3",
+        "text": "#1A1A1A",
+        "muted": "#474542",
+        "accent": "#E83030",
+        "border": "#BBB2A8"
+      },
+      "substitutions": [
+        "text #FFFFFF → #1A1A1A (contrast 1.34:1 on #E8DDD0)"
+      ]
+    },
+    {
+      "id": "scifi-holographic-data",
+      "title": "SciFi Holographic Data",
+      "index": 29,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#03050D",
+        "surface": "#03131E",
+        "text": "#00C8FF",
+        "muted": "#019DCA",
+        "accent": "#59DBFF",
+        "border": "#023042"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "risograph-print",
+      "title": "Risograph Print",
+      "index": 30,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F7F2E8",
+        "surface": "#E7E8E3",
+        "text": "#0D5C9E",
+        "muted": "#407DAE",
+        "accent": "#E8344A",
+        "border": "#C4D1D8"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "executive-minimal",
+      "title": "Executive Minimal",
+      "index": 31,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#F5F5F0",
+        "surface": "#E6E6E1",
+        "text": "#1A1A1A",
+        "muted": "#4A4A49",
+        "accent": "#1A1A1A",
+        "border": "#D4D4D0"
+      },
+      "substitutions": [
+        "muted #E8E8E3 → #4A4A49 (contrast 1.12:1 on #F5F5F0)"
+      ]
+    },
+    {
+      "id": "sage-professional",
+      "title": "Sage Professional",
+      "index": 32,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#B8C4B8",
+        "surface": "#F8FAF8",
+        "text": "#1A1A1A",
+        "muted": "#3D3F3D",
+        "accent": "#2D2D2D",
+        "border": "#9AA89A"
+      },
+      "substitutions": [
+        "muted #A3B0A3 → #3D3F3D (contrast 1.25:1 on #B8C4B8)"
+      ]
+    },
+    {
+      "id": "modern-dark",
+      "title": "Modern Dark",
+      "index": 33,
+      "typeAxis": "mono",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#0F0F0F",
+        "surface": "#252525",
+        "text": "#FFFFFF",
+        "muted": "#CACACA",
+        "accent": "#FFFFFF",
+        "border": "#333333"
+      },
+      "substitutions": [
+        "muted #1A1A1A → #CACACA (contrast 1.10:1 on #0F0F0F)"
+      ]
+    },
+    {
+      "id": "corporate-blue",
+      "title": "Corporate Blue",
+      "index": 34,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EFF0F1",
+        "text": "#1E2A3A",
+        "muted": "#505965",
+        "accent": "#2563EB",
+        "border": "#E2E8F0"
+      },
+      "substitutions": [
+        "muted #F7F9FC → #505965 (contrast 1.05:1 on #FFFFFF)"
+      ]
+    },
+    {
+      "id": "warm-neutral",
+      "title": "Warm Neutral",
+      "index": 35,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "strict-grid",
+      "classification": "builtin",
+      "palette": {
+        "bg": "#FAF8F5",
+        "surface": "#ECEAE7",
+        "text": "#2D2A26",
+        "muted": "#5A5754",
+        "accent": "#C45A3B",
+        "border": "#DDD8D0"
+      },
+      "substitutions": [
+        "muted #F0EBE3 → #5A5754 (contrast 1.12:1 on #FAF8F5)"
+      ]
+    },
+    {
+      "id": "ppt-consulting-precision-grid",
+      "title": "컨설팅 정밀그리드",
+      "index": 36,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "strict-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F4F5F7",
+        "text": "#1A1A1A",
+        "muted": "#6B7280",
+        "accent": "#0B5FFF",
+        "border": "#D1D5DB"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-keynote-minimal-fullbleed",
+      "title": "Keynote 미니멀 풀블리드",
+      "index": 37,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "full-bleed",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EFEFEF",
+        "text": "#1D1D1F",
+        "muted": "#4F4F50",
+        "accent": "#0071E3",
+        "border": "#CDCDCE"
+      },
+      "substitutions": [
+        "muted #86868B → #4F4F50 (contrast 3.62:1 on #FFFFFF)"
+      ]
+    },
+    {
+      "id": "ppt-korea-policy-navy",
+      "title": "한국 정책보고서 네이비",
+      "index": 38,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#E8F1FB",
+        "text": "#1A1A1A",
+        "muted": "#5C6470",
+        "accent": "#1B66C9",
+        "border": "#C5D2E3"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-dark-tech",
+      "title": "다크모드 테크",
+      "index": 39,
+      "typeAxis": "mono",
+      "layoutAxis": "asymmetric",
+      "classification": "variant",
+      "palette": {
+        "bg": "#0C0D10",
+        "surface": "#16181D",
+        "text": "#E4E6EB",
+        "muted": "#8A8F9A",
+        "accent": "#3DF5E0",
+        "border": "#2A2D35"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-hand-drawn-sketch",
+      "title": "핸드드로운 스케치",
+      "index": 40,
+      "typeAxis": "mixed",
+      "layoutAxis": "asymmetric",
+      "classification": "new",
+      "palette": {
+        "bg": "#F4ECDC",
+        "surface": "#E6DECF",
+        "text": "#2B2724",
+        "muted": "#7A7268",
+        "accent": "#E8654A",
+        "border": "#CFC4AC"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-data-infographic-heavy",
+      "title": "데이터 인포그래픽 헤비",
+      "index": 41,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#F7F8FA",
+        "surface": "#FFFFFF",
+        "text": "#1E2229",
+        "muted": "#6E7480",
+        "accent": "#2563EB",
+        "border": "#E2E5EA"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-monochrome-risk",
+      "title": "모노크롬 리스크",
+      "index": 42,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "strict-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#E6E6E6",
+        "text": "#0A0A0A",
+        "muted": "#767676",
+        "accent": "#0A0A0A",
+        "border": "#0A0A0A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-memphis-retro-90s",
+      "title": "90s 멤피스 레트로",
+      "index": 43,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "asymmetric",
+      "classification": "variant",
+      "palette": {
+        "bg": "#F4ECD8",
+        "surface": "#1A1A1A",
+        "text": "#1A1A1A",
+        "muted": "#4A4844",
+        "accent": "#FF3B7F",
+        "border": "#1A1A1A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-minimal-mono-note",
+      "title": "미니멀 모노 노트",
+      "index": 44,
+      "typeAxis": "mono",
+      "layoutAxis": "centered",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EEEEEE",
+        "text": "#111111",
+        "muted": "#454545",
+        "accent": "#8A8A8A",
+        "border": "#111111"
+      },
+      "substitutions": [
+        "muted #8A8A8A → #454545 (contrast 3.45:1 on #FFFFFF)"
+      ]
+    },
+    {
+      "id": "ppt-botanical-organic",
+      "title": "보태니컬 오가닉",
+      "index": 45,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "asymmetric",
+      "classification": "variant",
+      "palette": {
+        "bg": "#F2EAD9",
+        "surface": "#E5D9C3",
+        "text": "#3A352C",
+        "muted": "#625D52",
+        "accent": "#B5654A",
+        "border": "#7C8B5A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-vivid-gradient-future",
+      "title": "비비드 그라디언트 퓨처",
+      "index": 46,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "full-bleed",
+      "classification": "variant",
+      "palette": {
+        "bg": "#3A1C71",
+        "surface": "#482C7B",
+        "text": "#FFFFFF",
+        "muted": "#D4CDE0",
+        "accent": "#D11D8E",
+        "border": "#654E90"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-print-first-newspaper",
+      "title": "프린트-퍼스트 뉴스페이퍼",
+      "index": 47,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "block-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#F4F1E8",
+        "surface": "#E5E2D9",
+        "text": "#1C1B17",
+        "muted": "#4C4A45",
+        "accent": "#A8231B",
+        "border": "#1C1B17"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-swiss-editorial-bold",
+      "title": "스위스 에디토리얼 볼드",
+      "index": 48,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#F2F0EB",
+        "surface": "#111111",
+        "text": "#111111",
+        "muted": "#434241",
+        "accent": "#FF4A1C",
+        "border": "#111111"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-bauhaus-geometric",
+      "title": "바우하우스 지오메트릭",
+      "index": 49,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "asymmetric",
+      "classification": "new",
+      "palette": {
+        "bg": "#F0EDE4",
+        "surface": "#FFFFFF",
+        "text": "#1A1A1A",
+        "muted": "#494846",
+        "accent": "#D62828",
+        "border": "#1A1A1A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-expressive-material",
+      "title": "익스프레시브 머티리얼",
+      "index": 50,
+      "typeAxis": "mixed",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FEF7FF",
+        "surface": "#F3EDF7",
+        "text": "#1D1B20",
+        "muted": "#4F4B51",
+        "accent": "#6750A4",
+        "border": "#CAC4D0"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-luxury-editorial-serif",
+      "title": "럭셔리 에디토리얼 세리프",
+      "index": 51,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#FAF8F3",
+        "surface": "#EAE8E3",
+        "text": "#1A1814",
+        "muted": "#4B4945",
+        "accent": "#A8884E",
+        "border": "#A8884E"
+      },
+      "substitutions": [
+        "muted #8C887E → #4B4945 (contrast 3.33:1 on #FAF8F3)"
+      ]
+    },
+    {
+      "id": "ppt-startup-pitch-colorful",
+      "title": "스타트업 피치 컬러풀",
+      "index": 52,
+      "typeAxis": "mixed",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F4F6FF",
+        "text": "#15161B",
+        "muted": "#48494D",
+        "accent": "#5B5BFF",
+        "border": "#E5E7F0"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-precision-fintech-deck",
+      "title": "Precision Fintech Deck",
+      "index": 53,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "asymmetric",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F6F9FC",
+        "text": "#0A2540",
+        "muted": "#5C6B7E",
+        "accent": "#5A55E0",
+        "border": "#E3E8EE"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-engineered-dark-deck",
+      "title": "Engineered Dark Deck",
+      "index": 54,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "variant",
+      "palette": {
+        "bg": "#0E0E11",
+        "surface": "#16161A",
+        "text": "#9CA3AF",
+        "muted": "#7D828C",
+        "accent": "#8B7BF0",
+        "border": "#26262C"
+      },
+      "substitutions": [
+        "muted #6B7280 → #7D828C (contrast 3.99:1 on #0E0E11)"
+      ]
+    },
+    {
+      "id": "ppt-warm-hospitality-deck",
+      "title": "Warm Hospitality Deck",
+      "index": 55,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "full-bleed",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#FBF7F4",
+        "text": "#2B2B2E",
+        "muted": "#79767A",
+        "accent": "#F4625F",
+        "border": "#EDE8E4"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-monochrome-infrastructure-deck",
+      "title": "Monochrome Infrastructure Deck",
+      "index": 56,
+      "typeAxis": "mixed",
+      "layoutAxis": "strict-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F2F2F2",
+        "text": "#000000",
+        "muted": "#666666",
+        "accent": "#666666",
+        "border": "#000000"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-expressive-soundwave-deck",
+      "title": "Expressive Soundwave Deck",
+      "index": 57,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "block-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#121212",
+        "surface": "#1E1E1E",
+        "text": "#E8E8E8",
+        "muted": "#8A8A8A",
+        "accent": "#FF6B4A",
+        "border": "#3A3A3A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-editorial-product-deck",
+      "title": "Editorial Product Deck",
+      "index": 58,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#F7F4EE",
+        "surface": "#FCFAF5",
+        "text": "#1F1B16",
+        "muted": "#7A7164",
+        "accent": "#B5503A",
+        "border": "#DAD3C4"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-cinematic-keynote-deck",
+      "title": "Cinematic Keynote Deck",
+      "index": 59,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "full-bleed",
+      "classification": "variant",
+      "palette": {
+        "bg": "#000000",
+        "surface": "#0E0E0E",
+        "text": "#F5F5F7",
+        "muted": "#8A8A8E",
+        "accent": "#E8B341",
+        "border": "#262626"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-confident-color-block-deck",
+      "title": "Confident Color-Block Deck",
+      "index": 60,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "asymmetric",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EFEFEF",
+        "text": "#141414",
+        "muted": "#6E6E6E",
+        "accent": "#F0531C",
+        "border": "#E0E0E0"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-strategy-navy-deck",
+      "title": "Strategy Navy Deck",
+      "index": 61,
+      "typeAxis": "mixed",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F1F4F9",
+        "text": "#14213D",
+        "muted": "#5B6472",
+        "accent": "#2563EB",
+        "border": "#C7D0DD"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-heritage-luxury-deck",
+      "title": "Heritage Luxury Deck",
+      "index": 62,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#EDE6D6",
+        "surface": "#F4EFE3",
+        "text": "#3A2E1F",
+        "muted": "#615647",
+        "accent": "#A8893E",
+        "border": "#A8893E"
+      },
+      "substitutions": [
+        "muted #8A7C63 → #615647 (contrast 3.28:1 on #EDE6D6)"
+      ]
+    },
+    {
+      "id": "ppt-isometric-platform-deck",
+      "title": "Isometric Platform Deck",
+      "index": 63,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#EEF1F5",
+        "surface": "#FFFFFF",
+        "text": "#1B2330",
+        "muted": "#5C6679",
+        "accent": "#3B6FE0",
+        "border": "#E3E8EF"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-mckinsey-ghost-deck",
+      "title": "MBB Ghost Deck Framework",
+      "index": 64,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "asymmetric",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EFEFEF",
+        "text": "#1A1A1A",
+        "muted": "#4C4C4C",
+        "accent": "#1F3A5F",
+        "border": "#C9CDD3"
+      },
+      "substitutions": [
+        "muted #7A828F → #4C4C4C (contrast 3.88:1 on #FFFFFF)"
+      ]
+    },
+    {
+      "id": "ppt-blueprint-schematic-deck",
+      "title": "Blueprint Schematic Deck",
+      "index": 65,
+      "typeAxis": "mono",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#0E1B3D",
+        "surface": "#1D2A4A",
+        "text": "#E8EEF7",
+        "muted": "#8FA3C8",
+        "accent": "#4FC8E8",
+        "border": "#4FC8E8"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-editorial-infographic-deck",
+      "title": "Editorial Infographic Deck",
+      "index": 66,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#F6F3EC",
+        "surface": "#E7E4DD",
+        "text": "#1C1A17",
+        "muted": "#6B655B",
+        "accent": "#B22B1F",
+        "border": "#C8C2B4"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-vivid-gradient-infographic-deck",
+      "title": "Vivid Gradient Infographic Deck",
+      "index": 67,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "block-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FBFAFE",
+        "surface": "#FFFFFF",
+        "text": "#211B33",
+        "muted": "#7C7591",
+        "accent": "#7C3AED",
+        "border": "#ECE8F4"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-bold-block-infographic-deck",
+      "title": "Bold Block Infographic Deck",
+      "index": 68,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#2A2D34",
+        "text": "#2A2D34",
+        "muted": "#6B6F76",
+        "accent": "#2A2D34",
+        "border": "#D0D1D2"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-prismatic-dark-deck",
+      "title": "Prismatic Dark Diagram Deck",
+      "index": 69,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "full-bleed",
+      "classification": "variant",
+      "palette": {
+        "bg": "#0B0E1A",
+        "surface": "#141A2E",
+        "text": "#E8EAF0",
+        "muted": "#8A90A6",
+        "accent": "#22D3EE",
+        "border": "#1E2336"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-soft-pastel-system-deck",
+      "title": "Soft Pastel System Deck",
+      "index": 70,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#FAF7F4",
+        "surface": "#FFFFFF",
+        "text": "#3A3640",
+        "muted": "#646068",
+        "accent": "#8B72D9",
+        "border": "#D0CDCC"
+      },
+      "substitutions": [
+        "muted #8A8492 → #646068 (contrast 3.39:1 on #FAF7F4)",
+        "accent #C9BEEB → #8B72D9 (contrast 1.63:1 on #FAF7F4)"
+      ]
+    },
+    {
+      "id": "ppt-archival-index-deck",
+      "title": "Archival Index Deck",
+      "index": 71,
+      "typeAxis": "mixed",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#EFE9DD",
+        "surface": "#F6F2E8",
+        "text": "#33302A",
+        "muted": "#5C5951",
+        "accent": "#33302A",
+        "border": "#C9C0AC"
+      },
+      "substitutions": [
+        "muted #7A7468 → #5C5951 (contrast 3.84:1 on #EFE9DD)"
+      ]
+    },
+    {
+      "id": "ppt-warm-minimal-diagram-deck",
+      "title": "Warm Minimal Diagram Deck",
+      "index": 72,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#F2EBDF",
+        "surface": "#FBF7EF",
+        "text": "#3D3528",
+        "muted": "#655D50",
+        "accent": "#C2693F",
+        "border": "#3D3528"
+      },
+      "substitutions": [
+        "muted #8A8170 → #655D50 (contrast 3.25:1 on #F2EBDF)"
+      ]
+    },
+    {
+      "id": "ppt-bcg-exhibit-deck",
+      "title": "BCG 익스히빗 덱",
+      "index": 73,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "strict-grid",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F2F4F3",
+        "text": "#1A1A1A",
+        "muted": "#5B636E",
+        "accent": "#177B57",
+        "border": "#D6DAD8"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-bain-results-deck",
+      "title": "베인 리절츠 덱",
+      "index": 74,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "variant",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F4F5F6",
+        "text": "#111827",
+        "muted": "#454B57",
+        "accent": "#CC0000",
+        "border": "#CBCCCF"
+      },
+      "substitutions": [
+        "muted #9CA3AF → #454B57 (contrast 2.54:1 on #FFFFFF)"
+      ]
+    },
+    {
+      "id": "ppt-goldman-ir-deck",
+      "title": "골드만 IR 덱",
+      "index": 75,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#0A1A33",
+        "surface": "#1F3A5F",
+        "text": "#E8E5DE",
+        "muted": "#9AA6BC",
+        "accent": "#C8A24B",
+        "border": "#3B4759"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-every-golden-grid-keynote",
+      "title": "Every 골든 그리드 키노트",
+      "index": 76,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FAFAF8",
+        "surface": "#EAEAE8",
+        "text": "#161616",
+        "muted": "#6E6E68",
+        "accent": "#B5A642",
+        "border": "#D8D8D2"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-pattern-bold-poster-keynote",
+      "title": "Pattern 볼드 포스터 키노트",
+      "index": 77,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "full-bleed",
+      "classification": "new",
+      "palette": {
+        "bg": "#1F3DFF",
+        "surface": "#2F4BFF",
+        "text": "#FFFFFF",
+        "muted": "#CED4FF",
+        "accent": "#0E0E0E",
+        "border": "#5068FF"
+      },
+      "substitutions": [
+        "accent #FF4D2E → #0E0E0E (contrast 2.00:1 on #1F3DFF)"
+      ]
+    },
+    {
+      "id": "ppt-altezza-ultramodern-keynote",
+      "title": "Altezza 울트라모던 키노트",
+      "index": 78,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "asymmetric",
+      "classification": "new",
+      "palette": {
+        "bg": "#13141A",
+        "surface": "#3A3C46",
+        "text": "#F4F4F6",
+        "muted": "#9A9CA6",
+        "accent": "#2EE6A6",
+        "border": "#45454A"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-kula-minimalist-keynote",
+      "title": "Kula 미니멀리스트 키노트",
+      "index": 79,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#EDE8E0",
+        "surface": "#FFFFFF",
+        "text": "#4A4540",
+        "muted": "#6E6963",
+        "accent": "#8C857C",
+        "border": "#C9C4BD"
+      },
+      "substitutions": [
+        "muted #8C857C → #6E6963 (contrast 2.99:1 on #EDE8E0)",
+        "accent #B79B86 → #8C857C (contrast 2.14:1 on #EDE8E0)"
+      ]
+    },
+    {
+      "id": "ppt-epoch-premium-keynote",
+      "title": "Epoch 프리미엄 키노트",
+      "index": 80,
+      "typeAxis": "mixed",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#1A1E26",
+        "surface": "#2C313B",
+        "text": "#E6E8EC",
+        "muted": "#9298A4",
+        "accent": "#7FA9C9",
+        "border": "#474A52"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-folio-portfolio-keynote",
+      "title": "Folio 포트폴리오 키노트",
+      "index": 81,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "asymmetric",
+      "classification": "new",
+      "palette": {
+        "bg": "#F7F7F5",
+        "surface": "#FFFFFF",
+        "text": "#141414",
+        "muted": "#464646",
+        "accent": "#FF5C35",
+        "border": "#C5C5C4"
+      },
+      "substitutions": [
+        "muted #9A9A9A → #464646 (contrast 2.62:1 on #F7F7F5)"
+      ]
+    },
+    {
+      "id": "ppt-dark-luxury-keynote",
+      "title": "다크 럭셔리 키노트",
+      "index": 82,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "full-bleed",
+      "classification": "variant",
+      "palette": {
+        "bg": "#0B0B0C",
+        "surface": "#1A1A1C",
+        "text": "#EDEAE3",
+        "muted": "#8E8A82",
+        "accent": "#C9A36A",
+        "border": "#3D3C3B"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-samsung-ir-restrained",
+      "title": "삼성전자 IR 절제",
+      "index": 83,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#EDEEEF",
+        "text": "#010821",
+        "muted": "#393E52",
+        "accent": "#0028A8",
+        "border": "#0D2062"
+      },
+      "substitutions": [
+        "muted #A5B3C6 → #393E52 (contrast 2.13:1 on #FFFFFF)"
+      ]
+    },
+    {
+      "id": "ppt-skt-interactive-ai-pyramid",
+      "title": "SKT 인터랙티브 AI 피라미드",
+      "index": 84,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#E4EEFB",
+        "text": "#000000",
+        "muted": "#595757",
+        "accent": "#0023C3",
+        "border": "#D7D7D7"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-hyundai-cinematic-investor-day",
+      "title": "현대차 시네마틱 인베스터데이",
+      "index": 85,
+      "typeAxis": "heavy-display",
+      "layoutAxis": "full-bleed",
+      "classification": "new",
+      "palette": {
+        "bg": "#101030",
+        "surface": "#14274A",
+        "text": "#FFFFFF",
+        "muted": "#A8B4C8",
+        "accent": "#66FFFF",
+        "border": "#45455E"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-naver-integrated-report-award",
+      "title": "네이버 통합보고서 어워드",
+      "index": 86,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#FFFFFF",
+        "surface": "#F5F5F5",
+        "text": "#0A0A0A",
+        "muted": "#7B7B7B",
+        "accent": "#03C75A",
+        "border": "#E8E8E8"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-kakao-friendly-card-news",
+      "title": "카카오 1Q26 보수 IR",
+      "index": 87,
+      "typeAxis": "serif-editorial",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#F2F2F2",
+        "surface": "#FFFFFF",
+        "text": "#000000",
+        "muted": "#353535",
+        "accent": "#007ABF",
+        "border": "#BFBFBF"
+      },
+      "substitutions": [
+        "muted #7F7F7F → #353535 (contrast 3.58:1 on #F2F2F2)",
+        "accent #FBE100 → #007ABF (contrast 1.18:1 on #F2F2F2)"
+      ]
+    },
+    {
+      "id": "ppt-motie-slogan-infographic",
+      "title": "산업통상부 슬로건 캘리그래피",
+      "index": 88,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "block-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#001838",
+        "surface": "#FFFFFF",
+        "text": "#FFFFFF",
+        "muted": "#C7CCD3",
+        "accent": "#E8F8F8",
+        "border": "#384B64"
+      },
+      "substitutions": [
+        "text #1C2848 → #FFFFFF (contrast 1.22:1 on #001838)",
+        "muted #5C6470 → #C7CCD3 (contrast 2.96:1 on #001838)"
+      ]
+    },
+    {
+      "id": "ppt-msit-ai-three-powers",
+      "title": "과기정통부 정통 정부 라이트",
+      "index": 89,
+      "typeAxis": "minimal-sans",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#E7F1FA",
+        "surface": "#FFFFFF",
+        "text": "#1C2848",
+        "muted": "#3C4860",
+        "accent": "#002060",
+        "border": "#BAC5D3"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-moef-fiscal-blue",
+      "title": "기획재정부 시네마틱 브리핑",
+      "index": 90,
+      "typeAxis": "mixed",
+      "layoutAxis": "centered",
+      "classification": "new",
+      "palette": {
+        "bg": "#05091A",
+        "surface": "#FFFFFF",
+        "text": "#FFFFFF",
+        "muted": "#C8C9CD",
+        "accent": "#FCFCF6",
+        "border": "#3C3F4C"
+      },
+      "substitutions": [
+        "text #0D1627 → #FFFFFF (contrast 1.09:1 on #05091A)",
+        "accent #003F7B → #FCFCF6 (contrast 1.88:1 on #05091A)"
+      ]
+    },
+    {
+      "id": "ppt-mcst-k-culture",
+      "title": "문체부 K-컬처 라벤더",
+      "index": 91,
+      "typeAxis": "mixed",
+      "layoutAxis": "full-bleed",
+      "classification": "new",
+      "palette": {
+        "bg": "#EEF2F7",
+        "surface": "#E1E5EC",
+        "text": "#32355D",
+        "muted": "#5C5C63",
+        "accent": "#022853",
+        "border": "#C5C8D5"
+      },
+      "substitutions": []
+    },
+    {
+      "id": "ppt-unikorea-peace-coexistence",
+      "title": "통일부 한반도 평화공존",
+      "index": 92,
+      "typeAxis": "mixed",
+      "layoutAxis": "strict-grid",
+      "classification": "new",
+      "palette": {
+        "bg": "#050829",
+        "surface": "#FFFFFF",
+        "text": "#FFFFFF",
+        "muted": "#C9D9E6",
+        "accent": "#EDF4FD",
+        "border": "#3C3E58"
+      },
+      "substitutions": [
+        "accent #001B4A → #EDF4FD (contrast 1.17:1 on #050829)"
+      ]
+    }
+  ]
+}
