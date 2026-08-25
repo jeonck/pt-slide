@@ -3,8 +3,13 @@ node_modules/
 # Working render evidence.
 # decks/test-deck keeps its gate PNGs in .slides-grab/ (5 slides, ~800KB) because
 # its gate reports cite them. The 92-slide showcase does not: that set is ~6MB and
-# the committed PDF and viewer already show every slide. Rebuild either with
+# the committed PDF, viewer and preview/ sheets already show every slide. Rebuild
+# either with
 #   npx slides-grab png --slides-dir <deck> --output-dir <deck>/gate-preview --resolution 1080p
 decks/*/gate-preview/
 decks/*/out-png/
+decks/*/contact-sheets/
 decks/style-showcase/.slides-grab/gate-preview/
+
+# decks/*/preview/ IS committed — GitHub serves .html from a repo as source, so
+# those sheets are the only way the slides render in the browser without cloning.

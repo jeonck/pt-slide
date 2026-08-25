@@ -15,12 +15,25 @@
 
 ### 산출물
 
-| | HTML | 미리보기 | PDF |
+| | HTML | GitHub에서 보기 | 로컬 미리보기 |
 |---|---|---|---|
-| test-deck | `slide-01.html` … `slide-05.html` | [`viewer.html`](decks/test-deck/viewer.html) | [`ai-automation-deck.pdf`](decks/test-deck/ai-automation-deck.pdf) |
-| style-showcase | `slide-01.html` … `slide-92.html` | [`viewer.html`](decks/style-showcase/viewer.html) | [`slides-grab-style-showcase.pdf`](decks/style-showcase/slides-grab-style-showcase.pdf) |
+| test-deck | `slide-01.html` … `slide-05.html` | [PDF](decks/test-deck/ai-automation-deck.pdf) · [이미지](decks/test-deck/preview/) | [`viewer.html`](decks/test-deck/viewer.html) |
+| style-showcase | `slide-01.html` … `slide-92.html` | [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
-렌더 PNG는 용량 때문에 커밋하지 않는다 (`.gitignore` 참고). 아래 `png` 명령으로 언제든 다시 만든다.
+> **`.html` 파일을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 안의
+> `.html`을 렌더링하지 않고 텍스트로 서빙하기 때문이고, 파일이 잘못된 게 아니다.
+> 브라우저에서 그냥 보려면 위 표의 **PDF**(GitHub이 뷰어로 띄워 준다)나 **이미지** 열을 쓰면 된다.
+>
+> 슬라이드를 실제 HTML로 띄우려면 셋 중 하나다:
+> - **로컬에서 열기** (권장) — 클론 후 `viewer.html`을 브라우저로. 폰트·레이아웃이 그대로 나오는 유일한 방법
+> - **GitHub Pages** — Settings → Pages → Source `main` / `/ (root)`. 그러면
+>   `https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html`로 열린다 (켜는 순간 공개된다)
+> - **htmlpreview** — `htmlpreview.github.io/?<파일 URL>`. 설정은 필요 없지만 `./assets/fonts/`를 못 따라가 한글이 깨질 수 있다
+
+각 덱의 `preview/` 이미지는 커밋돼 있다. 전체 해상도 렌더 PNG는 용량 때문에 커밋하지 않으니
+(`.gitignore` 참고) 필요하면 아래 `png` 명령으로 다시 만든다.
+
+![test-deck 5장](decks/test-deck/preview/slides-01-05.png)
 
 ## 시작하기
 
@@ -58,11 +71,12 @@ validate → png(증거 재촬영) → Pass A / Pass B 리포트 갱신 → slid
 | 경로 | 하는 일 |
 |---|---|
 | [`scripts/build-style-showcase.mjs`](scripts/build-style-showcase.mjs) | 스타일 스펙에서 팔레트·타이포·레이아웃을 읽어 견본 92장을 생성 |
-| [`scripts/build-contact-sheets.mjs`](scripts/build-contact-sheets.mjs) | 렌더된 PNG를 3×4 컨택트 시트로 묶음 — 92장짜리 덱을 한눈에 리뷰할 때 |
+| [`scripts/build-contact-sheets.mjs`](scripts/build-contact-sheets.mjs) | 렌더된 PNG를 3×4 컨택트 시트로 묶음. 기본은 리뷰용 큰 타일, `--web`은 README에 붙일 `preview/` 이미지 |
 
 ```bash
 node scripts/build-style-showcase.mjs
-node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview
+node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview          # 리뷰용
+node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview --web    # README용 preview/
 ```
 
 ## 알아둘 것

@@ -29,6 +29,62 @@ slides-grab에 들어 있는 **선택 가능한 디자인 스타일 92종을 한
 - **대비 보정.** 스펙 토큰을 그대로 쓰면 자기 배경 위에서 안 읽히는 경우가 있어(본문 4.5:1, 보조 4:1, 액센트 2.2:1 미만) 92장 중 **29장**에 대체색을 넣었다. 대체는 같은 스펙의 다른 hex를 우선 쓰고, 없으면 그 스펙의 text↔bg 축을 섞는다. 원본·대체·측정된 비율이 전부 `palette-report.json`에 남아 있다.
 - **그라디언트는 첫 스톱만 평면으로.** slides-grab이 슬라이드 HTML에서 CSS 그라디언트를 금지한다. 전체 스톱은 스와치에 남는다.
 
+## 브라우저에서 바로 보기
+
+> `slide-07.html`을 GitHub에서 클릭하면 페이지가 아니라 **소스 코드**가 보인다. GitHub은 저장소 안의
+> `.html`을 렌더링하지 않고 텍스트로 서빙한다 — 파일이 잘못된 게 아니다.
+> 그래서 92장을 이미지로 미리 구워 아래에 붙여 뒀다. 이미지를 클릭하면 원본 크기로 열린다.
+
+전체를 한 번에 넘겨 보려면 [**92쪽 PDF**](slides-grab-style-showcase.pdf)가 편하다 — PDF는 GitHub이 뷰어로 렌더링해 준다.
+
+**01–12번**
+
+![슬라이드 01-12](preview/slides-01-12.png)
+
+**13–24번**
+
+![슬라이드 13-24](preview/slides-13-24.png)
+
+**25–36번**
+
+![슬라이드 25-36](preview/slides-25-36.png)
+
+**37–48번**
+
+![슬라이드 37-48](preview/slides-37-48.png)
+
+**49–60번**
+
+![슬라이드 49-60](preview/slides-49-60.png)
+
+**61–72번**
+
+![슬라이드 61-72](preview/slides-61-72.png)
+
+**73–84번**
+
+![슬라이드 73-84](preview/slides-73-84.png)
+
+**85–92번**
+
+![슬라이드 85-92](preview/slides-85-92.png)
+
+### 슬라이드를 실제 HTML로 열려면
+
+| 방법 | 하는 법 |
+|---|---|
+| **로컬에서 열기** (권장) | 저장소를 클론한 뒤 `decks/style-showcase/viewer.html`을 브라우저로 연다. 폰트·레이아웃이 그대로 나오는 유일한 방법 |
+| **GitHub Pages** | 저장소 Settings → Pages → Source를 `main` / `/ (root)`로 두면 `https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html`로 열린다 (저장소가 public이어야 하고, 켜는 순간 공개된다) |
+| **htmlpreview** | `htmlpreview.github.io/?<파일 URL>` — 설정 없이 되지만 `./assets/fonts/`를 못 따라가서 한글 폰트가 깨질 수 있다 |
+
+위 미리보기 이미지는 렌더된 PNG에서 만든다:
+
+```bash
+npx slides-grab png --slides-dir decks/style-showcase \
+  --output-dir decks/style-showcase/gate-preview --resolution 1080p
+node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview --web
+```
+
 ## 스타일 92종 전체 목록
 
 `#`는 이 덱의 슬라이드 번호다 — `slide-07.html`을 열면 07번 스타일이 나온다.
@@ -145,7 +201,8 @@ builtin과 자체 어휘를 쓰는 85–92번은 스펙 문구에서 키워드�
 | `palette-report.json` | 92장 전부의 해석된 토큰 + 대체 내역 |
 | `gate-pass-a.md`, `gate-pass-b.md` | 디자인 게이트 리포트. Pass B는 렌더된 92장을 3×4 컨택트 시트 8장으로 전부 확인한 뒤 작성 |
 | `.slides-grab/` | 게이트 영수증 (`design-gate.json`, 리포트) |
-| `viewer.html` | 92장 미리보기 |
+| `preview/` | README에 붙는 미리보기 이미지 8장 (커밋됨) |
+| `viewer.html` | 92장 미리보기 — 로컬 브라우저로 열 것. GitHub에서는 소스로 보인다 |
 | `slides-grab-style-showcase.pdf` | 92쪽 PDF (1080p 캡처) |
 
 렌더 PNG(`gate-preview/`, `.slides-grab/gate-preview/`)는 용량 때문에 커밋하지 않는다 — 아래 명령으로 언제든 다시 만든다.
@@ -158,7 +215,8 @@ node scripts/build-style-showcase.mjs                                    # 92장
 npx slides-grab validate --slides-dir decks/style-showcase               # 92/92 통과
 npx slides-grab png --slides-dir decks/style-showcase \
   --output-dir decks/style-showcase/gate-preview --resolution 1080p      # 렌더
-node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview  # 리뷰용 컨택트 시트 8장
+node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview         # 리뷰용 컨택트 시트 8장
+node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview --web   # README용 preview/ 이미지
 npx slides-grab build-viewer --slides-dir decks/style-showcase
 ```
 

@@ -24,8 +24,16 @@
 | `gate-pass-a.md`, `gate-pass-b.md` | Stage 2 디자인 게이트 리뷰 리포트 (Pass A / Pass B) |
 | `design-debt.md` | 게이트에서 수용한 Minor/Note 항목 |
 | `.slides-grab/` | 게이트 영수증 + 렌더 증거 PNG (export가 이걸 확인한다) |
-| `viewer.html` | 읽기 전용 미리보기 |
+| `preview/slides-01-05.png` | 5장 미리보기 이미지 (GitHub에서 바로 보이는 용도) |
+| `viewer.html` | 읽기 전용 미리보기 — 로컬 브라우저로 열 것. GitHub에서는 소스로 보인다 |
 | `ai-automation-deck.pdf` | PDF 내보내기 |
+
+## 미리보기
+
+![test-deck 5장](preview/slides-01-05.png)
+
+GitHub은 저장소 안의 `.html`을 렌더링하지 않고 소스로 보여준다. 브라우저에서 그냥 보려면 위 이미지나
+[PDF](ai-automation-deck.pdf)를, 실제 HTML로 띄우려면 클론 후 `viewer.html`을 열면 된다.
 
 ## 다시 만들거나 고치기
 
