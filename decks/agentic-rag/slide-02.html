@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Where classic RAG stops</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background-color:#0E1B3D;
+    background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc3MjAnIGhlaWdodD0nNDA1Jz48ZyBmaWxsPSdub25lJyBzdHJva2U9JyM0RkM4RTgnIHN0cm9rZS13aWR0aD0nMSc+PHJlY3QgeD0nMTInIHk9JzEyJyB3aWR0aD0nNjk2JyBoZWlnaHQ9JzM4MScvPjxsaW5lIHgxPScxMicgeTE9JzInIHgyPScxMicgeTI9JzknLz48bGluZSB4MT0nMicgeTE9JzEyJyB4Mj0nOScgeTI9JzEyJy8+PGxpbmUgeDE9JzcwOCcgeTE9JzInIHgyPSc3MDgnIHkyPSc5Jy8+PGxpbmUgeDE9JzcxOCcgeTE9JzEyJyB4Mj0nNzExJyB5Mj0nMTInLz48bGluZSB4MT0nMTInIHkxPSc0MDMnIHgyPScxMicgeTI9JzM5NicvPjxsaW5lIHgxPScyJyB5MT0nMzkzJyB4Mj0nOScgeTI9JzM5MycvPjxsaW5lIHgxPSc3MDgnIHkxPSc0MDMnIHgyPSc3MDgnIHkyPSczOTYnLz48bGluZSB4MT0nNzE4JyB5MT0nMzkzJyB4Mj0nNzExJyB5Mj0nMzkzJy8+PC9nPjwvc3ZnPg=="),url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScyNCcgaGVpZ2h0PScyNCc+PGNpcmNsZSBjeD0nMTInIGN5PScxMicgcj0nMC42JyBmaWxsPScjMkE0QThDJy8+PC9zdmc+");
+    background-repeat:no-repeat,repeat;
+    background-size:720pt 405pt,24pt 24pt;
+    color:#E8EEF7; font-family:'Inter',sans-serif;
+    padding:30pt 34pt 24pt 34pt;
+    display:flex; flex-direction:column;
+  }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h1 { font-family:'Inter'; font-weight:300; letter-spacing:0.02em; line-height:1.3; }
+  h2 { font-size:22pt; font-weight:400; letter-spacing:0.03em; line-height:1.3; }
+  h3 { font-size:15pt; font-weight:600; letter-spacing:0.01em; line-height:1.35; }
+  p { font-size:15pt; font-weight:400; line-height:1.55; }
+  .label { font-size:12pt; font-weight:400; letter-spacing:0.08em; color:#8FA3C8; }
+  .muted { color:#8FA3C8; }
+  .mono { font-family:'JetBrainsMono',monospace; }
+  .code { font-family:'JetBrainsMono',monospace; font-size:12pt; color:#4FC8E8; letter-spacing:0.04em; }
+  .box { border:1px solid #4FC8E8; }
+  .rule { height:1px; background:#4FC8E8; }
+  /* Title block — the spec puts it bottom-right on every sheet. */
+  .tb { align-self:flex-end; margin-top:14pt; display:flex; border:1px solid #4FC8E8; }
+  .tb div { padding:5pt 11pt; display:flex; align-items:center; }
+  .tb div + div { border-left:1px solid #4FC8E8; }
+  .tb p { font-size:10pt; line-height:1.6; }
+  .tb .n { font-family:'JetBrainsMono',monospace; color:#4FC8E8; }
+  .tb .t { letter-spacing:0.08em; color:#E8EEF7; }
+  .tb .s { font-family:'JetBrainsMono',monospace; color:#8FA3C8; }
+</style>
+</head>
+<body>
+<main>
+  <h2 style="margin-bottom:12pt;">What classic RAG does, and where it stops</h2>
+  <div style="display:flex; align-items:center; gap:8pt;"><div class="box" style="padding:7pt 12pt; flex:none;"><p class="mono" style="font-size:11.5pt; letter-spacing:0.04em; white-space:nowrap;">QUERY</p></div><div style="display:flex; align-items:center;"><svg width='20pt' height='12pt' viewBox='0 0 20 12' style='display:block;' aria-hidden='true'><line x1='0' y1='6' x2='12' y2='6' stroke='#4FC8E8' stroke-width='1'></line><polygon points='12,2.2 20,6 12,9.8' fill='#4FC8E8'></polygon></svg></div><div class="box" style="padding:7pt 12pt; flex:none;"><p class="mono" style="font-size:11.5pt; letter-spacing:0.04em; white-space:nowrap;">EMBED</p></div><div style="display:flex; align-items:center;"><svg width='20pt' height='12pt' viewBox='0 0 20 12' style='display:block;' aria-hidden='true'><line x1='0' y1='6' x2='12' y2='6' stroke='#4FC8E8' stroke-width='1'></line><polygon points='12,2.2 20,6 12,9.8' fill='#4FC8E8'></polygon></svg></div><div class="box" style="padding:7pt 12pt; flex:none;"><p class="mono" style="font-size:11.5pt; letter-spacing:0.04em; white-space:nowrap;">TOP-K</p></div><div style="display:flex; align-items:center;"><svg width='20pt' height='12pt' viewBox='0 0 20 12' style='display:block;' aria-hidden='true'><line x1='0' y1='6' x2='12' y2='6' stroke='#4FC8E8' stroke-width='1'></line><polygon points='12,2.2 20,6 12,9.8' fill='#4FC8E8'></polygon></svg></div><div class="box" style="padding:7pt 12pt; flex:none;"><p class="mono" style="font-size:11.5pt; letter-spacing:0.04em; white-space:nowrap;">CONTEXT</p></div><div style="display:flex; align-items:center;"><svg width='20pt' height='12pt' viewBox='0 0 20 12' style='display:block;' aria-hidden='true'><line x1='0' y1='6' x2='12' y2='6' stroke='#4FC8E8' stroke-width='1'></line><polygon points='12,2.2 20,6 12,9.8' fill='#4FC8E8'></polygon></svg></div><div class="box" style="padding:7pt 12pt; flex:none;"><p class="mono" style="font-size:11.5pt; letter-spacing:0.04em; white-space:nowrap;">GENERATE</p></div></div><p class="label" style="margin-top:8pt;">ONE PASS · NO FEEDBACK — THE PIPELINE CANNOT LOOK AGAIN</p>
+  <div style="flex:1; display:flex; align-items:center; gap:0; margin:10pt 0 8pt 0;"><div style="flex:1 1 0; min-width:0;  padding-right:20pt; display:flex; flex-direction:column;"><p class="code" style="margin-bottom:9pt;">F-01</p><h3 style="margin-bottom:8pt;">The question is not the query</h3><p class="muted" style="font-size:14pt; line-height:1.5;">The user asks in their words; the corpus is written in someone else’s.</p></div><div style="flex:1 1 0; min-width:0; border-left:1px solid #2A4A8C; padding-left:20pt; padding-right:20pt; display:flex; flex-direction:column;"><p class="code" style="margin-bottom:9pt;">F-02</p><h3 style="margin-bottom:8pt;">One hop is not enough</h3><p class="muted" style="font-size:14pt; line-height:1.5;">An answer that requires joining two documents cannot be retrieved in one shot.</p></div><div style="flex:1 1 0; min-width:0; border-left:1px solid #2A4A8C; padding-left:20pt;  display:flex; flex-direction:column;"><p class="code" style="margin-bottom:9pt;">F-03</p><h3 style="margin-bottom:8pt;">Nothing can notice the miss</h3><p class="muted" style="font-size:14pt; line-height:1.5;">Retrieval always returns its top k. Nothing can say the evidence is not enough.</p></div></div>
+  <div class="box" style="border-left-width:4px; padding:10pt 15pt; background:rgba(79,200,232,0.12);">
+    <p style="font-size:14pt;">Classic RAG assumes the first retrieval was the right one. No part of the pipeline is able to disagree.</p>
+  </div>
+</main>
+<div class="tb">
+  <div><p class="n">02</p></div>
+  <div><p class="t">WHERE CLASSIC RAG STOPS</p></div>
+  <div><p class="s">SHEET 02/06</p></div>
+</div>
+</body>
+</html>

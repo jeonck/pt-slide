@@ -10,6 +10,7 @@
 | 덱 | 내용 | 장수 | 스타일 |
 |---|---|---|---|
 | [`decks/test-deck`](decks/test-deck/) | **인공지능의 미래와 업무 자동화** — 사내 공유용 한국어 발표 덱. 커버 → 변화 진단 → 자동화 3단계 → 도입 준비 → Q&A | 5 | `ppt-korea-policy-navy` |
+| [`decks/agentic-rag`](decks/agentic-rag/) | **From RAG to Agentic RAG** — 영어 기술 덱. 클래식 RAG의 한계 → 검색이 루프가 되는 전환 → 도입 패턴 → 비용과 결정 → Q&A | 6 | `ppt-blueprint-schematic-deck` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -20,6 +21,7 @@
 | | HTML | GitHub에서 보기 | 로컬 미리보기 |
 |---|---|---|---|
 | test-deck | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/test-deck/viewer.html)** · [PDF](decks/test-deck/ai-automation-deck.pdf) · [이미지](decks/test-deck/preview/) | [`viewer.html`](decks/test-deck/viewer.html) |
+| agentic-rag | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/agentic-rag/viewer.html)** · [PDF](decks/agentic-rag/agentic-rag.pdf) · [이미지](decks/agentic-rag/preview/) | [`viewer.html`](decks/agentic-rag/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의
