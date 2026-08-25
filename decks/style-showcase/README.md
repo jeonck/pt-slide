@@ -33,7 +33,8 @@ slides-grab에 들어 있는 **선택 가능한 디자인 스타일 92종을 한
 
 > `slide-07.html`을 GitHub에서 클릭하면 페이지가 아니라 **소스 코드**가 보인다. GitHub은 저장소 안의
 > `.html`을 렌더링하지 않고 텍스트로 서빙한다 — 파일이 잘못된 게 아니다.
-> 그래서 92장을 이미지로 미리 구워 아래에 붙여 뒀다. 이미지를 클릭하면 원본 크기로 열린다.
+> **실제 페이지로 보려면 [Pages 뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)를 열면 된다.**
+> 아래는 GitHub 안에서 바로 훑어보라고 미리 구워 둔 이미지다 — 클릭하면 원본 크기로 열린다.
 
 전체를 한 번에 넘겨 보려면 [**92쪽 PDF**](slides-grab-style-showcase.pdf)가 편하다 — PDF는 GitHub이 뷰어로 렌더링해 준다.
 
@@ -74,7 +75,7 @@ slides-grab에 들어 있는 **선택 가능한 디자인 스타일 92종을 한
 | 방법 | 하는 법 |
 |---|---|
 | **로컬에서 열기** (권장) | 저장소를 클론한 뒤 `decks/style-showcase/viewer.html`을 브라우저로 연다. 폰트·레이아웃이 그대로 나오는 유일한 방법 |
-| **GitHub Pages** | 배포 워크플로는 이미 있다. Settings → Pages → Source를 **`GitHub Actions`**로 한 번만 바꾸면 `https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html`로 열리고, 이후 `main` 푸시마다 자동 배포된다. 이 토글은 사람이 해야 한다 — 워크플로 토큰은 Pages 사이트를 처음 생성할 권한이 없다 |
+| **GitHub Pages** | **이미 배포돼 있다** — [92장 뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html), 개별 슬라이드도 [`/slide-07.html`](https://jeonck.github.io/pt-slide/decks/style-showcase/slide-07.html)처럼 열린다. `main` 푸시마다 자동 재배포 |
 | **htmlpreview** | `htmlpreview.github.io/?<파일 URL>` — 설정 없이 되지만 `./assets/fonts/`를 못 따라가서 한글 폰트가 깨질 수 있다 |
 
 위 미리보기 이미지는 렌더된 PNG에서 만든다:

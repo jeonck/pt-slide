@@ -3,6 +3,8 @@
 [slides-grab](https://github.com/NomaDamas/slides-grab)로 만든 프레젠테이션 덱 모음.
 슬라이드는 전부 편집·검색 가능한 시맨틱 HTML(720pt × 405pt)이고, 여기서 PDF·PNG·PPTX로 내보낸다.
 
+**🔗 <https://jeonck.github.io/pt-slide/>** — 두 덱을 브라우저에서 바로 볼 수 있다.
+
 ## 덱
 
 | 덱 | 내용 | 장수 | 스타일 |
@@ -17,21 +19,18 @@
 
 | | HTML | GitHub에서 보기 | 로컬 미리보기 |
 |---|---|---|---|
-| test-deck | `slide-01.html` … `slide-05.html` | [PDF](decks/test-deck/ai-automation-deck.pdf) · [이미지](decks/test-deck/preview/) | [`viewer.html`](decks/test-deck/viewer.html) |
-| style-showcase | `slide-01.html` … `slide-92.html` | [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
+| test-deck | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/test-deck/viewer.html)** · [PDF](decks/test-deck/ai-automation-deck.pdf) · [이미지](decks/test-deck/preview/) | [`viewer.html`](decks/test-deck/viewer.html) |
+| style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
-> **`.html` 파일을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 안의
+> **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의
 > `.html`을 렌더링하지 않고 텍스트로 서빙하기 때문이고, 파일이 잘못된 게 아니다.
-> 브라우저에서 그냥 보려면 위 표의 **PDF**(GitHub이 뷰어로 띄워 준다)나 **이미지** 열을 쓰면 된다.
+> **위 Pages 링크로 열면 실제 페이지로 뜬다.** 표의 PDF·이미지 열도 GitHub에서 바로 보인다.
 >
-> 슬라이드를 실제 HTML로 띄우려면 셋 중 하나다:
+> 그 밖의 방법:
 > - **로컬에서 열기** (권장) — 클론 후 `viewer.html`을 브라우저로. 폰트·레이아웃이 그대로 나오는 유일한 방법
-> - **GitHub Pages** — 배포 워크플로(`.github/workflows/pages.yml`)와 랜딩 페이지(`index.html`)는 준비돼 있고,
->   **Settings → Pages → Source를 `GitHub Actions`로 한 번만 바꾸면** 그 다음부터 `main`에 푸시할 때마다 자동 배포된다.
->   그 토글은 사람이 해야 한다 — 워크플로 토큰은 이미 켜진 Pages에 배포만 할 수 있고 사이트를 처음 만들지는 못한다
->   (`actions/configure-pages`가 `Resource not accessible by integration`으로 실패). 켜고 나면:
->   `https://jeonck.github.io/pt-slide/` → 두 덱 뷰어로 연결
-> - **htmlpreview** — `htmlpreview.github.io/?<파일 URL>`. 설정은 필요 없지만 `./assets/fonts/`를 못 따라가 한글이 깨질 수 있다
+> - **GitHub Pages** — **이미 배포돼 있다: <https://jeonck.github.io/pt-slide/>**.
+>   `main`에 푸시할 때마다 `.github/workflows/pages.yml`이 저장소를 그대로 다시 배포한다
+> - **htmlpreview** — `htmlpreview.github.io/?<파일 URL>`. Pages가 있으니 이제 쓸 일은 없다
 
 각 덱의 `preview/` 이미지는 커밋돼 있다. 전체 해상도 렌더 PNG는 용량 때문에 커밋하지 않으니
 (`.gitignore` 참고) 필요하면 아래 `png` 명령으로 다시 만든다.
@@ -75,7 +74,7 @@ validate → png(증거 재촬영) → Pass A / Pass B 리포트 갱신 → slid
 |---|---|
 | [`scripts/build-style-showcase.mjs`](scripts/build-style-showcase.mjs) | 스타일 스펙에서 팔레트·타이포·레이아웃을 읽어 견본 92장을 생성 |
 | [`scripts/build-contact-sheets.mjs`](scripts/build-contact-sheets.mjs) | 렌더된 PNG를 3×4 컨택트 시트로 묶음. 기본은 리뷰용 큰 타일, `--web`은 README에 붙일 `preview/` 이미지 |
-| [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | `main` 푸시마다 저장소를 GitHub Pages로 배포 (Source를 `GitHub Actions`로 한 번 바꿔야 시작된다) |
+| [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | `main` 푸시마다 저장소를 <https://jeonck.github.io/pt-slide/>로 배포 |
 
 ```bash
 node scripts/build-style-showcase.mjs

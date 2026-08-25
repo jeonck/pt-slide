@@ -4,10 +4,13 @@ name: Deploy GitHub Pages
 # real pages. GitHub serves .html from the repo tree as source; Pages serves it
 # as a page, which is the whole point of this workflow.
 #
-# ONE-TIME SETUP: Settings -> Pages -> Build and deployment -> Source: GitHub Actions.
-# The workflow token can deploy to an existing Pages site but cannot create one
-# ("Resource not accessible by integration" from actions/configure-pages), so that
-# first toggle has to be done by a human. After it, every push to main deploys.
+# Live at https://jeonck.github.io/pt-slide/ — every push to main redeploys.
+#
+# Settings -> Pages -> Source is set to "GitHub Actions". That first toggle had to be
+# done by a human: the workflow token deploys to an existing Pages site but cannot
+# create one (actions/configure-pages returns "Resource not accessible by
+# integration"). enablement: true below is now a no-op and stays as a safety net if
+# the site is ever deleted and recreated.
 #
 # If you pick "Deploy from a branch" instead, delete this workflow — Pages will
 # serve the branch directly and this job would fail on every push. .nojekyll at

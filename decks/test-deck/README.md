@@ -32,8 +32,8 @@
 
 ![test-deck 5장](preview/slides-01-05.png)
 
-GitHub은 저장소 안의 `.html`을 렌더링하지 않고 소스로 보여준다. 브라우저에서 그냥 보려면 위 이미지나
-[PDF](ai-automation-deck.pdf)를, 실제 HTML로 띄우려면 클론 후 `viewer.html`을 열면 된다.
+실제 페이지로는 [Pages 뷰어](https://jeonck.github.io/pt-slide/decks/test-deck/viewer.html)에서 열린다.
+GitHub 저장소 트리의 `.html`은 렌더링되지 않고 소스로 보이니, 저장소 안에서는 위 이미지나 [PDF](ai-automation-deck.pdf)를 보면 된다.
 
 ## 다시 만들거나 고치기
 
