@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>업무 자동화는 3단계로 성숙한다</title>
+<style>
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-Bold.woff2') format('woff2'); font-weight: 700; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: block; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 720pt; height: 405pt; overflow: hidden;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif; word-break: keep-all;
+    background: #FFFFFF; color: #1A1A1A;
+    display: flex; flex-direction: column;
+  }
+  .band { height: 48.6pt; flex: none; background: #0B2C5C; padding: 0 38pt; display: flex; align-items: center; justify-content: space-between; }
+  .band-left { display: flex; align-items: center; gap: 13pt; }
+  .no-chip { width: 26pt; height: 26pt; flex: none; background: #1B66C9; display: flex; align-items: center; justify-content: center; }
+  .no-chip p { font-size: 13pt; font-weight: 700; color: #FFFFFF; }
+  .band h2 { font-size: 22pt; font-weight: 700; letter-spacing: -0.02em; color: #FFFFFF; }
+  .band-page { font-size: 11pt; font-weight: 600; color: #8FA6C4; }
+  main { flex: 1; padding: 24pt 38pt 20pt 38pt; display: flex; flex-direction: column; justify-content: space-between; gap: 22pt; }
+  .flow { display: flex; flex: 1; align-items: stretch; }
+  .node { flex: 1 1 0; min-width: 0; background: #FFFFFF; border: 1px solid #C5D2E3; padding: 18pt 16pt; display: flex; flex-direction: column; }
+  .node.active { background: #E8F1FB; border-left: 4px solid #1B66C9; }
+  .sq { width: 22pt; height: 22pt; flex: none; background: #1B66C9; display: flex; align-items: center; justify-content: center; margin-bottom: 11pt; }
+  .sq p { font-size: 11pt; font-weight: 700; color: #FFFFFF; }
+  .node h3 { font-size: 17pt; font-weight: 700; letter-spacing: -0.02em; color: #0B2C5C; margin-bottom: 8pt; }
+  .node p.body { font-size: 14pt; font-weight: 400; line-height: 1.5; color: #5C6470; flex: 1; }
+  .role { margin-top: 11pt; padding-top: 9pt; border-top: 1px solid #C5D2E3; }
+  .role p { font-size: 12pt; font-weight: 600; color: #0B2C5C; }
+  .role p span.k { font-weight: 400; color: #5C6470; }
+  .arrow { flex: none; width: 30pt; display: flex; align-items: center; justify-content: center; }
+  .callout { background: #E8F1FB; border-left: 4px solid #1B66C9; padding: 14pt 18pt; }
+  .callout p { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
+</style>
+</head>
+<body>
+
+  <div class="band">
+    <div class="band-left">
+      <div class="no-chip"><p>02</p></div>
+      <h2>업무 자동화는 3단계로 성숙한다</h2>
+    </div>
+    <p class="band-page">03</p>
+  </div>
+
+  <main>
+    <div class="flow">
+      <div class="node">
+        <div class="sq"><p>01</p></div>
+        <h3>보조</h3>
+        <p class="body">사람이 실행하고 AI가 초안과 검색을 돕는다. 산출물의 책임은 사람에게 있다.</p>
+        <div class="role"><p><span class="k">사람의 역할 </span>실행자</p></div>
+      </div>
+
+      <div class="arrow">
+        <svg width="30pt" height="12pt" viewBox="0 0 30 12" aria-hidden="true">
+          <line x1="0" y1="6" x2="22" y2="6" stroke="#1B66C9" stroke-width="1.75"></line>
+          <polygon points="22,1.8 30,6 22,10.2" fill="#1B66C9"></polygon>
+        </svg>
+      </div>
+
+      <div class="node active">
+        <div class="sq"><p>02</p></div>
+        <h3>위임</h3>
+        <p class="body">절차가 고정된 업무를 AI가 실행하고, 사람이 결과를 검수한다.</p>
+        <div class="role"><p><span class="k">사람의 역할 </span>검수자</p></div>
+      </div>
+
+      <div class="arrow">
+        <svg width="30pt" height="12pt" viewBox="0 0 30 12" aria-hidden="true">
+          <line x1="0" y1="6" x2="22" y2="6" stroke="#1B66C9" stroke-width="1.75"></line>
+          <polygon points="22,1.8 30,6 22,10.2" fill="#1B66C9"></polygon>
+        </svg>
+      </div>
+
+      <div class="node">
+        <div class="sq"><p>03</p></div>
+        <h3>자율</h3>
+        <p class="body">AI가 실행과 판단을 맡고, 사람은 예외와 기준만 관리한다.</p>
+        <div class="role"><p><span class="k">사람의 역할 </span>기준 설계자</p></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>2단계로 넘어가는 문턱은 모델 성능이 아니라, 검수 기준과 책임 소재를 정의했는지다.</p>
+    </div>
+  </main>
+
+</body>
+</html>

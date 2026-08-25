@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>지금 무엇이 달라졌는가</title>
+<style>
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-Bold.woff2') format('woff2'); font-weight: 700; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: block; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 720pt; height: 405pt; overflow: hidden;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif; word-break: keep-all;
+    background: #FFFFFF; color: #1A1A1A;
+    display: flex; flex-direction: column;
+  }
+  .band { height: 48.6pt; flex: none; background: #0B2C5C; padding: 0 38pt; display: flex; align-items: center; justify-content: space-between; }
+  .band-left { display: flex; align-items: center; gap: 13pt; }
+  .no-chip { width: 26pt; height: 26pt; flex: none; background: #1B66C9; display: flex; align-items: center; justify-content: center; }
+  .no-chip p { font-size: 13pt; font-weight: 700; color: #FFFFFF; }
+  .band h2 { font-size: 22pt; font-weight: 700; letter-spacing: -0.02em; color: #FFFFFF; }
+  .band-page { font-size: 11pt; font-weight: 600; color: #8FA6C4; }
+  main { flex: 1; padding: 26pt 38pt 22pt 38pt; display: flex; flex-direction: column; justify-content: space-between; gap: 24pt; }
+  .cols { display: flex; flex: 1; align-items: stretch; }
+  .col { width: 33.333%; padding: 2pt 22pt 0 22pt; display: flex; flex-direction: column; }
+  .col:first-child { padding-left: 0; }
+  .col:last-child { padding-right: 0; }
+  .col + .col { border-left: 1px solid #C5D2E3; }
+  .sq { width: 24pt; height: 24pt; flex: none; align-self: flex-start; background: #1B66C9; display: flex; align-items: center; justify-content: center; margin-bottom: 14pt; }
+  .sq p { font-size: 11pt; font-weight: 700; color: #FFFFFF; }
+  .col h3 { font-size: 19pt; font-weight: 700; letter-spacing: -0.02em; color: #0B2C5C; margin-bottom: 9pt; }
+  .col p.body { font-size: 15pt; font-weight: 400; line-height: 1.62; color: #5C6470; }
+  .shift { margin-top: auto; padding-top: 11pt; border-top: 1px solid #C5D2E3; }
+  .shift p { font-size: 12pt; font-weight: 600; line-height: 1.4; color: #0B2C5C; }
+  .shift p span.k { display: block; font-weight: 400; color: #5C6470; margin-bottom: 3pt; }
+  .callout { background: #E8F1FB; border-left: 4px solid #1B66C9; padding: 14pt 18pt; }
+  .callout p { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
+</style>
+</head>
+<body>
+
+  <div class="band">
+    <div class="band-left">
+      <div class="no-chip"><p>01</p></div>
+      <h2>지금 무엇이 달라졌는가</h2>
+    </div>
+    <p class="band-page">02</p>
+  </div>
+
+  <main>
+    <div class="cols">
+      <div class="col">
+        <div class="sq"><p>01</p></div>
+        <h3>도구에서 동료로</h3>
+        <p class="body">결과물을 제안하는 단계를 넘어, 정해진 절차를 스스로 수행하는 단계로 이동한다.</p>
+        <div class="shift"><p><span class="k">이동 방향</span>초안 보조 → 절차 실행</p></div>
+      </div>
+      <div class="col">
+        <div class="sq"><p>02</p></div>
+        <h3>문서에서 프로세스로</h3>
+        <p class="body">자동화 대상이 문서 한 건에서 조회·승인·보고로 이어지는 흐름 전체로 넓어진다.</p>
+        <div class="shift"><p><span class="k">이동 방향</span>문서 한 건 → 업무 흐름</p></div>
+      </div>
+      <div class="col">
+        <div class="sq"><p>03</p></div>
+        <h3>IT에서 현업으로</h3>
+        <p class="body">자동화를 만드는 주체가 개발 조직에서 업무를 가장 잘 아는 담당자로 옮겨간다.</p>
+        <div class="shift"><p><span class="k">이동 방향</span>개발 요청 → 현업 구성</p></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p>질문이 바뀌었다. &ldquo;AI가 무엇을 할 수 있는가&rdquo;가 아니라 &ldquo;어떤 업무를 맡길 것인가&rdquo;.</p>
+    </div>
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>도입 조직이 먼저 준비해야 할 것</title>
+<style>
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-Regular.woff2') format('woff2'); font-weight: 400; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2'); font-weight: 600; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-Bold.woff2') format('woff2'); font-weight: 700; font-display: block; }
+  @font-face { font-family: 'Pretendard'; src: url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2'); font-weight: 800; font-display: block; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    width: 720pt; height: 405pt; overflow: hidden;
+    font-family: 'Pretendard', 'Noto Sans KR', sans-serif; word-break: keep-all;
+    background: #FFFFFF; color: #1A1A1A;
+    display: flex; flex-direction: column;
+  }
+  .band { height: 48.6pt; flex: none; background: #0B2C5C; padding: 0 38pt; display: flex; align-items: center; justify-content: space-between; }
+  .band-left { display: flex; align-items: center; gap: 13pt; }
+  .no-chip { width: 26pt; height: 26pt; flex: none; background: #1B66C9; display: flex; align-items: center; justify-content: center; }
+  .no-chip p { font-size: 13pt; font-weight: 700; color: #FFFFFF; }
+  .band h2 { font-size: 22pt; font-weight: 700; letter-spacing: -0.02em; color: #FFFFFF; }
+  .band-page { font-size: 11pt; font-weight: 600; color: #8FA6C4; }
+  main { flex: 1; padding: 24pt 38pt 20pt 38pt; display: flex; flex-direction: column; justify-content: space-between; gap: 22pt; }
+  .grid { display: flex; flex: 1; gap: 24pt; align-items: stretch; }
+  .card { flex: 1 1 0; min-width: 0; border: 1px solid #C5D2E3; display: flex; flex-direction: column; }
+  .card.risk { border-left: 4px solid #E03B3B; }
+  .card-head { background: #0B2C5C; padding: 8pt 14pt; display: flex; align-items: baseline; justify-content: space-between; }
+  .card-head h3 { font-size: 15pt; font-weight: 700; color: #FFFFFF; letter-spacing: -0.01em; }
+  .card-head p { font-size: 10pt; font-weight: 400; color: #8FA6C4; }
+  .card ul { list-style: none; flex: 1; padding: 16pt 16pt 18pt 16pt; display: flex; flex-direction: column; justify-content: space-evenly; }
+  .card li { display: flex; gap: 10pt; align-items: flex-start; }
+  
+  .mk { width: 6pt; height: 6pt; flex: none; background: #1B66C9; margin-top: 7pt; }
+  .card li p { font-size: 15pt; font-weight: 400; line-height: 1.55; color: #1A1A1A; }
+  .summary { background: #E8F1FB; border-top: 3pt solid #0B2C5C; border-bottom: 3pt solid #0B2C5C; padding: 13pt 16pt; display: flex; gap: 14pt; align-items: center; }
+  .summary .lab { flex: none; background: #0B2C5C; padding: 4pt 10pt; font-size: 11pt; font-weight: 700; color: #FFFFFF; letter-spacing: 0.04em; }
+  .summary .txt { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
+</style>
+</head>
+<body>
+
+  <div class="band">
+    <div class="band-left">
+      <div class="no-chip"><p>03</p></div>
+      <h2>도입 조직이 먼저 준비해야 할 것</h2>
+    </div>
+    <p class="band-page">04</p>
+  </div>
+
+  <main>
+    <div class="grid">
+      <div class="card">
+        <div class="card-head">
+          <h3>먼저 할 일</h3>
+          <p>우선순위</p>
+        </div>
+        <ul>
+          <li><div class="mk"></div><p>반복도와 규칙성이 높은 업무부터 목록화한다</p></li>
+          <li><div class="mk"></div><p>사람이 최종 확인할 지점을 업무마다 정한다</p></li>
+          <li><div class="mk"></div><p>잘못 실행됐을 때 되돌릴 절차를 함께 만든다</p></li>
+        </ul>
+      </div>
+
+      <div class="card risk">
+        <div class="card-head">
+          <h3>미루면 위험한 것</h3>
+          <p>위험</p>
+        </div>
+        <ul>
+          <li><div class="mk"></div><p>검수 지점 없이 전체 업무에 한꺼번에 적용</p></li>
+          <li><div class="mk"></div><p>실행 근거와 기록을 남기지 않는 자동화</p></li>
+          <li><div class="mk"></div><p>직무 재설계 없이 도구만 먼저 도입</p></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="summary">
+      <p class="lab">요약</p>
+      <p class="txt">성패는 모델 성능이 아니라, 사람이 어디서 개입할지를 정하는 설계에서 갈린다.</p>
+    </div>
+  </main>
+
+</body>
+</html>

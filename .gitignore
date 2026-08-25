@@ -1,0 +1,5 @@
+node_modules/
+
+# Working render evidence (the gate receipt keeps its own copy under .slides-grab/)
+decks/*/gate-preview/
+decks/*/out-png/
