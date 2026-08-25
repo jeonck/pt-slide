@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>pt-slide — slides-grab 덱</title>
+<style>
+  :root {
+    --bg: #ffffff; --surface: #f4f6f9; --text: #14181f; --muted: #5c6470;
+    --navy: #0b2c5c; --accent: #1b66c9; --border: #d8dee7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1116; --surface: #171b22; --text: #e8ecf2; --muted: #9aa4b2;
+      --navy: #cfe0f7; --accent: #6ea8f0; --border: #262c36;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans KR', sans-serif;
+    line-height: 1.6; word-break: keep-all;
+    padding: 48px 20px 72px;
+  }
+  main { max-width: 860px; margin: 0 auto; }
+  h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; color: var(--navy); }
+  .lede { color: var(--muted); margin-top: 10px; }
+  .lede a { color: var(--accent); }
+  h2 { font-size: 1.05rem; font-weight: 700; margin: 40px 0 14px; letter-spacing: -0.01em; }
+  .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 20px; display: flex; flex-direction: column; gap: 10px;
+  }
+  .card h3 { font-size: 1.15rem; font-weight: 700; letter-spacing: -0.01em; }
+  .card p { color: var(--muted); font-size: 0.94rem; flex: 1; }
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a {
+    font-size: 0.86rem; font-weight: 600; text-decoration: none;
+    color: var(--bg); background: var(--accent); padding: 6px 12px;
+  }
+  .links a.ghost { color: var(--accent); background: transparent; border: 1px solid var(--accent); }
+  .note { color: var(--muted); font-size: 0.88rem; margin-top: 12px; }
+  footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.86rem; }
+  footer a { color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>pt-slide</h1>
+  <p class="lede">
+    <a href="https://github.com/NomaDamas/slides-grab">slides-grab</a>로 만든 프레젠테이션 덱.
+    슬라이드는 720pt × 405pt 시맨틱 HTML이고, 아래 뷰어에서 그대로 열린다.
+  </p>
+
+  <h2>덱</h2>
+  <div class="cards">
+    <div class="card">
+      <h3>인공지능의 미래와 업무 자동화</h3>
+      <p>사내 공유용 한국어 발표 덱 5장. 커버 → 변화 진단 → 자동화 3단계 → 도입 준비 → Q&amp;A.
+         스타일은 <code>ppt-korea-policy-navy</code>.</p>
+      <div class="links">
+        <a href="./decks/test-deck/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/test-deck/ai-automation-deck.pdf">PDF</a>
+        <a class="ghost" href="https://github.com/jeonck/pt-slide/tree/main/decks/test-deck">소스</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>번들 스타일 92종 견본</h3>
+      <p><code>slides-grab list-styles</code>가 출력하는 스타일마다 한 장씩. 스타일을 고를 때 보는 카탈로그다.
+         각 장에 팔레트·타이포·레이아웃 축과 <code>--style</code>에 넣을 id가 찍혀 있다.</p>
+      <div class="links">
+        <a href="./decks/style-showcase/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/style-showcase/slides-grab-style-showcase.pdf">PDF</a>
+        <a class="ghost" href="https://github.com/jeonck/pt-slide/blob/main/decks/style-showcase/README.md#스타일-92종-전체-목록">92종 목록</a>
+      </div>
+    </div>
+  </div>
+
+  <p class="note">
+    뷰어는 슬라이드를 iframe으로 띄운다. 개별 슬라이드를 직접 열려면
+    <code>./decks/style-showcase/slide-07.html</code>처럼 주소를 치면 된다.
+  </p>
+
+  <footer>
+    이 사이트는 저장소를 그대로 배포한다 —
+    <a href="https://github.com/jeonck/pt-slide">github.com/jeonck/pt-slide</a>.
+    <code>main</code>에 푸시하면 <code>.github/workflows/pages.yml</code>이 다시 배포한다.
+  </footer>
+</main>
+</body>
+</html>
