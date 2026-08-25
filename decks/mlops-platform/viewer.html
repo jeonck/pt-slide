@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 7</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>MLOps Platform Roadmap</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>PLATFORM ENGINEERING / 2026</p>
+  <h1>MLOps Platform Roadmap</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+  <div style=&quot;flex:1; display:flex; flex-direction:column; justify-content:center;&quot;>
+    <div style=&quot;height:4px; width:120pt; background:#0B5FFF; margin-bottom:22pt;&quot;></div>
+    <p style=&quot;font-size:17pt; line-height:1.45; max-width:470pt;&quot;>What to build first, what to buy,<br>and what to stop each phase on.</p>
+  </div>
+  <div style=&quot;display:flex; gap:52pt; padding-top:14pt; border-top:1px solid #D1D5DB;&quot;>
+    <div><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;&quot;>PREPARED BY</p><p style=&quot;font-size:14pt;&quot;>PRESENTER · TEAM</p></div>
+    <div><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;&quot;>DATE</p><p style=&quot;font-size:14pt;&quot;>2026.08</p></div>
+    <div><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;&quot;>AUDIENCE</p><p style=&quot;font-size:14pt;&quot;>PLATFORM &amp;amp; ML LEADS</p></div>
+  </div>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 01/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>A repeatability problem</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>DIAGNOSIS</p>
+  <h1>The problem is usually not MLOps — it is repeatability</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+<div style=&quot;flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12pt 12pt;&quot;><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>01</p><h2 style=&quot;margin-bottom:7pt;&quot;>Training lives in notebooks</h2><p class=&quot;muted&quot;>The run that produced the model in production cannot be reproduced.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>02</p><h2 style=&quot;margin-bottom:7pt;&quot;>Deployment is a person</h2><p class=&quot;muted&quot;>One engineer ships every model, and the steps live in their head.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>03</p><h2 style=&quot;margin-bottom:7pt;&quot;>Retraining is a memory</h2><p class=&quot;muted&quot;>Nobody can say when a model was last refreshed, or on what data.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>04</p><h2 style=&quot;margin-bottom:7pt;&quot;>Nobody owns the boundary</h2><p class=&quot;muted&quot;>Data platform and ML team each assume the other handles features.</p></div></div>
+  <p class=&quot;muted&quot; style=&quot;margin-top:14pt;&quot;>None of these is fixed by a tool. They are fixed by making one path the only path.</p>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 02/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Six capabilities</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>SCOPE</p>
+  <h1>A platform owns six capabilities; a project owns none of them</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+<div style=&quot;flex:1; min-height:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12pt 12pt;&quot;><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>01</p><h2 style=&quot;margin-bottom:7pt;&quot;>Data &amp;amp; features</h2><p class=&quot;muted&quot;>One definition, same in training and serving.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>02</p><h2 style=&quot;margin-bottom:7pt;&quot;>Training</h2><p class=&quot;muted&quot;>Every model comes from a pipeline that can re-run.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>03</p><h2 style=&quot;margin-bottom:7pt;&quot;>Registry</h2><p class=&quot;muted&quot;>A model has a version, a lineage and an owner.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>04</p><h2 style=&quot;margin-bottom:7pt;&quot;>Serving</h2><p class=&quot;muted&quot;>Shipping a model is a config change, not a project.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>05</p><h2 style=&quot;margin-bottom:7pt;&quot;>Monitoring</h2><p class=&quot;muted&quot;>Inputs, outputs and drift are visible on demand.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>06</p><h2 style=&quot;margin-bottom:7pt;&quot;>Governance</h2><p class=&quot;muted&quot;>What a model trained on is answerable months later.</p></div></div>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 03/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Three phases</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>SEQUENCE</p>
+  <h1>Three phases, each stopped by a criterion, not a date</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+<div style=&quot;flex:1; min-height:0; display:flex; align-items:stretch;&quot;><div class=&quot;cell&quot; style=&quot;flex:1 1 0; min-width:0;&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>PHASE 01</p><h2 style=&quot;margin-bottom:8pt;&quot;>REPEATABLE</h2><p class=&quot;muted&quot; style=&quot;margin-bottom:12pt;&quot;>Every model is produced by a pipeline, not a laptop.</p><div style=&quot;margin-top:auto; padding-top:10pt; border-top:1px solid #D1D5DB;&quot;><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;&quot;>EXIT</p><p style=&quot;font-size:14pt; line-height:1.35;&quot;>Any model in production can be rebuilt from its commit.</p></div></div><div style=&quot;flex:none; width:22pt; display:flex; align-items:center; justify-content:center;&quot;><svg width='22pt' height='10pt' viewBox='0 0 22 10' style='display:block;' aria-hidden='true'><line x1='0' y1='5' x2='16' y2='5' stroke='#1A1A1A' stroke-width='0.75'></line><polygon points='16,2 22,5 16,8' fill='#1A1A1A'></polygon></svg></div><div class=&quot;cell active&quot; style=&quot;flex:1 1 0; min-width:0;&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>PHASE 02</p><h2 style=&quot;margin-bottom:8pt;&quot;>OBSERVABLE</h2><p class=&quot;muted&quot; style=&quot;margin-bottom:12pt;&quot;>Inputs, outputs and drift are visible without a request.</p><div style=&quot;margin-top:auto; padding-top:10pt; border-top:1px solid #D1D5DB;&quot;><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;&quot;>EXIT</p><p style=&quot;font-size:14pt; line-height:1.35;&quot;>On-call can answer “is this model healthy” without the ML team.</p></div></div><div style=&quot;flex:none; width:22pt; display:flex; align-items:center; justify-content:center;&quot;><svg width='22pt' height='10pt' viewBox='0 0 22 10' style='display:block;' aria-hidden='true'><line x1='0' y1='5' x2='16' y2='5' stroke='#1A1A1A' stroke-width='0.75'></line><polygon points='16,2 22,5 16,8' fill='#1A1A1A'></polygon></svg></div><div class=&quot;cell&quot; style=&quot;flex:1 1 0; min-width:0;&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>PHASE 03</p><h2 style=&quot;margin-bottom:8pt;&quot;>SELF-SERVE</h2><p class=&quot;muted&quot; style=&quot;margin-bottom:12pt;&quot;>A new team ships a model without the platform team in the loop.</p><div style=&quot;margin-top:auto; padding-top:10pt; border-top:1px solid #D1D5DB;&quot;><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;&quot;>EXIT</p><p style=&quot;font-size:14pt; line-height:1.35;&quot;>A team onboards using the documentation alone.</p></div></div></div>
+  <p class=&quot;muted&quot; style=&quot;margin-top:12pt;&quot;>Phases are gates, not calendar quarters — no dates appear here because none can be sourced.</p>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 04/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Build vs buy</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>POSTURE</p>
+  <h1>Buy the undifferentiated layers; build only your differentiator</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+<div style=&quot;flex:1; min-height:0; border:1px solid #D1D5DB; display:flex; flex-direction:column;&quot;><div style=&quot;display:flex; background:#F4F5F7; border-bottom:1px solid #D1D5DB;&quot;><div style=&quot;width:30%; padding:9pt 14pt;&quot;><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280;&quot;>CAPABILITY</p></div><div style=&quot;width:32%; padding:9pt 14pt;&quot;><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280;&quot;>DEFAULT POSTURE</p></div><div style=&quot;width:38%; padding:9pt 14pt;&quot;><p style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280;&quot;>BUILD ONLY IF</p></div></div><div style=&quot;flex:1; display:flex; align-items:center; &quot;><div style=&quot;width:30%; padding:0 14pt;&quot;><p style=&quot;font-weight:700;&quot;>Data &amp;amp; features</p></div><div style=&quot;width:32%; padding:0 14pt;&quot;><p>Buy or adopt</p></div><div style=&quot;width:38%; padding:0 14pt;&quot;><p class=&quot;muted&quot;>Your features are the product</p></div></div><div style=&quot;flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;&quot;><div style=&quot;width:30%; padding:0 14pt;&quot;><p style=&quot;font-weight:700;&quot;>Training</p></div><div style=&quot;width:32%; padding:0 14pt;&quot;><p>Adopt a standard runner</p></div><div style=&quot;width:38%; padding:0 14pt;&quot;><p class=&quot;muted&quot;>Training itself is your research</p></div></div><div style=&quot;flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;&quot;><div style=&quot;width:30%; padding:0 14pt;&quot;><p style=&quot;font-weight:700;&quot;>Registry</p></div><div style=&quot;width:32%; padding:0 14pt;&quot;><p>Buy</p></div><div style=&quot;width:38%; padding:0 14pt;&quot;><p class=&quot;muted&quot;>Never</p></div></div><div style=&quot;flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;&quot;><div style=&quot;width:30%; padding:0 14pt;&quot;><p style=&quot;font-weight:700;&quot;>Serving</p></div><div style=&quot;width:32%; padding:0 14pt;&quot;><p>Buy</p></div><div style=&quot;width:38%; padding:0 14pt;&quot;><p class=&quot;muted&quot;>Latency or hardware is the differentiator</p></div></div><div style=&quot;flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;&quot;><div style=&quot;width:30%; padding:0 14pt;&quot;><p style=&quot;font-weight:700;&quot;>Monitoring</p></div><div style=&quot;width:32%; padding:0 14pt;&quot;><p>Buy, then extend</p></div><div style=&quot;width:38%; padding:0 14pt;&quot;><p class=&quot;muted&quot;>Your drift definition is domain-specific</p></div></div><div style=&quot;flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;&quot;><div style=&quot;width:30%; padding:0 14pt;&quot;><p style=&quot;font-weight:700;&quot;>Governance</p></div><div style=&quot;width:32%; padding:0 14pt;&quot;><p>Adopt the company standard</p></div><div style=&quot;width:38%; padding:0 14pt;&quot;><p class=&quot;muted&quot;>Never — inherit it</p></div></div></div>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 05/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="6" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-06.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Four decisions</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>DECISIONS</p>
+  <h1>Decide four things before phase 1, or phase 2 will decide them for you</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+<div style=&quot;flex:1; min-height:0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12pt 12pt;&quot;><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>01</p><h2 style=&quot;margin-bottom:7pt;&quot;>Who owns the boundary with the data platform</h2><p class=&quot;muted&quot;>Left open: features get built twice, differently.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>02</p><h2 style=&quot;margin-bottom:7pt;&quot;>What the exit criterion for each phase is</h2><p class=&quot;muted&quot;>Left open: phase 1 never ends.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>03</p><h2 style=&quot;margin-bottom:7pt;&quot;>What you will not build</h2><p class=&quot;muted&quot;>Left open: the platform grows a bespoke everything.</p></div><div class=&quot;cell&quot;><p class=&quot;num&quot; style=&quot;margin-bottom:9pt;&quot;>04</p><h2 style=&quot;margin-bottom:7pt;&quot;>Who the first internal customer is</h2><p class=&quot;muted&quot;>Left open: the platform is designed for nobody.</p></div></div>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 06/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="7" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-07.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Discussion</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#1A1A1A;
+    font-family:'Arimo','Helvetica Neue',sans-serif;
+    padding:22pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
+  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
+  h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
+  .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:700; line-height:1.3; }
+  p { font-size:14pt; font-weight:400; line-height:1.4; }
+  .muted { color:#6B7280; }
+  .num { font-size:14pt; font-weight:700; letter-spacing:0.04em; color:#6B7280; }
+  .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
+  .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
+  /* Source caption: fixed bottom-right on every sheet, per the style signature. */
+  footer { flex:none; margin-top:12pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kicker&quot;>DISCUSSION</p>
+  <h1>What we need to agree on before the first phase starts</h1>
+</header>
+<div class=&quot;rule&quot;></div>
+<main>
+  <ul style=&quot;list-style:none; flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;&quot;><li style=&quot;display:flex; gap:18pt; align-items:baseline; padding:14pt 0; &quot;><p class=&quot;num&quot; style=&quot;flex:none;&quot;>01</p><p style=&quot;font-size:17pt; line-height:1.35;&quot;>Which capability is actually blocking us today?</p></li><li style=&quot;display:flex; gap:18pt; align-items:baseline; padding:14pt 0; border-top:1px solid #D1D5DB;&quot;><p class=&quot;num&quot; style=&quot;flex:none;&quot;>02</p><p style=&quot;font-size:17pt; line-height:1.35;&quot;>What is our exit criterion for phase 1, in one sentence?</p></li><li style=&quot;display:flex; gap:18pt; align-items:baseline; padding:14pt 0; border-top:1px solid #D1D5DB;&quot;><p class=&quot;num&quot; style=&quot;flex:none;&quot;>03</p><p style=&quot;font-size:17pt; line-height:1.35;&quot;>Which layer are we genuinely differentiated in?</p></li></ul>
+  <div style=&quot;display:flex; justify-content:space-between; align-items:baseline; padding-top:12pt; border-top:1px solid #D1D5DB;&quot;>
+    <p style=&quot;font-size:14pt; font-weight:700;&quot;>Thank you</p>
+    <p class=&quot;muted&quot; style=&quot;font-size:11pt; font-weight:700; letter-spacing:0.08em;&quot;>PRESENTER · TEAM</p>
+  </div>
+</main>
+<footer><p>MLOPS PLATFORM ROADMAP · SHEET 07/07 · NO EXTERNAL DATA CITED</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 7;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

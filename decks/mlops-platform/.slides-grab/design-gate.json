@@ -1,0 +1,355 @@
+{
+  "schemaVersion": 2,
+  "verdict": "proceed",
+  "generatedAt": "2026-08-25T16:00:04.601Z",
+  "slideMode": "presentation",
+  "resolution": "1080p",
+  "previewDir": ".slides-grab/gate-preview",
+  "reportPath": ".slides-grab/design-gate-report.md",
+  "passA": {
+    "reportPath": "/home/user/pt-slide/decks/mlops-platform/gate-pass-a.md",
+    "summary": "# Pass A: System Contract / Constraint Integrity",
+    "verdict": "PASS",
+    "unresolvedCritical": 0,
+    "blockingFindings": [],
+    "checks": [
+      {
+        "name": "System consistency",
+        "status": "pass"
+      },
+      {
+        "name": "Color discipline",
+        "status": "pass"
+      },
+      {
+        "name": "AI slop tropes",
+        "status": "pass"
+      },
+      {
+        "name": "Content discipline",
+        "status": "pass"
+      }
+    ],
+    "evidenceFiles": [
+      "slide-01.png",
+      "slide-02.png",
+      "slide-03.png",
+      "slide-04.png",
+      "slide-05.png",
+      "slide-06.png",
+      "slide-07.png"
+    ],
+    "slideFingerprints": [
+      {
+        "file": "slide-01.html",
+        "sha256": "8fe56a4ec1f17f59ff8f4ffd8be467503bd51fef04a5e5af8bca7a3434ebfe5f"
+      },
+      {
+        "file": "slide-02.html",
+        "sha256": "9eb61b36907534320e04d71026fc1942059fb6c787b4dda729ffeccc2181a886"
+      },
+      {
+        "file": "slide-03.html",
+        "sha256": "21aeb4ad8c1ac7386f446ddd00f5e0c9878d8d18d3f6aeb1100bcb0e9c682572"
+      },
+      {
+        "file": "slide-04.html",
+        "sha256": "c96b18f144c31a149363f795a5fec4d89d5210ecb975c8e0f4cfefb382ba9567"
+      },
+      {
+        "file": "slide-05.html",
+        "sha256": "0cf60965de3a0e2599f81f1c916bf0d7223f680ef3984f33d3c03bba1939d355"
+      },
+      {
+        "file": "slide-06.html",
+        "sha256": "6bd80c3a77b1c17788ebf1fd6d866b633441132c3a6f6a7d8eb4dbceb86683e9"
+      },
+      {
+        "file": "slide-07.html",
+        "sha256": "016c1442da4f09f899a4cb28892df73903d14bcfe73cfc34a6962e406e6bac02"
+      }
+    ]
+  },
+  "passB": {
+    "reportPath": "/home/user/pt-slide/decks/mlops-platform/gate-pass-b.md",
+    "summary": "# Pass B: Audience Impact / Expressive Readability",
+    "verdict": "PASS",
+    "unresolvedCritical": 0,
+    "blockingFindings": [],
+    "checks": [
+      {
+        "name": "Composition & hierarchy",
+        "status": "pass"
+      },
+      {
+        "name": "Typography & legibility",
+        "status": "pass"
+      },
+      {
+        "name": "Korean/CJK word-break integrity",
+        "status": "pass"
+      },
+      {
+        "name": "Review Litmus",
+        "status": "pass"
+      }
+    ],
+    "evidenceFiles": [
+      "slide-01.png",
+      "slide-02.png",
+      "slide-03.png",
+      "slide-04.png",
+      "slide-05.png",
+      "slide-06.png",
+      "slide-07.png"
+    ],
+    "slideFingerprints": [
+      {
+        "file": "slide-01.html",
+        "sha256": "8fe56a4ec1f17f59ff8f4ffd8be467503bd51fef04a5e5af8bca7a3434ebfe5f"
+      },
+      {
+        "file": "slide-02.html",
+        "sha256": "9eb61b36907534320e04d71026fc1942059fb6c787b4dda729ffeccc2181a886"
+      },
+      {
+        "file": "slide-03.html",
+        "sha256": "21aeb4ad8c1ac7386f446ddd00f5e0c9878d8d18d3f6aeb1100bcb0e9c682572"
+      },
+      {
+        "file": "slide-04.html",
+        "sha256": "c96b18f144c31a149363f795a5fec4d89d5210ecb975c8e0f4cfefb382ba9567"
+      },
+      {
+        "file": "slide-05.html",
+        "sha256": "0cf60965de3a0e2599f81f1c916bf0d7223f680ef3984f33d3c03bba1939d355"
+      },
+      {
+        "file": "slide-06.html",
+        "sha256": "6bd80c3a77b1c17788ebf1fd6d866b633441132c3a6f6a7d8eb4dbceb86683e9"
+      },
+      {
+        "file": "slide-07.html",
+        "sha256": "016c1442da4f09f899a4cb28892df73903d14bcfe73cfc34a6962e406e6bac02"
+      }
+    ]
+  },
+  "gateValidation": {
+    "status": "passed",
+    "failures": [],
+    "passA": {
+      "label": "Pass A",
+      "verdict": "PASS",
+      "confidence": "High",
+      "unresolvedCritical": 0,
+      "blockingFindings": [],
+      "checks": [
+        {
+          "name": "System consistency",
+          "status": "pass"
+        },
+        {
+          "name": "Color discipline",
+          "status": "pass"
+        },
+        {
+          "name": "AI slop tropes",
+          "status": "pass"
+        },
+        {
+          "name": "Content discipline",
+          "status": "pass"
+        }
+      ],
+      "evidenceFiles": [
+        "slide-01.png",
+        "slide-02.png",
+        "slide-03.png",
+        "slide-04.png",
+        "slide-05.png",
+        "slide-06.png",
+        "slide-07.png"
+      ],
+      "slideFingerprints": [
+        {
+          "file": "slide-01.html",
+          "sha256": "8fe56a4ec1f17f59ff8f4ffd8be467503bd51fef04a5e5af8bca7a3434ebfe5f"
+        },
+        {
+          "file": "slide-02.html",
+          "sha256": "9eb61b36907534320e04d71026fc1942059fb6c787b4dda729ffeccc2181a886"
+        },
+        {
+          "file": "slide-03.html",
+          "sha256": "21aeb4ad8c1ac7386f446ddd00f5e0c9878d8d18d3f6aeb1100bcb0e9c682572"
+        },
+        {
+          "file": "slide-04.html",
+          "sha256": "c96b18f144c31a149363f795a5fec4d89d5210ecb975c8e0f4cfefb382ba9567"
+        },
+        {
+          "file": "slide-05.html",
+          "sha256": "0cf60965de3a0e2599f81f1c916bf0d7223f680ef3984f33d3c03bba1939d355"
+        },
+        {
+          "file": "slide-06.html",
+          "sha256": "6bd80c3a77b1c17788ebf1fd6d866b633441132c3a6f6a7d8eb4dbceb86683e9"
+        },
+        {
+          "file": "slide-07.html",
+          "sha256": "016c1442da4f09f899a4cb28892df73903d14bcfe73cfc34a6962e406e6bac02"
+        }
+      ]
+    },
+    "passB": {
+      "label": "Pass B",
+      "verdict": "PASS",
+      "confidence": "High",
+      "unresolvedCritical": 0,
+      "blockingFindings": [],
+      "checks": [
+        {
+          "name": "Composition & hierarchy",
+          "status": "pass"
+        },
+        {
+          "name": "Typography & legibility",
+          "status": "pass"
+        },
+        {
+          "name": "Korean/CJK word-break integrity",
+          "status": "pass"
+        },
+        {
+          "name": "Review Litmus",
+          "status": "pass"
+        }
+      ],
+      "evidenceFiles": [
+        "slide-01.png",
+        "slide-02.png",
+        "slide-03.png",
+        "slide-04.png",
+        "slide-05.png",
+        "slide-06.png",
+        "slide-07.png"
+      ],
+      "slideFingerprints": [
+        {
+          "file": "slide-01.html",
+          "sha256": "8fe56a4ec1f17f59ff8f4ffd8be467503bd51fef04a5e5af8bca7a3434ebfe5f"
+        },
+        {
+          "file": "slide-02.html",
+          "sha256": "9eb61b36907534320e04d71026fc1942059fb6c787b4dda729ffeccc2181a886"
+        },
+        {
+          "file": "slide-03.html",
+          "sha256": "21aeb4ad8c1ac7386f446ddd00f5e0c9878d8d18d3f6aeb1100bcb0e9c682572"
+        },
+        {
+          "file": "slide-04.html",
+          "sha256": "c96b18f144c31a149363f795a5fec4d89d5210ecb975c8e0f4cfefb382ba9567"
+        },
+        {
+          "file": "slide-05.html",
+          "sha256": "0cf60965de3a0e2599f81f1c916bf0d7223f680ef3984f33d3c03bba1939d355"
+        },
+        {
+          "file": "slide-06.html",
+          "sha256": "6bd80c3a77b1c17788ebf1fd6d866b633441132c3a6f6a7d8eb4dbceb86683e9"
+        },
+        {
+          "file": "slide-07.html",
+          "sha256": "016c1442da4f09f899a4cb28892df73903d14bcfe73cfc34a6962e406e6bac02"
+        }
+      ]
+    }
+  },
+  "slideFingerprints": [
+    {
+      "file": "slide-01.html",
+      "sha256": "8fe56a4ec1f17f59ff8f4ffd8be467503bd51fef04a5e5af8bca7a3434ebfe5f"
+    },
+    {
+      "file": "slide-02.html",
+      "sha256": "9eb61b36907534320e04d71026fc1942059fb6c787b4dda729ffeccc2181a886"
+    },
+    {
+      "file": "slide-03.html",
+      "sha256": "21aeb4ad8c1ac7386f446ddd00f5e0c9878d8d18d3f6aeb1100bcb0e9c682572"
+    },
+    {
+      "file": "slide-04.html",
+      "sha256": "c96b18f144c31a149363f795a5fec4d89d5210ecb975c8e0f4cfefb382ba9567"
+    },
+    {
+      "file": "slide-05.html",
+      "sha256": "0cf60965de3a0e2599f81f1c916bf0d7223f680ef3984f33d3c03bba1939d355"
+    },
+    {
+      "file": "slide-06.html",
+      "sha256": "6bd80c3a77b1c17788ebf1fd6d866b633441132c3a6f6a7d8eb4dbceb86683e9"
+    },
+    {
+      "file": "slide-07.html",
+      "sha256": "016c1442da4f09f899a4cb28892df73903d14bcfe73cfc34a6962e406e6bac02"
+    }
+  ],
+  "localAssetFingerprints": [
+    {
+      "file": "./assets/fonts/Arimo-400.woff2",
+      "sha256": "c1f056f51c99a65aca53a0a80e71e67916dd7a8ed2423cd11f52193241440b20"
+    },
+    {
+      "file": "./assets/fonts/Arimo-700.woff2",
+      "sha256": "181215e08de9ce411e8c9e628eea6ea8bfa45de2a955ee57fc970dd8a080a3f6"
+    }
+  ],
+  "passReportFingerprints": [
+    {
+      "file": "gate-pass-a.md",
+      "sha256": "11bdc7c58901f13536984ec32ba18b3e0536c9a973088b11fcf2885b68f9ed50"
+    },
+    {
+      "file": "gate-pass-b.md",
+      "sha256": "5c5491714d03247fe6c052eef9b0cd64a6f6e897d18bbce62a6dc9d98de45851"
+    }
+  ],
+  "previewFingerprints": [
+    {
+      "file": ".slides-grab/gate-preview/slide-01.png",
+      "sha256": "287ac8d4d14c4c3a5de7809638d928294001229c134badee466f072c2371a074"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-02.png",
+      "sha256": "5ff38676eef29b397a1be19381760230618e74c4c50e5597c4d79f2ba69b2ddb"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-03.png",
+      "sha256": "aa274c6bb6b18bfdc4c67eeacf6ca6f7dfd5d5c10b43f70efd2f6a85dfa4a253"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-04.png",
+      "sha256": "01c334a79d025c7d8167ae95e14b61cf6a63bee5a2fa022500af5ed302a379bd"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-05.png",
+      "sha256": "ff6127350bfaf5f5d1c0503e33528fb0d47e50a92007cdfd4508ad1d031c2bb7"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-06.png",
+      "sha256": "bc317de5c84d61023712119156854e98b02ec967631a6f883a038b7f1055e5da"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-07.png",
+      "sha256": "5f9dcdb2219c90e55071ef6515dd2bc1c4f7085cc9461a8ccc001b23afed6db5"
+    }
+  ],
+  "templateFidelity": {
+    "status": "not-applicable",
+    "slides": [],
+    "findings": [],
+    "referencePreviewFingerprints": []
+  }
+}
