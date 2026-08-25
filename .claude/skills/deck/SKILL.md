@@ -5,7 +5,7 @@ description: Build, revise or export a presentation deck in this repo with slide
 
 # 이 저장소에서 덱 만들기
 
-`slides-grab`으로 720pt × 405pt 시맨틱 HTML 슬라이드를 만든다. 이 스킬은 두 덱(5장 발표 덱, 92장 스타일 견본)을 실제로 만들며 부딪힌 것들을 담고 있다 — 순서를 지키는 것보다 **각 단계가 왜 있는지**를 이해하고 판단하는 게 중요하다.
+`slides-grab`으로 720pt × 405pt 시맨틱 HTML 슬라이드를 만든다. 이 스킬은 세 덱(5장 한국어 발표 덱, 92장 스타일 견본, 6장 영어 기술 덱)을 실제로 만들며 부딪힌 것들을 담고 있다 — 순서를 지키는 것보다 **각 단계가 왜 있는지**를 이해하고 판단하는 게 중요하다.
 
 ## 최소 입력
 
@@ -16,6 +16,7 @@ description: Build, revise or export a presentation deck in this repo with slide
 | 위치 | `decks/<name>/` |
 | 스타일 | `ppt-korea-policy-navy` — 한국어 비즈니스/보고서 톤에 안정적. 톤이 다르면 후보 2–3개를 제시하고 고르게 한다 |
 | 형태 | 첫 장 커버, 마지막 장 Q&A, 사이는 주제에 맞게 |
+| 언어 | 요청한 언어. 영어 덱이면 Pretendard를 지우고 스타일이 지정한 서체를 임베드한다 |
 | 데이터 | 출처를 댈 수 없으면 **수치·차트를 만들지 않는다** |
 | 발표자 | `발표자 · 소속` 자리표시자. 이름을 지어내지 않는다 |
 | 완료 지점 | validate → 디자인 게이트 → viewer + PDF + preview 이미지 → README → main 푸시 |
@@ -52,6 +53,10 @@ npx slides-grab show-design <style-id>          # 색·타이포·레이아웃·
 
 `slide-01.html` … `slide-NN.html` (2자리 번호). 작성 규칙은 `references/slide-html.md`를 읽고 따른다 — 시맨틱 태그, 한글 줄바꿈, 폰트 크기 하한, 세로 리듬 등 렌더해 봐야 드러나는 것들이 정리돼 있다.
 
+스타일에 **고정 furniture**(우하단 타이틀 블록, 하단 밴드, 헤더바)가 있으면 첫 슬라이드를 쓰기 전에
+`references/slide-html.md`의 **높이 예산** 섹션을 먼저 본다. 넘친 콘텐츠가 furniture 아래로 깔리는데
+`validate`는 이걸 잡지 못해서, 모르고 시작하면 슬라이드마다 카피를 줄이며 여러 번 왕복하게 된다.
+
 ### 5. 검증
 
 ```bash
@@ -68,7 +73,7 @@ npx slides-grab validate --slides-dir decks/<name>
 npx slides-grab png --slides-dir decks/<name> --output-dir decks/<name>/gate-preview --resolution 1080p
 ```
 
-**렌더된 PNG를 실제로 열어서 본다.** validate는 기계적 결함만 잡는다. 실제로 이 단계에서만 발견된 것들: 본문 블록과 하단 콜아웃 사이의 거대한 빈 공간, 디센더가 잘린 큰 제목, 한 글자만 남은 낙수 줄, 배경과 같은 색으로 칠해져 사라진 패널 텍스트.
+**렌더된 PNG를 실제로 열어서 본다.** validate는 기계적 결함만 잡는다. 실제로 이 단계에서만 발견된 것들: 고정 furniture 아래로 깔린 하단 콜아웃, 본문과 콜아웃 사이의 거대한 빈 공간, 디센더가 잘린 큰 제목, 한 글자만 남은 낙수 줄, 배경과 같은 색으로 칠해져 사라진 패널 텍스트.
 
 장수가 많으면 컨택트 시트로 묶어서 한 번에 본다:
 
@@ -114,7 +119,7 @@ PDF 해상도는 1080p면 충분하다 — 기본 2160p는 92장 기준 12MB까�
 
 ## 막혔을 때
 
-`references/troubleshooting.md`에 이 환경에서 실제로 난 오류와 해법이 있다 — Playwright 브라우저 버전 불일치, 한글 두부 현상, CDN 차단, 게이트 리포트 거부, 경로 중복 오류. 처음 보는 오류를 만나면 추측하기 전에 이 파일을 먼저 본다.
+`references/troubleshooting.md`에 이 환경에서 실제로 난 오류와 해법이 있다 — Playwright 브라우저 버전 불일치, 한글 두부 현상, CDN 차단, 게이트 리포트 거부, 경로 중복 오류, **validate는 통과인데 렌더가 이상한 경우**. 처음 보는 오류를 만나면 추측하기 전에 이 파일을 먼저 본다.
 
 ## 참고
 
