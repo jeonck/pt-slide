@@ -74,7 +74,7 @@ slides-grab에 들어 있는 **선택 가능한 디자인 스타일 92종을 한
 | 방법 | 하는 법 |
 |---|---|
 | **로컬에서 열기** (권장) | 저장소를 클론한 뒤 `decks/style-showcase/viewer.html`을 브라우저로 연다. 폰트·레이아웃이 그대로 나오는 유일한 방법 |
-| **GitHub Pages** | 저장소 Settings → Pages → Source를 `main` / `/ (root)`로 두면 `https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html`로 열린다 (저장소가 public이어야 하고, 켜는 순간 공개된다) |
+| **GitHub Pages** | 배포 워크플로는 이미 있다. Settings → Pages → Source를 **`GitHub Actions`**로 한 번만 바꾸면 `https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html`로 열리고, 이후 `main` 푸시마다 자동 배포된다. 이 토글은 사람이 해야 한다 — 워크플로 토큰은 Pages 사이트를 처음 생성할 권한이 없다 |
 | **htmlpreview** | `htmlpreview.github.io/?<파일 URL>` — 설정 없이 되지만 `./assets/fonts/`를 못 따라가서 한글 폰트가 깨질 수 있다 |
 
 위 미리보기 이미지는 렌더된 PNG에서 만든다:

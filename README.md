@@ -26,8 +26,11 @@
 >
 > 슬라이드를 실제 HTML로 띄우려면 셋 중 하나다:
 > - **로컬에서 열기** (권장) — 클론 후 `viewer.html`을 브라우저로. 폰트·레이아웃이 그대로 나오는 유일한 방법
-> - **GitHub Pages** — Settings → Pages → Source `main` / `/ (root)`. 그러면
->   `https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html`로 열린다 (켜는 순간 공개된다)
+> - **GitHub Pages** — 배포 워크플로(`.github/workflows/pages.yml`)와 랜딩 페이지(`index.html`)는 준비돼 있고,
+>   **Settings → Pages → Source를 `GitHub Actions`로 한 번만 바꾸면** 그 다음부터 `main`에 푸시할 때마다 자동 배포된다.
+>   그 토글은 사람이 해야 한다 — 워크플로 토큰은 이미 켜진 Pages에 배포만 할 수 있고 사이트를 처음 만들지는 못한다
+>   (`actions/configure-pages`가 `Resource not accessible by integration`으로 실패). 켜고 나면:
+>   `https://jeonck.github.io/pt-slide/` → 두 덱 뷰어로 연결
 > - **htmlpreview** — `htmlpreview.github.io/?<파일 URL>`. 설정은 필요 없지만 `./assets/fonts/`를 못 따라가 한글이 깨질 수 있다
 
 각 덱의 `preview/` 이미지는 커밋돼 있다. 전체 해상도 렌더 PNG는 용량 때문에 커밋하지 않으니
@@ -72,6 +75,7 @@ validate → png(증거 재촬영) → Pass A / Pass B 리포트 갱신 → slid
 |---|---|
 | [`scripts/build-style-showcase.mjs`](scripts/build-style-showcase.mjs) | 스타일 스펙에서 팔레트·타이포·레이아웃을 읽어 견본 92장을 생성 |
 | [`scripts/build-contact-sheets.mjs`](scripts/build-contact-sheets.mjs) | 렌더된 PNG를 3×4 컨택트 시트로 묶음. 기본은 리뷰용 큰 타일, `--web`은 README에 붙일 `preview/` 이미지 |
+| [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | `main` 푸시마다 저장소를 GitHub Pages로 배포 (Source를 `GitHub Actions`로 한 번 바꿔야 시작된다) |
 
 ```bash
 node scripts/build-style-showcase.mjs
