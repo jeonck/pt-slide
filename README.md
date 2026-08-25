@@ -72,15 +72,31 @@ validate → png(증거 재촬영) → Pass A / Pass B 리포트 갱신 → slid
 
 | 경로 | 하는 일 |
 |---|---|
+| [`scripts/new-deck.mjs`](scripts/new-deck.mjs) | 새 덱 스캐폴딩 — 폴더, 로컬 임베드용 Pretendard(`--display`면 Latin 서체까지), 아웃라인 뼈대 |
 | [`scripts/build-style-showcase.mjs`](scripts/build-style-showcase.mjs) | 스타일 스펙에서 팔레트·타이포·레이아웃을 읽어 견본 92장을 생성 |
 | [`scripts/build-contact-sheets.mjs`](scripts/build-contact-sheets.mjs) | 렌더된 PNG를 3×4 컨택트 시트로 묶음. 기본은 리뷰용 큰 타일, `--web`은 README에 붙일 `preview/` 이미지 |
 | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | `main` 푸시마다 저장소를 <https://jeonck.github.io/pt-slide/>로 배포 |
 
 ```bash
+node scripts/new-deck.mjs my-deck                                                # 새 덱 시작
 node scripts/build-style-showcase.mjs
 node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview          # 리뷰용
 node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview --web    # README용 preview/
 ```
+
+## 덱 만들기
+
+새 덱은 **`deck` 스킬**([`.claude/skills/deck/`](.claude/skills/deck/))이 처음부터 끝까지 안내한다.
+Claude Code에서 그냥 이렇게 말하면 된다:
+
+```
+decks/ai-roadmap 에 '제조 현장의 AI 품질검사' 8장 덱 만들어줘
+```
+
+스킬이 스캐폴딩 → 스타일 선택 → 아웃라인 → 슬라이드 → validate → 디자인 게이트 → export → 푸시까지
+정해진 순서로 끌고 간다. 슬라이드 작성 규칙(`references/slide-html.md`), 게이트 절차
+(`references/design-gate.md`), 이 환경에서 실제로 났던 오류와 해법(`references/troubleshooting.md`)이
+같이 들어 있다.
 
 ## 알아둘 것
 
