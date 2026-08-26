@@ -59,7 +59,7 @@ Blocking findings: None
 | slide-01 | No blocking findings | Note | None | tracked |
 ```
 
-Pass B도 같은 구조에 체크 항목만 다르다: Composition & hierarchy / Typography & legibility / Korean·CJK word-break integrity / Review Litmus.
+Pass B도 같은 구조에 체크 항목만 다르다: Composition & hierarchy / Typography & legibility / Korean/CJK word-break integrity / Review Litmus.
 
 지문은 이렇게 만든다:
 

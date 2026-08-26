@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Lean Software Development — 03</title>
+<style>
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  body{font-family:Pretendard,sans-serif;background:#FFFFFF;color:#0A0A0A;word-break:keep-all;-webkit-font-smoothing:antialiased}
+  .slide{width:720pt;height:405pt;padding:26pt 32pt 20pt;display:flex;flex-direction:column;background:#FFFFFF;overflow:hidden}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+       font-size:10pt;font-weight:600;letter-spacing:0.05em;color:#7B7B7B}
+  .top .idx{color:#B4B4B4;flex:none}
+  .hair{flex:none;height:0.5pt;background:#E8E8E8;margin-top:8pt}
+  h1{flex:none;font-size:24pt;font-weight:700;letter-spacing:-0.02em;line-height:1.32;margin-top:14pt}
+  .sub{flex:none;font-size:14pt;font-weight:400;line-height:1.5;color:#7B7B7B;margin-top:7pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin-top:16pt}
+  footer{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+         font-size:10pt;font-weight:400;color:#B4B4B4;padding-top:9pt;border-top:0.5pt solid #E8E8E8}
+  /* 행 목록 — 모든 행이 같은 구조를 갖는다. 한 행만 다르게 하면 그 행만 밀린다. */
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;align-items:start;border-left:3pt solid transparent}
+  .num{font-size:15pt;font-weight:700;line-height:1.35;color:#B4B4B4;font-variant-numeric:tabular-nums}
+  .name{font-size:15pt;font-weight:600;line-height:1.35;letter-spacing:-0.01em}
+  .en{font-size:10pt;font-weight:400;line-height:1.4;color:#B4B4B4;margin-top:2pt}
+  .desc{font-size:14pt;font-weight:400;line-height:1.5;color:#0A0A0A}
+  .rows{gap:22pt}
+  .row{grid-template-columns:26pt 172pt 1fr;gap:14pt;padding-left:11pt}
+  .label{min-height:33pt}
+</style>
+</head>
+<body>
+<section class="slide">
+  <div class="top"><span>7가지 원칙 · 5 – 7</span><span class="idx">03 / 05</span></div>
+  <div class="hair"></div>
+  <h1>Lean Software Development &ndash; 7가지 원칙 (후반부)</h1>
+  <main>
+    <div class="rows">
+      <div class="row">
+        <div class="num">5</div>
+        <div class="label"><div class="name">팀 권한 부여</div><div class="en">Empower the Team</div></div>
+        <div class="desc">현장 전문가에게 의사결정 권한 위임 및 자율적 팀 구성</div>
+      </div>
+      <div class="row">
+        <div class="num">6</div>
+        <div class="label"><div class="name">내재적 품질 구축</div><div class="en">Build Integrity In</div></div>
+        <div class="desc">디자인 단계부터 품질 내재화 (TDD, 코드 리뷰)</div>
+      </div>
+      <div class="row">
+        <div class="num">7</div>
+        <div class="label"><div class="name">전체 최적화</div><div class="en">Optimize the Whole</div></div>
+        <div class="desc">개별 단계가 아닌 전체 가치 흐름의 처리량 극대화</div>
+      </div>
+    </div>
+  </main>
+  <footer><span>출처 — 발표자 제공 개요 · fw-thinking.metacog.co.kr. 수치·차트 없음</span><span>LEAN SOFTWARE DEVELOPMENT</span></footer>
+</section>
+</body>
+</html>

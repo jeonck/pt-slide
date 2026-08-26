@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 5</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Lean Software Development — 01</title>
+<style>
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  body{font-family:Pretendard,sans-serif;background:#FFFFFF;color:#0A0A0A;word-break:keep-all;-webkit-font-smoothing:antialiased}
+  .slide{width:720pt;height:405pt;padding:26pt 32pt 20pt;display:flex;flex-direction:column;background:#FFFFFF;overflow:hidden}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+       font-size:10pt;font-weight:600;letter-spacing:0.05em;color:#7B7B7B}
+  .top .idx{color:#B4B4B4;flex:none}
+  .hair{flex:none;height:0.5pt;background:#E8E8E8;margin-top:8pt}
+  h1{flex:none;font-size:24pt;font-weight:700;letter-spacing:-0.02em;line-height:1.32;margin-top:14pt}
+  .sub{flex:none;font-size:14pt;font-weight:400;line-height:1.5;color:#7B7B7B;margin-top:7pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  footer{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+         font-size:10pt;font-weight:400;color:#B4B4B4;padding-top:9pt;border-top:0.5pt solid #E8E8E8}
+  /* 행 목록 — 모든 행이 같은 구조를 갖는다. 한 행만 다르게 하면 그 행만 밀린다. */
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;align-items:start;border-left:3pt solid transparent}
+  .num{font-size:15pt;font-weight:700;line-height:1.35;color:#B4B4B4;font-variant-numeric:tabular-nums}
+  .name{font-size:15pt;font-weight:600;line-height:1.35;letter-spacing:-0.01em}
+  .en{font-size:10pt;font-weight:400;line-height:1.4;color:#B4B4B4;margin-top:2pt}
+  .desc{font-size:14pt;font-weight:400;line-height:1.5;color:#0A0A0A}
+  .cover{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin-top:0}
+  .big{font-size:40pt;font-weight:800;letter-spacing:-0.03em;line-height:1.2}
+  .fw{font-size:19pt;font-weight:600;color:#7B7B7B;letter-spacing:-0.01em;line-height:1.35;margin-top:6pt}
+  .gbar{width:56pt;height:4pt;background:#03C75A;border-radius:999px;margin-top:20pt}
+  .lead{max-width:512pt;margin-top:20pt;display:flex;flex-direction:column;gap:7pt}
+  .lead p{font-size:14pt;line-height:1.55}
+  .trait{max-width:512pt;margin-top:18pt;font-size:13pt;line-height:1.5;color:#7B7B7B}
+  .who{flex:none;margin-top:20pt;font-size:11pt;font-weight:600;color:#7B7B7B;letter-spacing:0.02em}
+</style>
+</head>
+<body>
+<section class=&quot;slide&quot;>
+  <div class=&quot;top&quot;><span>LEAN SOFTWARE DEVELOPMENT · FRAMEWORK THINKING</span><span class=&quot;idx&quot;>01 / 05</span></div>
+  <div class=&quot;hair&quot;></div>
+  <div class=&quot;cover&quot;>
+    <div class=&quot;big&quot;>Lean Software Development</div>
+    <div class=&quot;fw&quot;>Framework Thinking</div>
+    <div class=&quot;gbar&quot;></div>
+    <div class=&quot;lead&quot;>
+      <p>토요타 생산 방식(TPS)의 낭비 제거 철학을 소프트웨어 개발에 적용한 가치 스트림 방법론</p>
+      <p>7가지 핵심 원칙을 바탕으로 고객 가치를 신속하게 전달</p>
+    </div>
+    <div class=&quot;trait&quot;>무다(Muda)·무라(Mura)·무리(Muri)의 &amp;lsquo;3M&amp;rsquo; 개념 적용 및 애자일·칸반·데브옵스의 이론적 기반</div>
+    <div class=&quot;who&quot;>발표자 · 소속</div>
+  </div>
+  <footer><span>출처 — 발표자 제공 개요 · fw-thinking.metacog.co.kr. 수치·차트 없음</span><span>LEAN SOFTWARE DEVELOPMENT</span></footer>
+</section>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Lean Software Development — 02</title>
+<style>
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  body{font-family:Pretendard,sans-serif;background:#FFFFFF;color:#0A0A0A;word-break:keep-all;-webkit-font-smoothing:antialiased}
+  .slide{width:720pt;height:405pt;padding:26pt 32pt 20pt;display:flex;flex-direction:column;background:#FFFFFF;overflow:hidden}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+       font-size:10pt;font-weight:600;letter-spacing:0.05em;color:#7B7B7B}
+  .top .idx{color:#B4B4B4;flex:none}
+  .hair{flex:none;height:0.5pt;background:#E8E8E8;margin-top:8pt}
+  h1{flex:none;font-size:24pt;font-weight:700;letter-spacing:-0.02em;line-height:1.32;margin-top:14pt}
+  .sub{flex:none;font-size:14pt;font-weight:400;line-height:1.5;color:#7B7B7B;margin-top:7pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin-top:16pt}
+  footer{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+         font-size:10pt;font-weight:400;color:#B4B4B4;padding-top:9pt;border-top:0.5pt solid #E8E8E8}
+  /* 행 목록 — 모든 행이 같은 구조를 갖는다. 한 행만 다르게 하면 그 행만 밀린다. */
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;align-items:start;border-left:3pt solid transparent}
+  .num{font-size:15pt;font-weight:700;line-height:1.35;color:#B4B4B4;font-variant-numeric:tabular-nums}
+  .name{font-size:15pt;font-weight:600;line-height:1.35;letter-spacing:-0.01em}
+  .en{font-size:10pt;font-weight:400;line-height:1.4;color:#B4B4B4;margin-top:2pt}
+  .desc{font-size:14pt;font-weight:400;line-height:1.5;color:#0A0A0A}
+  .rows{gap:13pt}
+  .row{grid-template-columns:26pt 172pt 1fr;gap:14pt;padding-left:11pt}
+  .label{min-height:33pt}
+</style>
+</head>
+<body>
+<section class=&quot;slide&quot;>
+  <div class=&quot;top&quot;><span>7가지 원칙 · 1 – 4</span><span class=&quot;idx&quot;>02 / 05</span></div>
+  <div class=&quot;hair&quot;></div>
+  <h1>Lean Software Development &amp;ndash; 7가지 원칙 (전반부)</h1>
+  <main>
+    <div class=&quot;rows&quot;>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>1</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>낭비 제거</div><div class=&quot;en&quot;>Eliminate Waste</div></div>
+        <div class=&quot;desc&quot;>고객 가치에 기여하지 않는 불필요한 활동 및 문서 제거</div>
+      </div>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>2</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>학습 증폭</div><div class=&quot;en&quot;>Amplify Learning</div></div>
+        <div class=&quot;desc&quot;>짧은 반복과 실험을 통한 지식 축적 (프로토타입, A/B 테스트)</div>
+      </div>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>3</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>최대한 늦은 결정</div><div class=&quot;en&quot;>Decide as Late as Possible</div></div>
+        <div class=&quot;desc&quot;>불확실성 속에서 비가역적 결정을 최대한 지연</div>
+      </div>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>4</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>최대한 빠른 전달</div><div class=&quot;en&quot;>Deliver as Fast as Possible</div></div>
+        <div class=&quot;desc&quot;>작은 단위로 빈번하게 배포하여 피드백 주기 단축 (CI/CD)</div>
+      </div>
+    </div>
+  </main>
+  <footer><span>출처 — 발표자 제공 개요 · fw-thinking.metacog.co.kr. 수치·차트 없음</span><span>LEAN SOFTWARE DEVELOPMENT</span></footer>
+</section>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Lean Software Development — 03</title>
+<style>
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  body{font-family:Pretendard,sans-serif;background:#FFFFFF;color:#0A0A0A;word-break:keep-all;-webkit-font-smoothing:antialiased}
+  .slide{width:720pt;height:405pt;padding:26pt 32pt 20pt;display:flex;flex-direction:column;background:#FFFFFF;overflow:hidden}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+       font-size:10pt;font-weight:600;letter-spacing:0.05em;color:#7B7B7B}
+  .top .idx{color:#B4B4B4;flex:none}
+  .hair{flex:none;height:0.5pt;background:#E8E8E8;margin-top:8pt}
+  h1{flex:none;font-size:24pt;font-weight:700;letter-spacing:-0.02em;line-height:1.32;margin-top:14pt}
+  .sub{flex:none;font-size:14pt;font-weight:400;line-height:1.5;color:#7B7B7B;margin-top:7pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin-top:16pt}
+  footer{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+         font-size:10pt;font-weight:400;color:#B4B4B4;padding-top:9pt;border-top:0.5pt solid #E8E8E8}
+  /* 행 목록 — 모든 행이 같은 구조를 갖는다. 한 행만 다르게 하면 그 행만 밀린다. */
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;align-items:start;border-left:3pt solid transparent}
+  .num{font-size:15pt;font-weight:700;line-height:1.35;color:#B4B4B4;font-variant-numeric:tabular-nums}
+  .name{font-size:15pt;font-weight:600;line-height:1.35;letter-spacing:-0.01em}
+  .en{font-size:10pt;font-weight:400;line-height:1.4;color:#B4B4B4;margin-top:2pt}
+  .desc{font-size:14pt;font-weight:400;line-height:1.5;color:#0A0A0A}
+  .rows{gap:22pt}
+  .row{grid-template-columns:26pt 172pt 1fr;gap:14pt;padding-left:11pt}
+  .label{min-height:33pt}
+</style>
+</head>
+<body>
+<section class=&quot;slide&quot;>
+  <div class=&quot;top&quot;><span>7가지 원칙 · 5 – 7</span><span class=&quot;idx&quot;>03 / 05</span></div>
+  <div class=&quot;hair&quot;></div>
+  <h1>Lean Software Development &amp;ndash; 7가지 원칙 (후반부)</h1>
+  <main>
+    <div class=&quot;rows&quot;>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>5</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>팀 권한 부여</div><div class=&quot;en&quot;>Empower the Team</div></div>
+        <div class=&quot;desc&quot;>현장 전문가에게 의사결정 권한 위임 및 자율적 팀 구성</div>
+      </div>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>6</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>내재적 품질 구축</div><div class=&quot;en&quot;>Build Integrity In</div></div>
+        <div class=&quot;desc&quot;>디자인 단계부터 품질 내재화 (TDD, 코드 리뷰)</div>
+      </div>
+      <div class=&quot;row&quot;>
+        <div class=&quot;num&quot;>7</div>
+        <div class=&quot;label&quot;><div class=&quot;name&quot;>전체 최적화</div><div class=&quot;en&quot;>Optimize the Whole</div></div>
+        <div class=&quot;desc&quot;>개별 단계가 아닌 전체 가치 흐름의 처리량 극대화</div>
+      </div>
+    </div>
+  </main>
+  <footer><span>출처 — 발표자 제공 개요 · fw-thinking.metacog.co.kr. 수치·차트 없음</span><span>LEAN SOFTWARE DEVELOPMENT</span></footer>
+</section>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Lean Software Development — 04</title>
+<style>
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  body{font-family:Pretendard,sans-serif;background:#FFFFFF;color:#0A0A0A;word-break:keep-all;-webkit-font-smoothing:antialiased}
+  .slide{width:720pt;height:405pt;padding:26pt 32pt 20pt;display:flex;flex-direction:column;background:#FFFFFF;overflow:hidden}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+       font-size:10pt;font-weight:600;letter-spacing:0.05em;color:#7B7B7B}
+  .top .idx{color:#B4B4B4;flex:none}
+  .hair{flex:none;height:0.5pt;background:#E8E8E8;margin-top:8pt}
+  h1{flex:none;font-size:24pt;font-weight:700;letter-spacing:-0.02em;line-height:1.32;margin-top:14pt}
+  .sub{flex:none;font-size:14pt;font-weight:400;line-height:1.5;color:#7B7B7B;margin-top:7pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  footer{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+         font-size:10pt;font-weight:400;color:#B4B4B4;padding-top:9pt;border-top:0.5pt solid #E8E8E8}
+  /* 행 목록 — 모든 행이 같은 구조를 갖는다. 한 행만 다르게 하면 그 행만 밀린다. */
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;align-items:start;border-left:3pt solid transparent}
+  .num{font-size:15pt;font-weight:700;line-height:1.35;color:#B4B4B4;font-variant-numeric:tabular-nums}
+  .name{font-size:15pt;font-weight:600;line-height:1.35;letter-spacing:-0.01em}
+  .en{font-size:10pt;font-weight:400;line-height:1.4;color:#B4B4B4;margin-top:2pt}
+  .desc{font-size:14pt;font-weight:400;line-height:1.5;color:#0A0A0A}
+  .rows{gap:5pt}
+  .row{grid-template-columns:196pt 1fr;gap:14pt;align-items:baseline;
+       background:#FAFAFA;border-radius:8px;padding:4pt 12pt 4pt 11pt}
+  .name{font-size:14pt}
+  .desc{font-size:14pt;color:#7B7B7B}
+</style>
+</head>
+<body>
+<section class=&quot;slide&quot;>
+  <div class=&quot;top&quot;><span>7가지 낭비 · MUDA</span><span class=&quot;idx&quot;>04 / 05</span></div>
+  <div class=&quot;hair&quot;></div>
+  <h1>Value Stream Analysis 및 낭비 요소</h1>
+  <main>
+    <div class=&quot;rows&quot;>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>진행 중인 미완료 작업</div><div class=&quot;desc&quot;>미완성 기능, 브랜치 적재 (WIP 제한 필요)</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>추가 프로세스</div><div class=&quot;desc&quot;>불필요한 승인, 문서, 회의</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>추가 기능</div><div class=&quot;desc&quot;>사용되지 않는 기능 개발 (YAGNI 위반)</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>작업 전환</div><div class=&quot;desc&quot;>멀티태스킹으로 인한 컨텍스트 스위칭 비용</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>대기</div><div class=&quot;desc&quot;>코드 리뷰 및 배포 승인 대기</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>동작</div><div class=&quot;desc&quot;>도구와 시스템 간 불필요한 전환</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>결함</div><div class=&quot;desc&quot;>버그 수정 및 재작업 비용</div></div>
+    </div>
+  </main>
+  <footer><span>출처 — 발표자 제공 개요 · fw-thinking.metacog.co.kr. 수치·차트 없음</span><span>LEAN SOFTWARE DEVELOPMENT</span></footer>
+</section>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ko&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Lean Software Development — 05</title>
+<style>
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-SemiBold.woff2') format('woff2');font-weight:600;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:block}
+  @font-face{font-family:Pretendard;src:url('./assets/fonts/Pretendard-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  body{font-family:Pretendard,sans-serif;background:#FFFFFF;color:#0A0A0A;word-break:keep-all;-webkit-font-smoothing:antialiased}
+  .slide{width:720pt;height:405pt;padding:26pt 32pt 20pt;display:flex;flex-direction:column;background:#FFFFFF;overflow:hidden}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+       font-size:10pt;font-weight:600;letter-spacing:0.05em;color:#7B7B7B}
+  .top .idx{color:#B4B4B4;flex:none}
+  .hair{flex:none;height:0.5pt;background:#E8E8E8;margin-top:8pt}
+  h1{flex:none;font-size:24pt;font-weight:700;letter-spacing:-0.02em;line-height:1.32;margin-top:14pt}
+  .sub{flex:none;font-size:14pt;font-weight:400;line-height:1.5;color:#7B7B7B;margin-top:7pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin-top:16pt}
+  footer{flex:none;display:flex;justify-content:space-between;align-items:baseline;
+         font-size:10pt;font-weight:400;color:#B4B4B4;padding-top:9pt;border-top:0.5pt solid #E8E8E8}
+  /* 행 목록 — 모든 행이 같은 구조를 갖는다. 한 행만 다르게 하면 그 행만 밀린다. */
+  .rows{display:flex;flex-direction:column}
+  .row{display:grid;align-items:start;border-left:3pt solid transparent}
+  .num{font-size:15pt;font-weight:700;line-height:1.35;color:#B4B4B4;font-variant-numeric:tabular-nums}
+  .name{font-size:15pt;font-weight:600;line-height:1.35;letter-spacing:-0.01em}
+  .en{font-size:10pt;font-weight:400;line-height:1.4;color:#B4B4B4;margin-top:2pt}
+  .desc{font-size:14pt;font-weight:400;line-height:1.5;color:#0A0A0A}
+  .rows{gap:12pt}
+  .row{grid-template-columns:168pt 1fr;gap:14pt;align-items:baseline;padding-left:11pt}
+  .close{flex:none;display:flex;align-items:center;gap:9pt;margin-top:26pt}
+  .dot{width:9pt;height:9pt;border-radius:999px;background:#03C75A;flex:none}
+  .close p{font-size:14pt;font-weight:600;line-height:1.4}
+</style>
+</head>
+<body>
+<section class=&quot;slide&quot;>
+  <div class=&quot;top&quot;><span>기대 효과 · 실무 적용</span><span class=&quot;idx&quot;>05 / 05</span></div>
+  <div class=&quot;hair&quot;></div>
+  <h1>기대 효과 및 실무 적용</h1>
+  <main>
+    <div class=&quot;rows&quot;>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>리드 타임 단축</div><div class=&quot;desc&quot;>밸류 스트림 맵을 통한 병목 구간 시각화 및 제거</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>품질 향상</div><div class=&quot;desc&quot;>TDD 및 자동화 테스트 도입을 통한 재작업 비용 절감</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>팀 생산성 향상</div><div class=&quot;desc&quot;>WIP 제한과 칸반 보드를 활용한 흐름 최적화</div></div>
+      <div class=&quot;row&quot;><div class=&quot;name&quot;>데브옵스 연계</div><div class=&quot;desc&quot;>CI/CD 및 자동화 개발 문화 구축</div></div>
+    </div>
+    <div class=&quot;close&quot;><span class=&quot;dot&quot;></span><p>낭비를 줄이는 것이 목적이 아니라, 전체 가치 흐름의 처리량을 올리는 것이 목적이다.</p></div>
+  </main>
+  <footer><span>출처 — 발표자 제공 개요 · fw-thinking.metacog.co.kr. 수치·차트 없음</span><span>LEAN SOFTWARE DEVELOPMENT</span></footer>
+</section>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 5;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+
+<script>
+  // slides-grab-patch: key-forwarding
+  // Clicking a slide focuses its iframe; key events there never reach this document.
+  // The frames are same-origin, so bind the parent's handler onto each framed
+  // document from out here. Re-bound on load: srcdoc frames can reparse.
+  (() => {
+    const NAV = ['ArrowRight', 'ArrowLeft', ' ', 'Home', 'End'];
+    const forward = (frame) => {
+      let doc;
+      try { doc = frame.contentDocument; } catch { return; }
+      if (!doc || doc.__sgKeys) return;
+      doc.__sgKeys = true;
+      doc.addEventListener('keydown', (e) => {
+        if (NAV.includes(e.key)) e.preventDefault();
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: e.key, bubbles: true }));
+      });
+    };
+    for (const frame of document.querySelectorAll('iframe')) {
+      forward(frame);
+      frame.addEventListener('load', () => forward(frame));
+    }
+  })();
+</script>
+</body>
+</html>
