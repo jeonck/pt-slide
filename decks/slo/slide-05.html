@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Three ways an SLO stops being a switch</title>
+<style>
+  @font-face { font-family:'Geist'; src:url('./assets/fonts/Geist-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Geist'; src:url('./assets/fonts/Geist-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Geist'; src:url('./assets/fonts/Geist-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'GeistMono'; src:url('./assets/fonts/GeistMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'GeistMono'; src:url('./assets/fonts/GeistMono-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#000000;
+    font-family:'Geist','Helvetica Neue',Helvetica,sans-serif;
+    padding:24pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Header furniture: kicker row, one-line h1, 1px rule. Identical box on all six
+     sheets, so the rule lands at the same y everywhere. h1 is nowrap because every
+     title was measured to fit 640pt — if one ever did not, it would overflow the
+     frame and validate would catch it rather than silently dropping the rule. */
+  header { flex:none; margin-bottom:16pt; }
+  .kick { display:flex; justify-content:space-between; align-items:baseline; gap:24pt; margin-bottom:6pt; }
+  .mono { font-family:'GeistMono','IBM Plex Mono',monospace; }
+  .kick p { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:500;
+            letter-spacing:0.04em; line-height:1.4; color:#666666; white-space:nowrap; }
+  h1 { font-size:23pt; font-weight:600; letter-spacing:-0.01em; line-height:1.3; white-space:nowrap; }
+  .hrule { height:1px; background:#000000; margin-top:10pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  p, li { font-size:14pt; font-weight:400; line-height:1.45; }
+  .lbl { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:500;
+         letter-spacing:0.04em; line-height:1.4; color:#666666; }
+  /* Emphasis element. Every sibling reserves the 3pt bar; only the colour changes,
+     so the marked item is never nudged out of column. */
+  .bar { flex:none; height:3pt; background:transparent; }
+  .mark > .bar { background:#000000; }
+  .band { flex:none; border-top:1px solid #000000; padding-top:12pt; }
+  .band p { font-size:15pt; font-weight:600; letter-spacing:-0.01em; line-height:1.45; }
+  footer { flex:none; margin-top:12pt; display:flex; justify-content:space-between;
+           align-items:baseline; gap:24pt; }
+  footer p { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:10pt; font-weight:400;
+             letter-spacing:0.04em; line-height:1.4; color:#666666; white-space:nowrap; }
+  /* Three equal failure modes. None is emphasised — marking one would be a claim this
+     deck cannot support — so all three cards carry an identical box. Bodies are pinned
+     with margin-top:auto so their first lines share a baseline across the row. */
+  .intro { flex:none; margin-bottom:14pt; }
+  .cards { flex:1; min-height:0; display:flex; gap:12pt; margin-bottom:16pt; }
+  .card { flex:1 1 0; min-width:0; border:1px solid #000000; padding:12pt 12pt;
+          display:flex; flex-direction:column; }
+  .card .num { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:500;
+               letter-spacing:0.04em; line-height:1.4; color:#666666; }
+  .card h2 { font-size:15pt; font-weight:600; letter-spacing:-0.01em; line-height:1.35;
+             margin-top:8pt; white-space:nowrap; }
+  .card > p:last-child { margin-top:auto; border-top:1px solid #000000; padding-top:10pt; }
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">
+    <p>05 &middot; THE FAILURE MODES</p>
+    <p>SHEET 05 / 06</p>
+  </div>
+  <h1>Three ways an SLO stops being a switch</h1>
+  <div class="hrule"></div>
+</header>
+<main>
+  <p class="intro">The number stays exactly where it was. What goes missing is the rule attached to it.</p>
+  <div class="cards">
+    <section class="card">
+      <p class="num">01</p>
+      <h2>A target nobody chose</h2>
+      <p>It came off a vendor page. Nobody in the room would defend it, so nobody enforces it either.</p>
+    </section>
+    <section class="card">
+      <p class="num">02</p>
+      <h2>A budget with no teeth</h2>
+      <p>The chart turns red, the sprint carries on, and the budget quietly becomes a colour.</p>
+    </section>
+    <section class="card">
+      <p class="num">03</p>
+      <h2>An exception each time</h2>
+      <p>Every breach arrives with a good reason. A switch that bends has only one position.</p>
+    </section>
+  </div>
+  <div class="band">
+    <p>Each of these is a decision nobody wrote down, showing up later as a habit.</p>
+  </div>
+</main>
+<footer>
+  <p>SLO &middot; OPERATING NOTE</p>
+  <p>Source: none &mdash; no figures appear in this deck.</p>
+</footer>
+</body>
+</html>
