@@ -1,5 +1,5 @@
 node_modules/
-.font-staging/   # scripts/new-deck.mjs 가 폰트를 받아오는 임시 prefix
+.font-staging-*/   # scripts/new-deck.mjs 가 덱별로 폰트를 받아오는 임시 prefix
 
 # Working render evidence.
 # decks/test-deck keeps its gate PNGs in .slides-grab/ (5 slides, ~800KB) because

@@ -40,7 +40,9 @@ if (existsSync(DECK)) {
  * `npm install --no-save` calls prune each other's packages as extraneous, so installing
  * one at a time silently leaves only the last one on disk.
  */
-const TMP = resolve('.font-staging');
+// Unique per invocation: several decks may be scaffolded concurrently, and a shared
+// staging directory would have them deleting each other's downloads mid-install.
+const TMP = resolve(`.font-staging-${name}`);
 
 function stageFonts(packages) {
   mkdirSync(TMP, { recursive: true });
