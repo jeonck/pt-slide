@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What a handover has to carry</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  h2 { flex:none; margin-bottom:12pt; }
+  /* Comparison vocabulary: two columns split by a full-height 1pt hairline, so the pair
+     reads as one comparison rather than two lists. 315 + 24 + 1 + 24 + 244 = 608. */
+  .cols { flex:1; min-height:0; display:flex; }
+  .col-a { width:300pt; flex:none; }
+  .divider { width:1pt; flex:none; background:#D6CCB8; margin:0 24pt; }
+  .col-b { flex:1; min-width:0; }
+  .colhead { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; color:#C2693F; margin-bottom:10pt; }
+  /* Every row carries the hairline, and the last one turns it off by colour, not by
+     removing it - so all five rows are the same height and the left edge stays true. */
+  .row { border-bottom:0.75pt solid #D6CCB8; padding-bottom:6pt; margin-bottom:6pt; }
+  .row:last-child { border-bottom-color:transparent; }
+  .row p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .emph { font-size:18pt; font-weight:500; line-height:1.3; color:#C2693F; margin-bottom:12pt; }
+  .col-b .note { font-size:14pt; font-weight:400; line-height:1.45; }
+  .col-b .note + .note { margin-top:10pt; }
+</style>
+</head>
+<body>
+<header><p class="kicker">Handover</p><p class="counter">03 / 05</p></header>
+<main>
+  <h2>What a handover has to carry</h2>
+  <div class="cols">
+    <div class="col-a">
+      <h3 class="colhead">The payload</h3>
+      <div class="row"><p>Open incidents and the live hypothesis</p></div>
+      <div class="row"><p>What was tried and already ruled out</p></div>
+      <div class="row"><p>What is silenced, and when it returns</p></div>
+      <div class="row"><p>What is degraded but not yet paging</p></div>
+      <div class="row"><p>Who has been woken, and how often</p></div>
+    </div>
+    <div class="divider"></div>
+    <div class="col-b">
+      <h3 class="colhead">Why it cannot wait</h3>
+      <p class="emph">The person leaving the shift<br>is the one who knows.</p>
+      <p class="note">The events are in the dashboard. The reasoning is in the head of the person going to bed.</p>
+      <p class="note">So the handover is work inside the shift, not a note sent after it.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="footrule"></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>

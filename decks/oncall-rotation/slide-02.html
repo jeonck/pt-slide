@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>A rota is a staffing decision</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  h2 { flex:none; margin-bottom:10pt; }
+  /* 2x2 outline-node grid. minmax(0,1fr) rows so a track cannot grow past its share.
+     Budget: main 256.8 - h2 46 - claim block 51 = ~160 for the grid; rows ~72 each.
+     Card content = badge row 22 + 6 + one gloss line 20.3 = 48.3, + 20pt padding = 68.3. */
+  .grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); grid-template-rows:repeat(2, minmax(0,1fr)); gap:16pt 20pt; }
+  /* flex-start, not center: if any gloss ever takes a second line, centring would drop that
+     card's header below its neighbours' and break the row's first-line alignment. */
+  .node { border:1pt solid #3D3528; border-radius:12px; padding:10pt 16pt; display:flex; flex-direction:column; justify-content:flex-start; }
+  .node-top { display:flex; align-items:center; gap:8pt; }
+  .badge { flex:none; width:22pt; height:22pt; border-radius:50%; background:#C2693F; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-size:12pt; font-weight:600; line-height:1.4; color:#FBF7EF; }
+  .node h3 { font-size:16pt; font-weight:500; line-height:1.35; }
+  .gloss { margin-top:6pt; font-size:14pt; font-weight:400; line-height:1.45; }
+  /* The one terracotta rule on this sheet. Single line, measured at 585.1pt of 608pt. */
+  .claimrule { flex:none; height:1pt; background:#C2693F; margin-top:16pt; }
+  .claim { flex:none; margin-top:10pt; font-size:16pt; font-weight:400; line-height:1.5; }
+</style>
+</head>
+<body>
+<header><p class="kicker">The levers</p><p class="counter">02 / 05</p></header>
+<main>
+  <h2>A rota is a staffing decision</h2>
+  <div class="grid">
+    <div class="node">
+      <div class="node-top"><div class="badge"><p>1</p></div><h3>Shift length</h3></div>
+      <p class="gloss">How long one person is reachable.</p>
+    </div>
+    <div class="node">
+      <div class="node-top"><div class="badge"><p>2</p></div><h3>Handover</h3></div>
+      <p class="gloss">What moves at the change of shift.</p>
+    </div>
+    <div class="node">
+      <div class="node-top"><div class="badge"><p>3</p></div><h3>Compensation</h3></div>
+      <p class="gloss">What the hours cost to schedule.</p>
+    </div>
+    <div class="node">
+      <div class="node-top"><div class="badge"><p>4</p></div><h3>A ceiling on night pages</h3></div>
+      <p class="gloss">A limit the rota may not exceed.</p>
+    </div>
+  </div>
+  <div class="claimrule"></div>
+  <p class="claim">Encouragement moves none of them. Only the roster does.</p>
+</main>
+<footer>
+  <div class="footrule"></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>

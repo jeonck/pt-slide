@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 5</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>On-call rotations people can survive</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  /* Cover: left text column 392pt + 24pt gap + 192pt anchor column = 608pt. */
+  main { flex-direction:row; align-items:center; gap:24pt; }
+  .lede { width:392pt; flex:none; }
+  h1 { font-size:42pt; font-weight:500; letter-spacing:-0.01em; line-height:1.25; }
+  .titlerule { height:1pt; background:#D6CCB8; margin:20pt 0 18pt; }
+  .sub { font-size:18pt; font-weight:400; line-height:1.5; }
+  .presenter { margin-top:22pt; font-size:12pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; color:#8A8170; }
+  /* Visual anchor: one shift drawn as a terracotta arc on a 1pt ink ring, with a hollow
+     handover marker at each end. Deliberately shows no countable people - any number of
+     markers on the ring would assert a roster size this deck cannot source. */
+  /* svg is inline-level by default, so it sits on a text baseline and drops ~24pt of
+     descender space between the ring and its caption. display:block removes it. */
+  .anchor { flex:1; display:flex; flex-direction:column; align-items:center; }
+  .anchor svg { display:block; }
+  .anchor figcaption { margin-top:10pt; font-size:11pt; font-weight:500; line-height:1.4; text-align:center; }
+</style>
+</head>
+<body>
+<header><p class=&quot;kicker&quot;>On-call design</p><p class=&quot;counter&quot;>01 / 05</p></header>
+<main>
+  <div class=&quot;lede&quot;>
+    <h1>On-call rotations<br>people can survive</h1>
+    <div class=&quot;titlerule&quot;></div>
+    <p class=&quot;sub&quot;>Rotation design is a staffing problem,<br>not a goodwill problem.</p>
+    <p class=&quot;presenter&quot;>Presenter · Team</p>
+  </div>
+  <figure class=&quot;anchor&quot;>
+    <svg width=&quot;152pt&quot; height=&quot;152pt&quot; viewBox=&quot;14 14 140 140&quot; role=&quot;img&quot; aria-label=&quot;A rotation ring with one shift marked and a handover at each end&quot;>
+      <circle cx=&quot;84&quot; cy=&quot;84&quot; r=&quot;66&quot; fill=&quot;none&quot; stroke=&quot;#3D3528&quot; stroke-width=&quot;1&quot;></circle>
+      <path d=&quot;M 21.98 61.43 A 66 66 0 0 1 106.57 21.98&quot; fill=&quot;none&quot; stroke=&quot;#C2693F&quot; stroke-width=&quot;1.5&quot; stroke-linecap=&quot;round&quot;></path>
+      <circle cx=&quot;21.98&quot; cy=&quot;61.43&quot; r=&quot;5&quot; fill=&quot;#F2EBDF&quot; stroke=&quot;#3D3528&quot; stroke-width=&quot;1&quot;></circle>
+      <circle cx=&quot;106.57&quot; cy=&quot;21.98&quot; r=&quot;5&quot; fill=&quot;#F2EBDF&quot; stroke=&quot;#3D3528&quot; stroke-width=&quot;1&quot;></circle>
+    </svg>
+    <figcaption>One shift. Two handovers.</figcaption>
+  </figure>
+</main>
+<footer>
+  <div class=&quot;footrule&quot;></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>A rota is a staffing decision</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  h2 { flex:none; margin-bottom:10pt; }
+  /* 2x2 outline-node grid. minmax(0,1fr) rows so a track cannot grow past its share.
+     Budget: main 256.8 - h2 46 - claim block 51 = ~160 for the grid; rows ~72 each.
+     Card content = badge row 22 + 6 + one gloss line 20.3 = 48.3, + 20pt padding = 68.3. */
+  .grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); grid-template-rows:repeat(2, minmax(0,1fr)); gap:16pt 20pt; }
+  /* flex-start, not center: if any gloss ever takes a second line, centring would drop that
+     card's header below its neighbours' and break the row's first-line alignment. */
+  .node { border:1pt solid #3D3528; border-radius:12px; padding:10pt 16pt; display:flex; flex-direction:column; justify-content:flex-start; }
+  .node-top { display:flex; align-items:center; gap:8pt; }
+  .badge { flex:none; width:22pt; height:22pt; border-radius:50%; background:#C2693F; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-size:12pt; font-weight:600; line-height:1.4; color:#FBF7EF; }
+  .node h3 { font-size:16pt; font-weight:500; line-height:1.35; }
+  .gloss { margin-top:6pt; font-size:14pt; font-weight:400; line-height:1.45; }
+  /* The one terracotta rule on this sheet. Single line, measured at 585.1pt of 608pt. */
+  .claimrule { flex:none; height:1pt; background:#C2693F; margin-top:16pt; }
+  .claim { flex:none; margin-top:10pt; font-size:16pt; font-weight:400; line-height:1.5; }
+</style>
+</head>
+<body>
+<header><p class=&quot;kicker&quot;>The levers</p><p class=&quot;counter&quot;>02 / 05</p></header>
+<main>
+  <h2>A rota is a staffing decision</h2>
+  <div class=&quot;grid&quot;>
+    <div class=&quot;node&quot;>
+      <div class=&quot;node-top&quot;><div class=&quot;badge&quot;><p>1</p></div><h3>Shift length</h3></div>
+      <p class=&quot;gloss&quot;>How long one person is reachable.</p>
+    </div>
+    <div class=&quot;node&quot;>
+      <div class=&quot;node-top&quot;><div class=&quot;badge&quot;><p>2</p></div><h3>Handover</h3></div>
+      <p class=&quot;gloss&quot;>What moves at the change of shift.</p>
+    </div>
+    <div class=&quot;node&quot;>
+      <div class=&quot;node-top&quot;><div class=&quot;badge&quot;><p>3</p></div><h3>Compensation</h3></div>
+      <p class=&quot;gloss&quot;>What the hours cost to schedule.</p>
+    </div>
+    <div class=&quot;node&quot;>
+      <div class=&quot;node-top&quot;><div class=&quot;badge&quot;><p>4</p></div><h3>A ceiling on night pages</h3></div>
+      <p class=&quot;gloss&quot;>A limit the rota may not exceed.</p>
+    </div>
+  </div>
+  <div class=&quot;claimrule&quot;></div>
+  <p class=&quot;claim&quot;>Encouragement moves none of them. Only the roster does.</p>
+</main>
+<footer>
+  <div class=&quot;footrule&quot;></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What a handover has to carry</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  h2 { flex:none; margin-bottom:12pt; }
+  /* Comparison vocabulary: two columns split by a full-height 1pt hairline, so the pair
+     reads as one comparison rather than two lists. 315 + 24 + 1 + 24 + 244 = 608. */
+  .cols { flex:1; min-height:0; display:flex; }
+  .col-a { width:300pt; flex:none; }
+  .divider { width:1pt; flex:none; background:#D6CCB8; margin:0 24pt; }
+  .col-b { flex:1; min-width:0; }
+  .colhead { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; color:#C2693F; margin-bottom:10pt; }
+  /* Every row carries the hairline, and the last one turns it off by colour, not by
+     removing it - so all five rows are the same height and the left edge stays true. */
+  .row { border-bottom:0.75pt solid #D6CCB8; padding-bottom:6pt; margin-bottom:6pt; }
+  .row:last-child { border-bottom-color:transparent; }
+  .row p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .emph { font-size:18pt; font-weight:500; line-height:1.3; color:#C2693F; margin-bottom:12pt; }
+  .col-b .note { font-size:14pt; font-weight:400; line-height:1.45; }
+  .col-b .note + .note { margin-top:10pt; }
+</style>
+</head>
+<body>
+<header><p class=&quot;kicker&quot;>Handover</p><p class=&quot;counter&quot;>03 / 05</p></header>
+<main>
+  <h2>What a handover has to carry</h2>
+  <div class=&quot;cols&quot;>
+    <div class=&quot;col-a&quot;>
+      <h3 class=&quot;colhead&quot;>The payload</h3>
+      <div class=&quot;row&quot;><p>Open incidents and the live hypothesis</p></div>
+      <div class=&quot;row&quot;><p>What was tried and already ruled out</p></div>
+      <div class=&quot;row&quot;><p>What is silenced, and when it returns</p></div>
+      <div class=&quot;row&quot;><p>What is degraded but not yet paging</p></div>
+      <div class=&quot;row&quot;><p>Who has been woken, and how often</p></div>
+    </div>
+    <div class=&quot;divider&quot;></div>
+    <div class=&quot;col-b&quot;>
+      <h3 class=&quot;colhead&quot;>Why it cannot wait</h3>
+      <p class=&quot;emph&quot;>The person leaving the shift<br>is the one who knows.</p>
+      <p class=&quot;note&quot;>The events are in the dashboard. The reasoning is in the head of the person going to bed.</p>
+      <p class=&quot;note&quot;>So the handover is work inside the shift, not a note sent after it.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class=&quot;footrule&quot;></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What a page ceiling forces upstream</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  h2 { flex:none; margin-bottom:10pt; }
+  .lead { flex:none; font-size:16pt; font-weight:400; line-height:1.5; margin-bottom:14pt; }
+  /* Process flow: 3 outline nodes, 1pt curved bezier connectors with a thin arrowhead.
+     Node = (608 - 2 x 24pt connectors) / 3 = 186.7pt wide; label budget 162.7pt inner,
+     longest measured label 141.8pt. Text stays in HTML; only the connector is SVG. */
+  .flow { flex:none; display:flex; align-items:stretch; }
+  .fnode { flex:1; min-width:0; border:1pt solid #3D3528; border-radius:12px; padding:10pt 10pt; display:flex; flex-direction:column; align-items:flex-start; }
+  .fbadge { flex:none; width:20pt; height:20pt; border-radius:50%; background:#C2693F; display:flex; align-items:center; justify-content:center; margin-bottom:5pt; }
+  .fbadge p { font-size:11pt; font-weight:600; line-height:1.4; color:#FBF7EF; }
+  .fnode h3 { font-size:15pt; font-weight:500; line-height:1.4; }
+  /* The connector is aligned to the label line, not to the node's box centre: centred it
+     floated in the empty band between the step badge and the label it connects. */
+  .conn { flex:none; width:24pt; display:flex; align-items:flex-end; justify-content:center; padding-bottom:11pt; }
+  /* Consequences. All three rows carry the hairline; the last one hides it by colour so
+     the three rows stay identical in height. */
+  .cons { flex:1; min-height:0; margin-top:16pt; }
+  .crow { border-bottom:0.75pt solid #D6CCB8; padding-bottom:8pt; margin-bottom:8pt; }
+  .crow:last-child { border-bottom-color:transparent; }
+  .crow p { font-size:14pt; font-weight:400; line-height:1.45; }
+</style>
+</head>
+<body>
+<header><p class=&quot;kicker&quot;>The night-page ceiling</p><p class=&quot;counter&quot;>04 / 05</p></header>
+<main>
+  <h2>What a page ceiling forces upstream</h2>
+  <p class=&quot;lead&quot;>A ceiling does not reduce pages. It converts them into scheduled work.</p>
+  <div class=&quot;flow&quot;>
+    <div class=&quot;fnode&quot;>
+      <div class=&quot;fbadge&quot;><p>1</p></div>
+      <h3>A night page fires</h3>
+    </div>
+    <div class=&quot;conn&quot;>
+      <svg width=&quot;24pt&quot; height=&quot;16pt&quot; viewBox=&quot;0 0 24 16&quot; role=&quot;img&quot; aria-label=&quot;leads to&quot;>
+        <path d=&quot;M 0 11 C 7 11 12 5 18.6 5&quot; fill=&quot;none&quot; stroke=&quot;#3D3528&quot; stroke-width=&quot;1&quot;></path>
+        <polygon points=&quot;18.4,2.4 23.4,5 18.4,7.6&quot; fill=&quot;#3D3528&quot;></polygon>
+      </svg>
+    </div>
+    <div class=&quot;fnode&quot;>
+      <div class=&quot;fbadge&quot;><p>2</p></div>
+      <h3>The ceiling is hit</h3>
+    </div>
+    <div class=&quot;conn&quot;>
+      <svg width=&quot;24pt&quot; height=&quot;16pt&quot; viewBox=&quot;0 0 24 16&quot; role=&quot;img&quot; aria-label=&quot;leads to&quot;>
+        <path d=&quot;M 0 11 C 7 11 12 5 18.6 5&quot; fill=&quot;none&quot; stroke=&quot;#3D3528&quot; stroke-width=&quot;1&quot;></path>
+        <polygon points=&quot;18.4,2.4 23.4,5 18.4,7.6&quot; fill=&quot;#3D3528&quot;></polygon>
+      </svg>
+    </div>
+    <div class=&quot;fnode&quot;>
+      <div class=&quot;fbadge&quot;><p>3</p></div>
+      <h3>An owner, and a date</h3>
+    </div>
+  </div>
+  <div class=&quot;cons&quot;>
+    <div class=&quot;crow&quot;><p>A breach becomes an engineering ticket, not a personal apology.</p></div>
+    <div class=&quot;crow&quot;><p>An alert that cannot live under the ceiling is deleted or moved to daytime.</p></div>
+    <div class=&quot;crow&quot;><p>A system that only survives because someone is awake finally gets its fix.</p></div>
+  </div>
+</main>
+<footer>
+  <div class=&quot;footrule&quot;></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-300.woff2') format('woff2'); font-weight:300; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Work Sans'; src:url('./assets/fonts/WorkSans-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 1.0in x 0.8in on a 13.33in slide, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 56pt x 40pt. Content width 608pt.
+     Height budget for main: 405 - 80 (padding) - 16.8 (kicker) - 14 (margin)
+                             - 37.4 (footer rule + caption) = 256.8pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2EBDF; color:#3D3528;
+    font-family:'Work Sans', Arial, sans-serif;
+    padding:40pt 56pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
+  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .kicker { color:#C2693F; }
+  .counter { color:#8A8170; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:14pt; }
+  .footrule { height:1pt; background:#D6CCB8; }
+  /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
+     slot carries that fact instead of a citation. Ink brown, not muted: muted measures
+     3.25:1 on sand and this line has to be readable. */
+  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
+  h2 { flex:none; margin-bottom:12pt; }
+  /* Two decision cards, 292pt each. Card inner budget 123pt:
+     colhead 16.8 + 8 + question 24.3 + 10 + three body lines 60.9 = 120. */
+  .cards { flex:1; min-height:0; display:flex; gap:20pt; }
+  .card { flex:1; min-width:0; border:1pt solid #3D3528; border-radius:12px; padding:12pt; display:flex; flex-direction:column; }
+  .colhead { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; color:#C2693F; margin-bottom:8pt; }
+  .card h3 { font-size:18pt; font-weight:500; line-height:1.35; margin-bottom:10pt; }
+  .card p.body { font-size:14pt; font-weight:400; line-height:1.45; }
+  /* Visual anchor for the closing sheet: the one terracotta rule, and the line the room
+     has to answer for. Measured at 562.3pt of 608pt - one line. */
+  .closerule { flex:none; height:1pt; background:#C2693F; margin-top:16pt; }
+  .close { flex:none; margin-top:12pt; font-size:20pt; font-weight:400; line-height:1.4; }
+</style>
+</head>
+<body>
+<header><p class=&quot;kicker&quot;>Decisions</p><p class=&quot;counter&quot;>05 / 05</p></header>
+<main>
+  <h2>What we need to decide</h2>
+  <div class=&quot;cards&quot;>
+    <div class=&quot;card&quot;>
+      <h4 class=&quot;colhead&quot;>Decision one</h4>
+      <h3>What is the minimum roster?</h3>
+      <p class=&quot;body&quot;>The size below which shift length, handover, pay and the night ceiling cannot all hold at once.</p>
+    </div>
+    <div class=&quot;card&quot;>
+      <h4 class=&quot;colhead&quot;>Decision two</h4>
+      <h3>What do we give up below it?</h3>
+      <p class=&quot;body&quot;>Name the lever we suspend, for how long, and what pulls it back — before the rota picks for us.</p>
+    </div>
+  </div>
+  <div class=&quot;closerule&quot;></div>
+  <p class=&quot;close&quot;>Below the floor, something is given up — chosen or not.</p>
+</main>
+<footer>
+  <div class=&quot;footrule&quot;></div>
+  <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 5;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>
