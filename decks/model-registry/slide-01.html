@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Model Registry — operating guide</title>
+<style>
+  @font-face { font-family:'SourceSerif4'; src:url('./assets/fonts/SourceSerif4-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'SourceSerif4'; src:url('./assets/fonts/SourceSerif4-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'IBMPlexMono'; src:url('./assets/fonts/IBMPlexMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'IBMPlexMono'; src:url('./assets/fonts/IBMPlexMono-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#EFE9DD; color:#33302A;
+    font-family:'SourceSerif4',Georgia,serif;
+    padding:26pt 32pt 20pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Title row + rule. One-line titles keep the rule at a constant y across sheets. */
+  header { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:12pt; }
+  h1 { font-size:20pt; font-weight:600; line-height:1.3; }
+  .fig { font-family:'IBMPlexMono',monospace; font-size:11pt; font-weight:400; letter-spacing:0.04em; color:#7A7468; white-space:nowrap; }
+  .rule { height:1px; background:#9A9180; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  h2 { font-size:15pt; font-weight:600; line-height:1.35; }
+  p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .muted { color:#7A7468; }
+  .idx { font-family:'IBMPlexMono',monospace; font-size:11pt; font-weight:500; letter-spacing:0.04em; color:#5A5448; line-height:1.4; }
+  .mono { font-family:'IBMPlexMono',monospace; font-weight:400; line-height:1.4; }
+  .sc { font-size:10pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; }
+  /* Catalogue table: ink header, rule grid, no colour anywhere. */
+  .tbl { flex:1; min-height:0; border:1px solid #C9C0AC; display:flex; flex-direction:column; background:#F6F2E8; }
+  .thead { flex:none; display:flex; background:#33302A; color:#EFE9DD; }
+  .thead div { padding:8pt 14pt; }
+  .trow { flex:1 1 0; min-height:0; display:flex; align-items:center; }
+  .trow + .trow { border-top:1px solid #C9C0AC; }
+  .trow div { padding:10pt 14pt; }
+  .mark { border-left:9pt solid #33302A; }
+  footer { flex:none; margin-top:12pt; }
+  footer p { font-family:'IBMPlexMono',monospace; font-size:10pt; font-weight:400; color:#7A7468; letter-spacing:0.03em; line-height:1.4; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Model Registry — operating guide</h1>
+  <p class="fig">Fig. 01 / 05</p>
+</header>
+<div class="rule"></div>
+<main>
+  <div style="flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;">
+    <p style="font-size:19pt; line-height:1.45; max-width:500pt;">The registry is the record of what is allowed to run —<br>and of who said so.</p>
+  </div>
+  <div style="flex:none; border:1px solid #C9C0AC; background:#F6F2E8; display:flex;">
+    <div style="width:33%; padding:11pt 14pt; border-right:1px solid #C9C0AC;">
+      <p class="sc muted" style="margin-bottom:5pt;">PREPARED BY</p><p class="mono" style="font-size:13pt;">PRESENTER · TEAM</p></div>
+    <div style="width:24%; padding:11pt 14pt; border-right:1px solid #C9C0AC;">
+      <p class="sc muted" style="margin-bottom:5pt;">DATE</p><p class="mono" style="font-size:13pt;">2026.08</p></div>
+    <div style="width:43%; padding:11pt 14pt;">
+      <p class="sc muted" style="margin-bottom:5pt;">APPLIES TO</p><p class="mono" style="font-size:13pt;">ALL REGISTERED MODELS</p></div>
+  </div>
+</main>
+<footer><p>MODEL REGISTRY — OPERATING GUIDE · SHEET 01/05 · NO CHART, NO EXTERNAL DATA</p></footer>
+</body>
+</html>
