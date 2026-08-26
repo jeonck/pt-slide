@@ -112,15 +112,99 @@ y에 있다는 것**이 그 스타일의 "엄격한 그리드"의 전부인데, 
 **글자 수 예산**은 이렇게 잡는다:
 
 ```
-한 줄에 들어가는 글자 수 ≈ 사용 가능 폭 ÷ (font-size × 0.48)
+한 줄에 들어가는 글자 수 ≈ 사용 가능 폭 ÷ (font-size × 계수)
 ```
 
-폭 656pt에 20pt면 약 68자. 여유를 두어 **66자 이하**로 쓴다.
+폭 656pt에 20pt, 계수 0.48이면 약 68자. 여유를 두어 **66자 이하**로 쓴다.
 
-계수 0.48은 이 저장소의 덱에서 실측한 값이다 — Arimo 700 / 20pt / 폭 656pt에서 69자는 한 줄에
-들어갔고 70자는 감겼다(656 ÷ 69 ÷ 20 = 0.475). Arimo 400 / 14pt 본문에서도 거의 같은 값이 나왔다.
-영문 산세리프의 출발점으로 쓰되 **서체마다 다르고, 한글은 글자폭이 완전히 달라 이 계수가 통하지
-않는다.** 어느 쪽이든 추정으로 끝내지 말고 렌더에서 실제로 한 줄인지 확인한다.
+#### 사용 가능 폭은 박스 폭이 아니다
+
+좌우 패딩, 보더, 불릿 점의 들여쓰기를 **전부 뺀** 값이다. CI 덱은 176pt 카드의 불릿 예산을
+176pt로 잡았다가 점 들여쓰기 11pt를 빼먹었다. 실제 폭은 165pt였고, 12pt에서 한계는 28자가
+아니라 25자였다 — 아홉 개 중 두 개가 감기면서 3열 그리드가 어긋났다.
+
+#### 계수는 서체가 아니라 **문자열**의 성질이다
+
+이 저장소의 덱에서 실제 액션 타이틀을 재서 나온 값:
+
+| 서체 | 문자열 | 계수 |
+|---|---|---|
+| Space Grotesk 700 | `Three failures, none of them technical` | 0.471 |
+| Archivo 800 | `Three ways to replace a running version` | 0.485 |
+| Inter 600 | `What CI answers on every commit` | 0.519 |
+| Archivo Black 900 | `Make one path the only path` | 0.550 |
+
+여기까지만 보면 서체별 표로 정리하고 싶어진다. 그런데 **같은 서체, 같은 크기**에서 문자열만 바꾸면
+이렇게 된다 (Archivo Black 900):
+
+| 문자열 | 계수 |
+|---|---|
+| `It it lit till` | 0.347 |
+| `Make one path the only path` | 0.550 |
+| `READ-ONLY BY DEFAULT` | 0.661 |
+| `WWWWWWWWWW` | 0.973 |
+
+같은 서체 안에서 두 배 가까이 벌어진다. 특히 **대문자 라벨은 혼합 대소문자 산문보다 한참 넓다** —
+0.55로 잡은 예산에 0.661짜리 문자열을 넣은 것이 IaC 덱에서 `READ-ONLY BY DEFAULT`가 200pt 셀에
+210pt를 요구한 이유다. 라벨이 감기자 원장 행이 전부 커지고 닫는 문장이 하단 룰 아래로 깔렸는데
+`validate`는 5/5를 찍었다.
+
+그래서:
+
+- **0.48은 영문 혼합 대소문자 산문의 출발점일 뿐이다.** 배포 전략 덱은 Inter를 0.50으로 잡았다가
+  마무리 슬라이드 질문 하나만 네 줄로 감겨서 세 블록이 한 세트로 읽히지 않게 됐다. 실측은 0.52다.
+- **대문자 라벨·배지·열 머리는 따로 잰다.** 산문 계수를 그대로 쓰면 20~30% 과소평가한다.
+- **한글은 글자폭이 완전히 달라 이 계수가 아예 통하지 않는다.**
+- 샘플 문자열로 재지 않는다. `I`와 `W`는 같은 글자가 아니다 — 슬라이드에 **실제로 들어갈 그
+  문자열**을 잰다.
+
+#### 재는 법
+
+폭이 아슬아슬한 줄은 계산하지 말고 이걸로 잰다. 저장소 루트에서 실행한다(`playwright`가
+`node_modules`에 있다):
+
+```js
+// _measure.mjs — 실제 문자열의 실제 폭. 다 쓰면 지운다.
+import { chromium } from 'playwright';
+const [file, sel] = process.argv.slice(2);
+const b = await chromium.launch();
+const p = await b.newPage();
+await p.goto('file://' + file);
+console.log(await p.evaluate((sel) => {
+  const el = document.querySelector(sel);
+  const cs = getComputedStyle(el);
+  const probe = document.createElement('span');
+  probe.style.cssText = `position:absolute;visibility:hidden;white-space:nowrap;
+    font:${cs.font};letter-spacing:${cs.letterSpacing}`;
+  const text = el.textContent.trim();
+  probe.textContent = text;
+  document.body.appendChild(probe);
+  const needs = probe.getBoundingClientRect().width;
+  probe.remove();
+  const par = getComputedStyle(el.parentElement);
+  const avail = el.parentElement.clientWidth
+    - parseFloat(par.paddingLeft) - parseFloat(par.paddingRight);
+  const pt = (px) => +(px / (4 / 3)).toFixed(1);
+  return { text, chars: text.length, needs_pt: pt(needs), avail_pt: pt(avail),
+           coef: +(needs / (parseFloat(cs.fontSize) * text.length)).toFixed(3) };
+}, sel));
+await b.close();
+```
+
+```bash
+node ./_measure.mjs $PWD/decks/<name>/slide-04.html h2
+```
+
+두 가지를 조심한다:
+
+- **`getBoundingClientRect()`는 px를 준다.** 이 캔버스는 pt로 짜여 있으므로 4/3으로 나눠야 스펙과
+  같은 단위가 된다. 그냥 비교하면 33% 여유가 있는 것처럼 보인다.
+- **재려는 요소의 `clientWidth`를 쓰지 않는다.** 제목이 inline-block이나 flex 아이템이면 폭이
+  내용에 맞춰지므로 언제나 "딱 맞음"으로 나온다. **부모의** 콘텐츠 폭에서 패딩을 뺀 값이 실제
+  예산이다.
+
+슬라이드가 아직 없으면 같은 `@font-face`·폰트 크기를 넣은 임시 HTML을 만들어 잰다. 어느 쪽이든
+추정으로 끝내지 말고, 마지막에는 렌더 이미지에서 실제로 한 줄인지 눈으로 확인한다.
 
 넘치면 **제목을 줄인다.** 한 줄에 안 들어가는 액션 타이틀은 대개 주장이 두 개다 — 하나로 줄이면
 문장도 좋아진다. 타입을 줄이거나 감기게 두는 것은 답이 아니다.
