@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Deployment strategies — cover</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:24pt;
+    display:flex; gap:6pt;
+  }
+  .left { width:417pt; display:flex; flex-direction:column; gap:6pt; }
+  .right { flex:1; display:flex; flex-direction:column; gap:6pt; }
+  .title-block { flex:1; background:#2A2D34; padding:28pt; display:flex; flex-direction:column; }
+  h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:40pt; font-weight:800; letter-spacing:-0.02em; line-height:1.2; color:#FFFFFF; margin-top:10pt; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#E8A317; }
+  .sub { font-size:14pt; font-weight:600; line-height:1.45; color:#FFFFFF; margin-top:12pt; }
+  .presenter { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#FFFFFF; margin-top:auto; }
+  .thesis-block { flex:none; background:#E8A317; padding:20pt; }
+  .thesis-block p { font-size:16pt; font-weight:600; line-height:1.45; color:#2A2D34; }
+  .strat { flex:1 1 0; min-height:0; padding:16pt 18pt; display:flex; flex-direction:column; justify-content:center; }
+  .strat.teal { background:#1F8A82; }
+  .strat.char { background:#2A2D34; }
+  .strat .num { font-family:'Archivo', 'Arial Black', sans-serif; font-size:34pt; font-weight:800; line-height:1.2; color:#FFFFFF; }
+  .strat .name { font-size:14pt; font-weight:700; letter-spacing:0.06em; line-height:1.4; color:#FFFFFF; margin-top:2pt; }
+</style>
+</head>
+<body>
+<div class="left">
+  <div class="title-block">
+    <p class="eyebrow">RELEASE ENGINEERING · PLATFORM</p>
+    <h1>Deployment<br>strategies</h1>
+    <p class="sub">Rolling · Blue-green · Canary</p>
+    <p class="presenter">PRESENTER · TEAM</p>
+  </div>
+  <div class="thesis-block">
+    <p>The strategy is not a matter of taste. It is decided by how fast you must be able to roll back, and by whether your traffic can be split.</p>
+  </div>
+</div>
+<div class="right">
+  <div class="strat teal">
+    <p class="num">01</p>
+    <p class="name">ROLLING</p>
+  </div>
+  <div class="strat char">
+    <p class="num">02</p>
+    <p class="name">BLUE-GREEN</p>
+  </div>
+  <div class="strat teal">
+    <p class="num">03</p>
+    <p class="name">CANARY</p>
+  </div>
+</div>
+</body>
+</html>

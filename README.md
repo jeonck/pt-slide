@@ -14,6 +14,10 @@
 | [`decks/mlops-platform`](decks/mlops-platform/) | **MLOps Platform Roadmap** — 영어 컨설팅 익스히빗. 진단 → 역량 지도 → 3단계 시퀀스 → build vs buy → 결정 → 논의 | 7 | `ppt-consulting-precision-grid` |
 | [`decks/feature-store`](decks/feature-store/) | **Feature Store adoption review** — 영어 고스트 덱. 무엇을 푸는가 → 무엇인가 → 언제 도입하나 → 비용 → 결정 | 6 | `ppt-mckinsey-ghost-deck` |
 | [`decks/model-registry`](decks/model-registry/) | **Model Registry operating guide** — 영어 대장(ledger) 덱. 무엇을 기록하나 → 승격 원장 → 운영 규칙 4개 → 미결 사항 | 5 | `ppt-archival-index-deck` |
+| [`decks/alert-design`](decks/alert-design/) | **Alert design: what deserves a page** — 영어 모노크롬 리스크 덱. 세 목적지(page·ticket·dashboard) → 페이지의 자격을 묻는 시험 3문 → 탈락한 알럿의 처분 → 결정 | 5 | `ppt-monochrome-risk` |
+| [`decks/incident-response`](decks/incident-response/) | **Incident response: the first 30 minutes** — 영어 다크 테크 런북. 기술이 아닌 세 가지 실패 → 역할이 하지 않는 일 → 체크포인트 5 → 심각도가 지우는 의무 → 결정 | 6 | `ppt-dark-tech` |
+| [`decks/deployment-strategies`](decks/deployment-strategies/) | **Deployment strategies** — 영어 블록 인포그래픽. rolling·blue-green·canary 비교 → 전략을 정하는 두 질문 → 각 전략의 전제 조건 → 결정 | 5 | `ppt-bold-block-infographic-deck` |
+| [`decks/ci-pipeline`](decks/ci-pipeline/) | **CI pipeline: what belongs in it** — 영어 정밀 그리드 덱. CI가 매 커밋에 답하는 질문 → CI/머지 후/스케줄 경계 → 신호를 지키는 두 정책 → 이미 느릴 때 → 결정 | 6 | `ppt-precision-fintech-deck` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -28,6 +32,10 @@
 | mlops-platform | `slide-01.html` … `slide-07.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/mlops-platform/viewer.html)** · [PDF](decks/mlops-platform/mlops-platform.pdf) · [이미지](decks/mlops-platform/preview/) | [`viewer.html`](decks/mlops-platform/viewer.html) |
 | feature-store | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/feature-store/viewer.html)** · [PDF](decks/feature-store/feature-store.pdf) · [이미지](decks/feature-store/preview/) | [`viewer.html`](decks/feature-store/viewer.html) |
 | model-registry | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/model-registry/viewer.html)** · [PDF](decks/model-registry/model-registry.pdf) · [이미지](decks/model-registry/preview/) | [`viewer.html`](decks/model-registry/viewer.html) |
+| alert-design | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/alert-design/viewer.html)** · [PDF](decks/alert-design/alert-design.pdf) · [이미지](decks/alert-design/preview/) | [`viewer.html`](decks/alert-design/viewer.html) |
+| incident-response | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/incident-response/viewer.html)** · [PDF](decks/incident-response/incident-response.pdf) · [이미지](decks/incident-response/preview/) | [`viewer.html`](decks/incident-response/viewer.html) |
+| deployment-strategies | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/deployment-strategies/viewer.html)** · [PDF](decks/deployment-strategies/deployment-strategies.pdf) · [이미지](decks/deployment-strategies/preview/) | [`viewer.html`](decks/deployment-strategies/viewer.html) |
+| ci-pipeline | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/ci-pipeline/viewer.html)** · [PDF](decks/ci-pipeline/ci-pipeline.pdf) · [이미지](decks/ci-pipeline/preview/) | [`viewer.html`](decks/ci-pipeline/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의

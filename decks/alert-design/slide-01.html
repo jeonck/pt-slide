@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alert design: what deserves a page</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; }
+  h1 { font-size:40pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; margin-bottom:26pt; }
+  .thesis { background:#0A0A0A; padding:14pt 16pt; }
+  .thesis p { font-size:17pt; font-weight:400; line-height:1.45; color:#FFFFFF; }
+  footer { flex:none; margin-top:20pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:12pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; padding-top:8pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">RISK REVIEW · ON-CALL</p>
+  <div class="rule-h"></div>
+</header>
+<main>
+  <h1>Alert design:<br>what deserves a page</h1>
+  <div class="thesis">
+    <p>A page wakes a human. The bar is not whether the alert is true. The bar is whether it is worth someone's night.</p>
+  </div>
+</main>
+<footer>
+  <div class="rule-f"></div>
+  <p>PRESENTER · TEAM</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 5</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Alert design: what deserves a page</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; }
+  h1 { font-size:40pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; margin-bottom:26pt; }
+  .thesis { background:#0A0A0A; padding:14pt 16pt; }
+  .thesis p { font-size:17pt; font-weight:400; line-height:1.45; color:#FFFFFF; }
+  footer { flex:none; margin-top:20pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:12pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; padding-top:8pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;eyebrow&quot;>RISK REVIEW · ON-CALL</p>
+  <div class=&quot;rule-h&quot;></div>
+</header>
+<main>
+  <h1>Alert design:<br>what deserves a page</h1>
+  <div class=&quot;thesis&quot;>
+    <p>A page wakes a human. The bar is not whether the alert is true. The bar is whether it is worth someone's night.</p>
+  </div>
+</main>
+<footer>
+  <div class=&quot;rule-f&quot;></div>
+  <p>PRESENTER · TEAM</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Three destinations</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; }
+  /* diagram.comparison — 3 columns split by 4px vertical rules, black-fill inversion on the
+     emphasised column, 2px rule between rows. Row labels live in a left gutter so they are
+     stated once instead of three times. */
+  .gutter { flex:none; width:78pt; display:flex; flex-direction:column; padding-right:12pt; }
+  .ghead { flex:none; height:38pt; }
+  .grow { flex:1 1 0; min-height:0; display:flex; align-items:flex-start; justify-content:flex-end; padding:13pt 0 10pt 0; }
+  .grow + .grow { border-top:2px solid #0A0A0A; }
+  .lab { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#767676; text-align:right; }
+  .col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; padding:0 12pt; }
+  .vrule { flex:none; width:4px; background:#0A0A0A; margin:0 8pt; }
+  .col.mark { background:#0A0A0A; }
+  .chead { flex:none; height:38pt; display:flex; align-items:center; border-bottom:3px solid #0A0A0A; }
+  .col.mark .chead { border-bottom-color:#FFFFFF; }
+  h2 { font-size:22pt; font-weight:700; letter-spacing:0.02em; line-height:1.25; }
+  .col.mark h2 { color:#FFFFFF; }
+  .cell { flex:1 1 0; min-height:0; display:flex; align-items:flex-start; padding:10pt 0; }
+  .cell + .cell { border-top:2px solid #0A0A0A; }
+  .col.mark .cell + .cell { border-top-color:#FFFFFF; }
+  .cell p { font-size:14pt; font-weight:400; line-height:1.45; text-wrap:balance; }
+  .col.mark .cell p { color:#FFFFFF; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;eyebrow&quot;>02 · DESTINATIONS</p>
+  <h1>Three destinations, and only one wakes anyone</h1>
+  <p class=&quot;subline&quot;>Every alert lands in one of three places. Most of the pain is landing wrong.</p>
+</header>
+<div class=&quot;rule-h&quot;></div>
+<main>
+  <div class=&quot;gutter&quot;>
+    <div class=&quot;ghead&quot;></div>
+    <div class=&quot;grow&quot;><p class=&quot;lab&quot;>PURPOSE</p></div>
+    <div class=&quot;grow&quot;><p class=&quot;lab&quot;>FAILURE MODE</p></div>
+  </div>
+  <section class=&quot;col mark&quot;>
+    <div class=&quot;chead&quot;><h2>PAGE</h2></div>
+    <div class=&quot;cell&quot;><p>Something is breaking now and only a person can stop it.</p></div>
+    <div class=&quot;cell&quot;><p>A page that could have waited teaches people to wait.</p></div>
+  </section>
+  <div class=&quot;vrule&quot;></div>
+  <section class=&quot;col&quot;>
+    <div class=&quot;chead&quot;><h2>TICKET</h2></div>
+    <div class=&quot;cell&quot;><p>Real work that survives until the next working day.</p></div>
+    <div class=&quot;cell&quot;><p>Something urgent filed here is read after the outage.</p></div>
+  </section>
+  <div class=&quot;vrule&quot;></div>
+  <section class=&quot;col&quot;>
+    <div class=&quot;chead&quot;><h2>DASHBOARD</h2></div>
+    <div class=&quot;cell&quot;><p>Context you read when you are already investigating.</p></div>
+    <div class=&quot;cell&quot;><p>A dashboard notifies nobody. At 3am it is a dark room.</p></div>
+  </section>
+</main>
+<footer>
+  <div class=&quot;rule-f&quot;></div>
+  <p>ALERT DESIGN · SHEET 02/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>The test an alert must pass</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  /* diagram.process_flow — right-angle nodes, 2px border, 0px radius, black square number chip,
+     2pt right-angle connectors with sharp triangle heads (inline SVG). */
+  .flow { flex:1; min-height:0; display:flex; align-items:stretch; }
+  .node { flex:1 1 0; min-width:0; border:2px solid #0A0A0A; padding:12pt 12pt 0 12pt; display:flex; flex-direction:column; }
+  .chip { width:22pt; height:22pt; background:#0A0A0A; display:flex; align-items:center; justify-content:center; flex:none; }
+  .chip p { font-size:12pt; font-weight:700; line-height:1.4; color:#FFFFFF; letter-spacing:0.02em; }
+  h3 { font-size:16pt; font-weight:700; letter-spacing:0.06em; line-height:1.3; margin-top:10pt; }
+  .q { font-size:14pt; font-weight:400; line-height:1.45; margin-top:8pt; text-wrap:balance; }
+  .no { margin:auto -12pt 0 -12pt; background:#E6E6E6; padding:8pt 12pt; flex:none; }
+  .no p { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#3D3D3D; }
+  .conn { flex:none; width:16pt; display:flex; align-items:center; justify-content:center; }
+  .bar { flex:none; background:#0A0A0A; padding:11pt 16pt; margin-top:14pt; }
+  .bar p { font-size:15pt; font-weight:700; line-height:1.3; color:#FFFFFF; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;eyebrow&quot;>03 · THE TEST</p>
+  <h1>The test an alert must pass to earn a page</h1>
+  <p class=&quot;subline&quot;>Three questions. A no to any one of them means this is not a page.</p>
+</header>
+<div class=&quot;rule-h&quot;></div>
+<main>
+  <div class=&quot;flow&quot;>
+    <article class=&quot;node&quot;>
+      <div class=&quot;chip&quot;><p>01</p></div>
+      <h3>URGENT</h3>
+      <p class=&quot;q&quot;>Does waiting until morning make it worse?</p>
+      <div class=&quot;no&quot;><p>IF NO · SEND TO TICKET</p></div>
+    </article>
+    <div class=&quot;conn&quot;>
+      <svg style=&quot;width:16pt; height:10pt;&quot; viewBox=&quot;0 0 20 12&quot; role=&quot;presentation&quot; aria-hidden=&quot;true&quot;>
+        <rect x=&quot;0&quot; y=&quot;5&quot; width=&quot;12&quot; height=&quot;2&quot; fill=&quot;#0A0A0A&quot;></rect>
+        <polygon points=&quot;12,1 20,6 12,11&quot; fill=&quot;#0A0A0A&quot;></polygon>
+      </svg>
+    </div>
+    <article class=&quot;node&quot;>
+      <div class=&quot;chip&quot;><p>02</p></div>
+      <h3>ACTIONABLE</h3>
+      <p class=&quot;q&quot;>Is there a step someone can take right now?</p>
+      <div class=&quot;no&quot;><p>IF NO · DELETE OR FIX</p></div>
+    </article>
+    <div class=&quot;conn&quot;>
+      <svg style=&quot;width:16pt; height:10pt;&quot; viewBox=&quot;0 0 20 12&quot; role=&quot;presentation&quot; aria-hidden=&quot;true&quot;>
+        <rect x=&quot;0&quot; y=&quot;5&quot; width=&quot;12&quot; height=&quot;2&quot; fill=&quot;#0A0A0A&quot;></rect>
+        <polygon points=&quot;12,1 20,6 12,11&quot; fill=&quot;#0A0A0A&quot;></polygon>
+      </svg>
+    </div>
+    <article class=&quot;node&quot;>
+      <div class=&quot;chip&quot;><p>03</p></div>
+      <h3>HUMAN ONLY</h3>
+      <p class=&quot;q&quot;>Can only a person take that step?</p>
+      <div class=&quot;no&quot;><p>IF NO · AUTOMATE IT</p></div>
+    </article>
+  </div>
+  <div class=&quot;bar&quot;>
+    <p>All three, or it is not a page. Two out of three is still someone's night.</p>
+  </div>
+</main>
+<footer>
+  <div class=&quot;rule-f&quot;></div>
+  <p>ALERT DESIGN · SHEET 03/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What to do with the alerts that fail</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  /* Disposition ledger. Every row carries the same border and padding; only the fill inverts,
+     so the chip column stays on one vertical line across all three rows. */
+  .ledger { flex:1; min-height:0; border:2px solid #0A0A0A; display:flex; flex-direction:column; }
+  .row { flex:1 1 0; min-height:0; display:flex; align-items:stretch; }
+  .row + .row { border-top:2px solid #0A0A0A; }
+  .row.mark { background:#0A0A0A; }
+  .verb { flex:none; width:180pt; display:flex; align-items:center; gap:12pt; padding:10pt 14pt; border-right:2px solid #0A0A0A; }
+  .row.mark .verb { border-right-color:#FFFFFF; }
+  .chip { width:22pt; height:22pt; background:#0A0A0A; display:flex; align-items:center; justify-content:center; flex:none; }
+  .chip p { font-size:12pt; font-weight:700; line-height:1.4; color:#FFFFFF; }
+  .row.mark .chip { background:#FFFFFF; }
+  .row.mark .chip p { color:#0A0A0A; }
+  h3 { font-size:17pt; font-weight:700; letter-spacing:0.02em; line-height:1.3; white-space:nowrap; }
+  .row.mark h3 { color:#FFFFFF; }
+  .body { flex:1; min-width:0; padding:10pt 14pt; display:flex; align-items:center; }
+  .body p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .row.mark .body p { color:#FFFFFF; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;eyebrow&quot;>04 · DISPOSITION</p>
+  <h1>What to do with the alerts that fail</h1>
+  <p class=&quot;subline&quot;>A failing alert is not left alone. It is deleted, downgraded, or fixed.</p>
+</header>
+<div class=&quot;rule-h&quot;></div>
+<main>
+  <div class=&quot;ledger&quot;>
+    <div class=&quot;row&quot;>
+      <div class=&quot;verb&quot;><div class=&quot;chip&quot;><p>A</p></div><h3>DELETE</h3></div>
+      <div class=&quot;body&quot;><p>It has never once changed what anyone did. Deleting it removes noise and nothing else; the check that produced it can stay.</p></div>
+    </div>
+    <div class=&quot;row&quot;>
+      <div class=&quot;verb&quot;><div class=&quot;chip&quot;><p>B</p></div><h3>DOWNGRADE</h3></div>
+      <div class=&quot;body&quot;><p>The condition is real and it can wait. Move it to a queue with a named owner and a date. A promise is not the same as silence.</p></div>
+    </div>
+    <div class=&quot;row mark&quot;>
+      <div class=&quot;verb&quot;><div class=&quot;chip&quot;><p>C</p></div><h3>FIX</h3></div>
+      <div class=&quot;body&quot;><p>It fires because the system needs a human to survive. Repair the system and the alert deletes itself. Only this one lowers the count.</p></div>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class=&quot;rule-f&quot;></div>
+  <p>ALERT DESIGN · SHEET 04/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .creed { flex:none; background:#0A0A0A; padding:14pt 16pt; }
+  .creed p { font-size:16pt; font-weight:700; line-height:1.4; color:#FFFFFF; }
+  .qs { flex:1; min-height:0; display:flex; flex-direction:column; margin-top:14pt; border-top:2px solid #0A0A0A; }
+  .qrow { flex:1 1 0; min-height:0; display:flex; align-items:center; gap:12pt; padding:10pt 0; }
+  .qrow + .qrow { border-top:2px solid #0A0A0A; }
+  .chip { width:22pt; height:22pt; background:#0A0A0A; display:flex; align-items:center; justify-content:center; flex:none; }
+  .chip p { font-size:12pt; font-weight:700; line-height:1.4; color:#FFFFFF; }
+  .qrow > p { font-size:14pt; font-weight:400; line-height:1.45; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;eyebrow&quot;>05 · OPEN QUESTIONS</p>
+  <h1>What we need to decide</h1>
+  <p class=&quot;subline&quot;>The rule is short. Holding to it is not. These are the parts still open.</p>
+</header>
+<div class=&quot;rule-h&quot;></div>
+<main>
+  <div class=&quot;creed&quot;>
+    <p>If it can wait, it is a ticket. If no one is needed, it is a script. If nobody is looking, it is a dashboard. What is left is a page.</p>
+  </div>
+  <div class=&quot;qs&quot;>
+    <div class=&quot;qrow&quot;><div class=&quot;chip&quot;><p>1</p></div><p>Who may delete an alert, and what do they have to show to do it?</p></div>
+    <div class=&quot;qrow&quot;><div class=&quot;chip&quot;><p>2</p></div><p>How many pages in one shift is too many, and who makes that call?</p></div>
+    <div class=&quot;qrow&quot;><div class=&quot;chip&quot;><p>3</p></div><p>Which alerts do we fix at the source before the next rotation?</p></div>
+  </div>
+</main>
+<footer>
+  <div class=&quot;rule-f&quot;></div>
+  <p>PRESENTER · TEAM · ALERT DESIGN · SHEET 05/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 5;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

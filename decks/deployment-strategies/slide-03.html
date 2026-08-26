@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The two questions that actually decide it</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:27pt 30pt 24pt 30pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; display:flex; align-items:center; justify-content:space-between; gap:16pt; margin-bottom:14pt; }
+  h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:24pt; font-weight:800; letter-spacing:-0.02em; line-height:1.3; white-space:nowrap; }
+  .sheet { flex:none; width:27pt; height:27pt; background:#2A2D34; display:flex; align-items:center; justify-content:center; }
+  .sheet p { font-family:'Archivo', 'Arial Black', sans-serif; font-size:13pt; font-weight:800; line-height:1.4; color:#FFFFFF; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .axis-top { flex:none; display:flex; gap:6pt; margin-bottom:6pt; }
+  .axis-top .pad { flex:none; width:130pt; }
+  .axis-top .lab { flex:1 1 0; min-width:0; }
+  .axis-top .lab p { font-size:10pt; font-weight:700; letter-spacing:0.06em; line-height:1.4; color:#6B6F76; }
+  .body-row { flex:1; min-height:0; display:flex; gap:6pt; }
+  .rail { flex:none; width:130pt; display:flex; flex-direction:column; gap:4pt; }
+  .rail div { flex:1 1 0; min-height:0; display:flex; align-items:center; }
+  .rail p { font-size:10pt; font-weight:700; letter-spacing:0.06em; line-height:1.5; color:#6B6F76; text-align:right; width:100%; }
+  .matrix { flex:1; min-height:0; display:flex; flex-direction:column; gap:4pt; }
+  .mrow { flex:1 1 0; min-height:0; display:flex; gap:4pt; }
+  .q { flex:1 1 0; min-width:0; padding:14pt; display:flex; flex-direction:column; justify-content:center; }
+  .q.teal { background:#1F8A82; }
+  .q.char { background:#2A2D34; }
+  .q.amber { background:#E8A317; }
+  .q h2 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:20pt; font-weight:800; letter-spacing:-0.02em; line-height:1.25; color:#FFFFFF; }
+  .q p { font-size:14pt; font-weight:400; line-height:1.4; color:#FFFFFF; margin-top:6pt; }
+  .q.amber h2, .q.amber p { color:#2A2D34; }
+  .cap { flex:none; margin-top:10pt; }
+  .cap p { font-size:14pt; font-weight:600; line-height:1.45; color:#2A2D34; }
+</style>
+</head>
+<body>
+<header>
+  <h1>The two questions that actually decide it</h1>
+  <div class="sheet"><p>03</p></div>
+</header>
+<main>
+  <div class="axis-top">
+    <div class="pad"></div>
+    <div class="lab"><p>TRAFFIC CANNOT BE SPLIT BY REQUEST</p></div>
+    <div class="lab"><p>TRAFFIC CAN BE SPLIT BY REQUEST</p></div>
+  </div>
+  <div class="body-row">
+    <div class="rail">
+      <div><p>A BAD RELEASE MUST STOP AT ONCE</p></div>
+      <div><p>A BAD RELEASE CAN WAIT FOR A REDEPLOY</p></div>
+    </div>
+    <div class="matrix">
+      <div class="mrow">
+        <div class="q teal">
+          <h2>Blue-green</h2>
+          <p>Stopping at once needs a switch. A switch does not need per-request routing.</p>
+        </div>
+        <div class="q amber">
+          <h2>Canary</h2>
+          <p>Both answers demanded. Exposure is bought a slice at a time, and withdrawn the same way.</p>
+        </div>
+      </div>
+      <div class="mrow">
+        <div class="q char">
+          <h2>Rolling</h2>
+          <p>If a redeploy is a fast enough exit, one fleet does it and nothing else is needed.</p>
+        </div>
+        <div class="q char">
+          <h2>Rolling, still</h2>
+          <p>Splitting traffic buys staged exposure, not a faster exit. It does not decide this alone.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="cap">
+    <p>Amber marks the most demanding cell here, not the best strategy.</p>
+  </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Five checkpoints, not a clock</title>
+<style>
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* 0.5in machine grid: a 36pt base64 SVG tile, not a repeating-linear-gradient. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#0C0D10 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTM1LjUgMFYzNk0wIDM1LjVIMzYiIHN0cm9rZT0iIzE2MTgxRCIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIi8+PC9zdmc+") repeat;
+    background-size:36pt 36pt;
+    color:#E4E6EB;
+    font-family:'SpaceGrotesk',Arial,sans-serif;
+    padding:26pt 34pt 20pt 34pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .kick { display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:7pt; }
+  .kick p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .kick p.idx { font-weight:400; color:#8A8F9A; }
+  /* One-line H1 keeps the hairline at a constant y on every sheet. */
+  h1 { font-size:26pt; font-weight:700; letter-spacing:-0.01em; line-height:1.2; margin-bottom:9pt; white-space:nowrap; }
+  .rule { height:0.75pt; background:#2A2D35; flex:none; margin-bottom:13pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .muted { color:#8A8F9A; }
+  .mono { font-family:'JetBrainsMono',Consolas,monospace; letter-spacing:0.05em; line-height:1.4; }
+  .tag { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .cap { font-family:'JetBrainsMono',Consolas,monospace; font-size:11pt; font-weight:400; letter-spacing:0.05em; line-height:1.4; color:#8A8F9A; white-space:nowrap; }
+  /* Code-block node: the style's one container. Every repeated node declares the same
+     border width so an emphasised sibling never shifts its own content. */
+  .node { background:#16181D; border:1px solid #2A2D35; border-radius:4px; }
+  footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  /* Vertical node/connector sequence — the spec's hierarchy form, chosen over the horizontal
+     process flow because five 112pt columns cannot hold a clause at the 14pt body floor. */
+  .capline { flex:none; display:flex; justify-content:space-between; gap:20pt; margin-bottom:10pt; }
+  .seq { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .step { flex:1 1 0; min-height:0; display:flex; align-items:center; padding:8pt 14pt; }
+  .step.live { border-color:#3DF5E0; box-shadow:0 0 8px rgba(61,245,224,0.45); }
+  .step .lead { width:176pt; flex:none; display:flex; align-items:baseline; gap:12pt; }
+  .num { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .name { font-family:'JetBrainsMono',Consolas,monospace; font-size:14pt; font-weight:500; letter-spacing:0.06em; line-height:1.4; white-space:nowrap; }
+  .conn { flex:none; width:1.5pt; height:7pt; background:#3DF5E0; margin-left:24pt; }
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">
+    <p>// 04 — SEQUENCE</p>
+    <p class="idx">[ 04 / 06 ]</p>
+  </div>
+  <h1>Five checkpoints, not a clock</h1>
+</header>
+<div class="rule"></div>
+<main>
+  <div class="capline">
+    <p class="cap">[ CHECKPOINT ] EACH ONE IS PASSED, NOT SCHEDULED</p>
+    <p class="cap">// NO CLOCK, NO MINUTE MARKERS</p>
+  </div>
+  <div class="seq">
+    <div class="node step live">
+      <div class="lead"><p class="num">// 01</p><p class="name">DECLARE</p></div>
+      <p>Someone says the word out loud. Ambiguity ends there.</p>
+    </div>
+    <div class="conn"></div>
+    <div class="node step">
+      <div class="lead"><p class="num">// 02</p><p class="name">ASSIGN</p></div>
+      <p>Commander, comms, investigator — named, in the channel.</p>
+    </div>
+    <div class="conn"></div>
+    <div class="node step">
+      <div class="lead"><p class="num">// 03</p><p class="name">STABILISE</p></div>
+      <p>Restore service first; the cause can wait for the review.</p>
+    </div>
+    <div class="conn"></div>
+    <div class="node step">
+      <div class="lead"><p class="num">// 04</p><p class="name">COMMUNICATE</p></div>
+      <p>The first update goes out before anyone knows the cause.</p>
+    </div>
+    <div class="conn"></div>
+    <div class="node step">
+      <div class="lead"><p class="num">// 05</p><p class="name">RECORD</p></div>
+      <p>The log is written while it happens, or it is fiction.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <p class="cap">INCIDENT RESPONSE · THE FIRST 30 MINUTES</p>
+  <p class="cap">DECLARE UNLOCKS THE OTHER FOUR</p>
+</footer>
+</body>
+</html>

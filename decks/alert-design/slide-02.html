@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Three destinations</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; }
+  /* diagram.comparison — 3 columns split by 4px vertical rules, black-fill inversion on the
+     emphasised column, 2px rule between rows. Row labels live in a left gutter so they are
+     stated once instead of three times. */
+  .gutter { flex:none; width:78pt; display:flex; flex-direction:column; padding-right:12pt; }
+  .ghead { flex:none; height:38pt; }
+  .grow { flex:1 1 0; min-height:0; display:flex; align-items:flex-start; justify-content:flex-end; padding:13pt 0 10pt 0; }
+  .grow + .grow { border-top:2px solid #0A0A0A; }
+  .lab { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#767676; text-align:right; }
+  .col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; padding:0 12pt; }
+  .vrule { flex:none; width:4px; background:#0A0A0A; margin:0 8pt; }
+  .col.mark { background:#0A0A0A; }
+  .chead { flex:none; height:38pt; display:flex; align-items:center; border-bottom:3px solid #0A0A0A; }
+  .col.mark .chead { border-bottom-color:#FFFFFF; }
+  h2 { font-size:22pt; font-weight:700; letter-spacing:0.02em; line-height:1.25; }
+  .col.mark h2 { color:#FFFFFF; }
+  .cell { flex:1 1 0; min-height:0; display:flex; align-items:flex-start; padding:10pt 0; }
+  .cell + .cell { border-top:2px solid #0A0A0A; }
+  .col.mark .cell + .cell { border-top-color:#FFFFFF; }
+  .cell p { font-size:14pt; font-weight:400; line-height:1.45; text-wrap:balance; }
+  .col.mark .cell p { color:#FFFFFF; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">02 · DESTINATIONS</p>
+  <h1>Three destinations, and only one wakes anyone</h1>
+  <p class="subline">Every alert lands in one of three places. Most of the pain is landing wrong.</p>
+</header>
+<div class="rule-h"></div>
+<main>
+  <div class="gutter">
+    <div class="ghead"></div>
+    <div class="grow"><p class="lab">PURPOSE</p></div>
+    <div class="grow"><p class="lab">FAILURE MODE</p></div>
+  </div>
+  <section class="col mark">
+    <div class="chead"><h2>PAGE</h2></div>
+    <div class="cell"><p>Something is breaking now and only a person can stop it.</p></div>
+    <div class="cell"><p>A page that could have waited teaches people to wait.</p></div>
+  </section>
+  <div class="vrule"></div>
+  <section class="col">
+    <div class="chead"><h2>TICKET</h2></div>
+    <div class="cell"><p>Real work that survives until the next working day.</p></div>
+    <div class="cell"><p>Something urgent filed here is read after the outage.</p></div>
+  </section>
+  <div class="vrule"></div>
+  <section class="col">
+    <div class="chead"><h2>DASHBOARD</h2></div>
+    <div class="cell"><p>Context you read when you are already investigating.</p></div>
+    <div class="cell"><p>A dashboard notifies nobody. At 3am it is a dark room.</p></div>
+  </section>
+</main>
+<footer>
+  <div class="rule-f"></div>
+  <p>ALERT DESIGN · SHEET 02/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>

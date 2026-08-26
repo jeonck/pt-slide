@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The test an alert must pass</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  /* diagram.process_flow — right-angle nodes, 2px border, 0px radius, black square number chip,
+     2pt right-angle connectors with sharp triangle heads (inline SVG). */
+  .flow { flex:1; min-height:0; display:flex; align-items:stretch; }
+  .node { flex:1 1 0; min-width:0; border:2px solid #0A0A0A; padding:12pt 12pt 0 12pt; display:flex; flex-direction:column; }
+  .chip { width:22pt; height:22pt; background:#0A0A0A; display:flex; align-items:center; justify-content:center; flex:none; }
+  .chip p { font-size:12pt; font-weight:700; line-height:1.4; color:#FFFFFF; letter-spacing:0.02em; }
+  h3 { font-size:16pt; font-weight:700; letter-spacing:0.06em; line-height:1.3; margin-top:10pt; }
+  .q { font-size:14pt; font-weight:400; line-height:1.45; margin-top:8pt; text-wrap:balance; }
+  .no { margin:auto -12pt 0 -12pt; background:#E6E6E6; padding:8pt 12pt; flex:none; }
+  .no p { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#3D3D3D; }
+  .conn { flex:none; width:16pt; display:flex; align-items:center; justify-content:center; }
+  .bar { flex:none; background:#0A0A0A; padding:11pt 16pt; margin-top:14pt; }
+  .bar p { font-size:15pt; font-weight:700; line-height:1.3; color:#FFFFFF; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">03 · THE TEST</p>
+  <h1>The test an alert must pass to earn a page</h1>
+  <p class="subline">Three questions. A no to any one of them means this is not a page.</p>
+</header>
+<div class="rule-h"></div>
+<main>
+  <div class="flow">
+    <article class="node">
+      <div class="chip"><p>01</p></div>
+      <h3>URGENT</h3>
+      <p class="q">Does waiting until morning make it worse?</p>
+      <div class="no"><p>IF NO · SEND TO TICKET</p></div>
+    </article>
+    <div class="conn">
+      <svg style="width:16pt; height:10pt;" viewBox="0 0 20 12" role="presentation" aria-hidden="true">
+        <rect x="0" y="5" width="12" height="2" fill="#0A0A0A"></rect>
+        <polygon points="12,1 20,6 12,11" fill="#0A0A0A"></polygon>
+      </svg>
+    </div>
+    <article class="node">
+      <div class="chip"><p>02</p></div>
+      <h3>ACTIONABLE</h3>
+      <p class="q">Is there a step someone can take right now?</p>
+      <div class="no"><p>IF NO · DELETE OR FIX</p></div>
+    </article>
+    <div class="conn">
+      <svg style="width:16pt; height:10pt;" viewBox="0 0 20 12" role="presentation" aria-hidden="true">
+        <rect x="0" y="5" width="12" height="2" fill="#0A0A0A"></rect>
+        <polygon points="12,1 20,6 12,11" fill="#0A0A0A"></polygon>
+      </svg>
+    </div>
+    <article class="node">
+      <div class="chip"><p>03</p></div>
+      <h3>HUMAN ONLY</h3>
+      <p class="q">Can only a person take that step?</p>
+      <div class="no"><p>IF NO · AUTOMATE IT</p></div>
+    </article>
+  </div>
+  <div class="bar">
+    <p>All three, or it is not a page. Two out of three is still someone's night.</p>
+  </div>
+</main>
+<footer>
+  <div class="rule-f"></div>
+  <p>ALERT DESIGN · SHEET 03/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Two policies that keep the signal honest</title>
+<style>
+@font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Budget: 405 - 32 - 26 - header 63.8 - footer 28 = 255pt for main. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A2540;
+    font-family:'Inter','Helvetica Neue',Arial,sans-serif;
+    padding:32pt 40pt 26pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; margin-bottom:16pt; }
+  .kicker { font-size:10pt; font-weight:600; letter-spacing:0.06em; line-height:1.4; color:#5C6B7E; }
+  h1 { font-size:24pt; font-weight:600; letter-spacing:-0.015em; line-height:1.2; max-width:560pt; margin-top:5pt; }
+  main { flex:1; min-height:0; display:flex; }
+  p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .muted { color:#5C6B7E; }
+  /* Division is by surface step, never by a border — per the style's Signature and Avoid list. */
+  .surface { background:#F6F9FC; border-radius:6pt; }
+  .surface-alt { background:#EBF0F6; border-radius:6pt; }
+  .card-h { font-size:11pt; font-weight:600; line-height:1.35; }
+  .gloss { font-size:12pt; font-weight:400; line-height:1.4; color:#5C6B7E; }
+  /* Circular number badge: accent fill, white SemiBold, per diagram.number_badge. */
+  .badge { flex:none; width:20pt; height:20pt; border-radius:10pt; background:#5A55E0;
+           display:flex; align-items:center; justify-content:center; }
+  .badge p { font-size:10pt; font-weight:600; line-height:1.4; color:#FFFFFF; }
+  footer { flex:none; margin-top:14pt; display:flex; justify-content:flex-end; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; letter-spacing:0.04em; color:#5C6B7E; }
+  /* 5:7 — the alternate of slide 02, per slide.layout "asymmetric 7:5 alternating". */
+  main { gap:20pt; }
+  .col5 { flex:5; min-width:0; display:flex; flex-direction:column; padding:18pt; justify-content:center; }
+  .col5 h2 { font-size:16pt; font-weight:600; letter-spacing:-0.015em; line-height:1.35; margin-top:8pt; }
+  .col5 .gloss { margin-top:10pt; }
+  .col7 { flex:7; min-width:0; display:flex; flex-direction:column; gap:16pt; }
+  .policy { flex:1; min-height:0; display:flex; gap:12pt; padding:13pt 15pt; }
+  .policy h3 { font-size:13pt; font-weight:600; letter-spacing:-0.01em; line-height:1.35; }
+  .policy .gloss { margin-top:6pt; }
+  .ptext { min-width:0; }
+</style>
+</head>
+<body>
+<header>
+  <p class="kicker">POLICY</p>
+  <h1>Two policies that keep the signal honest</h1>
+</header>
+<main>
+  <div class="col5 surface">
+    <p class="kicker">WHY BOTH EXIST</p>
+    <h2>The gate&rsquo;s only asset is that a red build means something.</h2>
+    <p class="gloss">Both policies protect that one asset. Neither of them is really about the test.</p>
+  </div>
+  <div class="col7">
+    <div class="policy surface">
+      <div class="badge"><p>01</p></div>
+      <div class="ptext">
+        <h3>A flaky test is a broken test.</h3>
+        <p class="gloss">A test that fails without a cause teaches the team to read failures as noise. Quarantine it the day it flakes, then fix it or delete it — a retry is not a fix.</p>
+      </div>
+    </div>
+    <div class="policy surface">
+      <div class="badge"><p>02</p></div>
+      <div class="ptext">
+        <h3>A pipeline nobody trusts gets bypassed.</h3>
+        <p class="gloss">Not by rebellion — by batching commits, merging on &ldquo;probably green&rdquo;, and handing out overrides. The gate holds only what people will actually wait for.</p>
+      </div>
+    </div>
+  </div>
+</main>
+<footer><p>CI PIPELINE · SHEET 04 / 06 · NO CHART, NO EXTERNAL DATA</p></footer>
+</body>
+</html>

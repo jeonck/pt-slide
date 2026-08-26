@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What we have to decide</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:24pt;
+    display:flex; flex-direction:column; gap:6pt;
+  }
+  .quote { flex:none; display:flex; background:#2A2D34; }
+  .quote .bar { flex:none; width:10pt; background:#E8A317; }
+  .quote .inner { flex:1; min-width:0; padding:26pt; }
+  .quote h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:22pt; font-weight:800; letter-spacing:-0.02em; line-height:1.35; color:#FFFFFF; }
+  .quote .presenter { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#FFFFFF; margin-top:12pt; text-align:right; }
+  .decisions { flex:1; min-height:0; display:flex; gap:6pt; }
+  .d { flex:1 1 0; min-width:0; padding:22pt; display:flex; flex-direction:column; justify-content:center; }
+  .d.char { background:#2A2D34; }
+  .d.teal { background:#1F8A82; }
+  .d .n { font-family:'Archivo', 'Arial Black', sans-serif; font-size:32pt; font-weight:800; letter-spacing:-0.02em; line-height:1.2; color:#FFFFFF; }
+  .d h2 { font-size:11pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#FFFFFF; margin-top:6pt; }
+  .d p { font-size:14pt; font-weight:400; line-height:1.45; color:#FFFFFF; margin-top:10pt; }
+</style>
+</head>
+<body>
+<div class="quote">
+  <div class="bar"></div>
+  <div class="inner">
+    <h1>Two answers pick the strategy: how long a bad release may keep serving, and whether traffic can be split.</h1>
+    <p class="presenter">PRESENTER · TEAM</p>
+  </div>
+</div>
+<div class="decisions">
+  <div class="d char">
+    <p class="n">01</p>
+    <h2>THE EXIT BUDGET</h2>
+    <p>How long may a bad release serve before we call it an incident?</p>
+  </div>
+  <div class="d teal">
+    <p class="n">02</p>
+    <h2>THE ROUTER</h2>
+    <p>Can our ingress split traffic by request today? If not, what would it take?</p>
+  </div>
+  <div class="d char">
+    <p class="n">03</p>
+    <h2>THE DRILL</h2>
+    <p>When did we last roll back on purpose, and what did it cost us to find out?</p>
+  </div>
+</div>
+</body>
+</html>

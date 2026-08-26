@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 5</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Deployment strategies — cover</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:24pt;
+    display:flex; gap:6pt;
+  }
+  .left { width:417pt; display:flex; flex-direction:column; gap:6pt; }
+  .right { flex:1; display:flex; flex-direction:column; gap:6pt; }
+  .title-block { flex:1; background:#2A2D34; padding:28pt; display:flex; flex-direction:column; }
+  h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:40pt; font-weight:800; letter-spacing:-0.02em; line-height:1.2; color:#FFFFFF; margin-top:10pt; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#E8A317; }
+  .sub { font-size:14pt; font-weight:600; line-height:1.45; color:#FFFFFF; margin-top:12pt; }
+  .presenter { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#FFFFFF; margin-top:auto; }
+  .thesis-block { flex:none; background:#E8A317; padding:20pt; }
+  .thesis-block p { font-size:16pt; font-weight:600; line-height:1.45; color:#2A2D34; }
+  .strat { flex:1 1 0; min-height:0; padding:16pt 18pt; display:flex; flex-direction:column; justify-content:center; }
+  .strat.teal { background:#1F8A82; }
+  .strat.char { background:#2A2D34; }
+  .strat .num { font-family:'Archivo', 'Arial Black', sans-serif; font-size:34pt; font-weight:800; line-height:1.2; color:#FFFFFF; }
+  .strat .name { font-size:14pt; font-weight:700; letter-spacing:0.06em; line-height:1.4; color:#FFFFFF; margin-top:2pt; }
+</style>
+</head>
+<body>
+<div class=&quot;left&quot;>
+  <div class=&quot;title-block&quot;>
+    <p class=&quot;eyebrow&quot;>RELEASE ENGINEERING · PLATFORM</p>
+    <h1>Deployment<br>strategies</h1>
+    <p class=&quot;sub&quot;>Rolling · Blue-green · Canary</p>
+    <p class=&quot;presenter&quot;>PRESENTER · TEAM</p>
+  </div>
+  <div class=&quot;thesis-block&quot;>
+    <p>The strategy is not a matter of taste. It is decided by how fast you must be able to roll back, and by whether your traffic can be split.</p>
+  </div>
+</div>
+<div class=&quot;right&quot;>
+  <div class=&quot;strat teal&quot;>
+    <p class=&quot;num&quot;>01</p>
+    <p class=&quot;name&quot;>ROLLING</p>
+  </div>
+  <div class=&quot;strat char&quot;>
+    <p class=&quot;num&quot;>02</p>
+    <p class=&quot;name&quot;>BLUE-GREEN</p>
+  </div>
+  <div class=&quot;strat teal&quot;>
+    <p class=&quot;num&quot;>03</p>
+    <p class=&quot;name&quot;>CANARY</p>
+  </div>
+</div>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Three ways to replace a running version</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:27pt 30pt 24pt 30pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; display:flex; align-items:center; justify-content:space-between; gap:16pt; margin-bottom:14pt; }
+  h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:24pt; font-weight:800; letter-spacing:-0.02em; line-height:1.3; white-space:nowrap; }
+  .sheet { flex:none; width:27pt; height:27pt; background:#2A2D34; display:flex; align-items:center; justify-content:center; }
+  .sheet p { font-family:'Archivo', 'Arial Black', sans-serif; font-size:13pt; font-weight:800; line-height:1.4; color:#FFFFFF; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .grid { flex:1; min-height:0; display:flex; gap:6pt; }
+  .rail { flex:none; width:108pt; display:flex; flex-direction:column; }
+  .rail .spacer { flex:none; height:38pt; }
+  .rail .cell { flex:1 1 0; min-height:0; display:flex; align-items:center; padding:8pt 10pt; }
+  .rail .cell.mark { background:#E8A317; }
+  .rail .cell p { font-size:11pt; font-weight:700; letter-spacing:0.05em; line-height:1.35; color:#2A2D34; }
+  .col { flex:1 1 0; min-width:0; display:flex; flex-direction:column; }
+  .col.char { background:#2A2D34; }
+  .col.teal { background:#1F8A82; }
+  .band { flex:none; height:38pt; display:flex; align-items:center; gap:8pt; padding:0 12pt; }
+  .band .n { font-family:'Archivo', 'Arial Black', sans-serif; font-size:16pt; font-weight:800; line-height:1.3; color:#FFFFFF; }
+  .band .t { font-size:13pt; font-weight:700; letter-spacing:0.06em; line-height:1.35; color:#FFFFFF; }
+  .row { flex:1 1 0; min-height:0; display:flex; flex-direction:column; justify-content:center; padding:8pt 12pt; border-top:0.75pt solid #FFFFFF; }
+  .row p { font-size:14pt; font-weight:600; line-height:1.4; color:#FFFFFF; }
+  .strip { flex:none; background:#E8A317; padding:11pt 16pt; margin-top:8pt; }
+  .strip p { font-size:14pt; font-weight:600; line-height:1.45; color:#2A2D34; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Three ways to replace a running version</h1>
+  <div class=&quot;sheet&quot;><p>02</p></div>
+</header>
+<main>
+  <div class=&quot;grid&quot;>
+    <div class=&quot;rail&quot;>
+      <div class=&quot;spacer&quot;></div>
+      <div class=&quot;cell&quot;><p>HOW IT RELEASES</p></div>
+      <div class=&quot;cell mark&quot;><p>HOW IT ROLLS BACK</p></div>
+      <div class=&quot;cell&quot;><p>WHAT IT COSTS YOU</p></div>
+    </div>
+    <div class=&quot;col char&quot;>
+      <div class=&quot;band&quot;><p class=&quot;n&quot;>01</p><p class=&quot;t&quot;>ROLLING</p></div>
+      <div class=&quot;row&quot;><p>Replacing instances in batches</p></div>
+      <div class=&quot;row&quot;><p>Deploying the old build again, batch by batch</p></div>
+      <div class=&quot;row&quot;><p>One fleet, with headroom for the surge</p></div>
+    </div>
+    <div class=&quot;col teal&quot;>
+      <div class=&quot;band&quot;><p class=&quot;n&quot;>02</p><p class=&quot;t&quot;>BLUE-GREEN</p></div>
+      <div class=&quot;row&quot;><p>Switching a router to a second full stack</p></div>
+      <div class=&quot;row&quot;><p>Switching the router back</p></div>
+      <div class=&quot;row&quot;><p>Two full environments at once</p></div>
+    </div>
+    <div class=&quot;col char&quot;>
+      <div class=&quot;band&quot;><p class=&quot;n&quot;>03</p><p class=&quot;t&quot;>CANARY</p></div>
+      <div class=&quot;row&quot;><p>Sending a slice of traffic to the new build</p></div>
+      <div class=&quot;row&quot;><p>Withdrawing the slice</p></div>
+      <div class=&quot;row&quot;><p>Request routing and per-slice telemetry</p></div>
+    </div>
+  </div>
+  <div class=&quot;strip&quot;>
+    <p>Only one of the three undoes a release by deploying again. The other two undo it by routing.</p>
+  </div>
+</main>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>The two questions that actually decide it</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:27pt 30pt 24pt 30pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; display:flex; align-items:center; justify-content:space-between; gap:16pt; margin-bottom:14pt; }
+  h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:24pt; font-weight:800; letter-spacing:-0.02em; line-height:1.3; white-space:nowrap; }
+  .sheet { flex:none; width:27pt; height:27pt; background:#2A2D34; display:flex; align-items:center; justify-content:center; }
+  .sheet p { font-family:'Archivo', 'Arial Black', sans-serif; font-size:13pt; font-weight:800; line-height:1.4; color:#FFFFFF; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .axis-top { flex:none; display:flex; gap:6pt; margin-bottom:6pt; }
+  .axis-top .pad { flex:none; width:130pt; }
+  .axis-top .lab { flex:1 1 0; min-width:0; }
+  .axis-top .lab p { font-size:10pt; font-weight:700; letter-spacing:0.06em; line-height:1.4; color:#6B6F76; }
+  .body-row { flex:1; min-height:0; display:flex; gap:6pt; }
+  .rail { flex:none; width:130pt; display:flex; flex-direction:column; gap:4pt; }
+  .rail div { flex:1 1 0; min-height:0; display:flex; align-items:center; }
+  .rail p { font-size:10pt; font-weight:700; letter-spacing:0.06em; line-height:1.5; color:#6B6F76; text-align:right; width:100%; }
+  .matrix { flex:1; min-height:0; display:flex; flex-direction:column; gap:4pt; }
+  .mrow { flex:1 1 0; min-height:0; display:flex; gap:4pt; }
+  .q { flex:1 1 0; min-width:0; padding:14pt; display:flex; flex-direction:column; justify-content:center; }
+  .q.teal { background:#1F8A82; }
+  .q.char { background:#2A2D34; }
+  .q.amber { background:#E8A317; }
+  .q h2 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:20pt; font-weight:800; letter-spacing:-0.02em; line-height:1.25; color:#FFFFFF; }
+  .q p { font-size:14pt; font-weight:400; line-height:1.4; color:#FFFFFF; margin-top:6pt; }
+  .q.amber h2, .q.amber p { color:#2A2D34; }
+  .cap { flex:none; margin-top:10pt; }
+  .cap p { font-size:14pt; font-weight:600; line-height:1.45; color:#2A2D34; }
+</style>
+</head>
+<body>
+<header>
+  <h1>The two questions that actually decide it</h1>
+  <div class=&quot;sheet&quot;><p>03</p></div>
+</header>
+<main>
+  <div class=&quot;axis-top&quot;>
+    <div class=&quot;pad&quot;></div>
+    <div class=&quot;lab&quot;><p>TRAFFIC CANNOT BE SPLIT BY REQUEST</p></div>
+    <div class=&quot;lab&quot;><p>TRAFFIC CAN BE SPLIT BY REQUEST</p></div>
+  </div>
+  <div class=&quot;body-row&quot;>
+    <div class=&quot;rail&quot;>
+      <div><p>A BAD RELEASE MUST STOP AT ONCE</p></div>
+      <div><p>A BAD RELEASE CAN WAIT FOR A REDEPLOY</p></div>
+    </div>
+    <div class=&quot;matrix&quot;>
+      <div class=&quot;mrow&quot;>
+        <div class=&quot;q teal&quot;>
+          <h2>Blue-green</h2>
+          <p>Stopping at once needs a switch. A switch does not need per-request routing.</p>
+        </div>
+        <div class=&quot;q amber&quot;>
+          <h2>Canary</h2>
+          <p>Both answers demanded. Exposure is bought a slice at a time, and withdrawn the same way.</p>
+        </div>
+      </div>
+      <div class=&quot;mrow&quot;>
+        <div class=&quot;q char&quot;>
+          <h2>Rolling</h2>
+          <p>If a redeploy is a fast enough exit, one fleet does it and nothing else is needed.</p>
+        </div>
+        <div class=&quot;q char&quot;>
+          <h2>Rolling, still</h2>
+          <p>Splitting traffic buys staged exposure, not a faster exit. It does not decide this alone.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class=&quot;cap&quot;>
+    <p>Amber marks the most demanding cell here, not the best strategy.</p>
+  </div>
+</main>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What each strategy demands before it works</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:27pt 30pt 24pt 30pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; display:flex; align-items:center; justify-content:space-between; gap:16pt; margin-bottom:14pt; }
+  h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:24pt; font-weight:800; letter-spacing:-0.02em; line-height:1.3; white-space:nowrap; }
+  .sheet { flex:none; width:27pt; height:27pt; background:#2A2D34; display:flex; align-items:center; justify-content:center; }
+  .sheet p { font-family:'Archivo', 'Arial Black', sans-serif; font-size:13pt; font-weight:800; line-height:1.4; color:#FFFFFF; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .bands { flex:1; min-height:0; display:flex; flex-direction:column; gap:6pt; }
+  .band { flex:1 1 0; min-height:0; display:flex; gap:6pt; }
+  .tag { flex:none; width:160pt; padding:12pt 14pt; display:flex; flex-direction:column; justify-content:center; }
+  .tag.char { background:#2A2D34; }
+  .tag.teal { background:#1F8A82; }
+  .tag.amber { background:#E8A317; }
+  .tag .n { font-family:'Archivo', 'Arial Black', sans-serif; font-size:34pt; font-weight:800; letter-spacing:-0.02em; line-height:1.2; color:#FFFFFF; }
+  .tag .t { font-size:13pt; font-weight:700; letter-spacing:0.06em; line-height:1.35; color:#FFFFFF; margin-top:2pt; }
+  .tag.amber .n, .tag.amber .t { color:#2A2D34; }
+  .say { flex:1; min-width:0; padding:12pt 16pt; display:flex; align-items:center; }
+  .say p { font-size:14pt; font-weight:400; line-height:1.4; color:#2A2D34; }
+  .chip { flex:none; width:132pt; padding:10pt 12pt; display:flex; align-items:center; }
+  .chip.char { background:#2A2D34; }
+  .chip.teal { background:#1F8A82; }
+  .chip p { font-size:10pt; font-weight:700; letter-spacing:0.06em; line-height:1.5; color:#FFFFFF; }
+  .cap { flex:none; margin-top:10pt; }
+  .cap p { font-size:14pt; font-weight:600; line-height:1.45; color:#2A2D34; }
+</style>
+</head>
+<body>
+<header>
+  <h1>What each strategy demands before it works</h1>
+  <div class=&quot;sheet&quot;><p>04</p></div>
+</header>
+<main>
+  <div class=&quot;bands&quot;>
+    <div class=&quot;band&quot;>
+      <div class=&quot;tag char&quot;>
+        <p class=&quot;n&quot;>01</p>
+        <p class=&quot;t&quot;>HEALTH CHECKS</p>
+      </div>
+      <div class=&quot;say&quot;>
+        <p>A check that only proves the process is listening will pass a broken release — and all three strategies promote on that signal.</p>
+      </div>
+      <div class=&quot;chip teal&quot;>
+        <p>A BAD BATCH IS PROMOTED</p>
+      </div>
+    </div>
+    <div class=&quot;band&quot;>
+      <div class=&quot;tag amber&quot;>
+        <p class=&quot;n&quot;>02</p>
+        <p class=&quot;t&quot;>ROLLBACK</p>
+      </div>
+      <div class=&quot;say&quot;>
+        <p>A rollback path that has never been run is a plan, not a capability. The strategies differ only in how fast a working one fires.</p>
+      </div>
+      <div class=&quot;chip char&quot;>
+        <p>THE EXIT IS UNTESTED</p>
+      </div>
+    </div>
+    <div class=&quot;band&quot;>
+      <div class=&quot;tag teal&quot;>
+        <p class=&quot;n&quot;>03</p>
+        <p class=&quot;t&quot;>SESSIONS</p>
+      </div>
+      <div class=&quot;say&quot;>
+        <p>All three serve two versions at once, if only for a moment. State pinned to one instance dies with that instance.</p>
+      </div>
+      <div class=&quot;chip char&quot;>
+        <p>USERS LOSE THEIR STATE</p>
+      </div>
+    </div>
+  </div>
+  <div class=&quot;cap&quot;>
+    <p>Missing one of these leaves you with the slowest exit you own.</p>
+  </div>
+</main>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we have to decide</title>
+<style>
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Archivo'; src:url('./assets/fonts/Archivo-800.woff2') format('woff2'); font-weight:800; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#2A2D34;
+    font-family:'Inter', Arial, sans-serif;
+    padding:24pt;
+    display:flex; flex-direction:column; gap:6pt;
+  }
+  .quote { flex:none; display:flex; background:#2A2D34; }
+  .quote .bar { flex:none; width:10pt; background:#E8A317; }
+  .quote .inner { flex:1; min-width:0; padding:26pt; }
+  .quote h1 { font-family:'Archivo', 'Arial Black', sans-serif; font-size:22pt; font-weight:800; letter-spacing:-0.02em; line-height:1.35; color:#FFFFFF; }
+  .quote .presenter { font-size:10pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#FFFFFF; margin-top:12pt; text-align:right; }
+  .decisions { flex:1; min-height:0; display:flex; gap:6pt; }
+  .d { flex:1 1 0; min-width:0; padding:22pt; display:flex; flex-direction:column; justify-content:center; }
+  .d.char { background:#2A2D34; }
+  .d.teal { background:#1F8A82; }
+  .d .n { font-family:'Archivo', 'Arial Black', sans-serif; font-size:32pt; font-weight:800; letter-spacing:-0.02em; line-height:1.2; color:#FFFFFF; }
+  .d h2 { font-size:11pt; font-weight:700; letter-spacing:0.08em; line-height:1.4; color:#FFFFFF; margin-top:6pt; }
+  .d p { font-size:14pt; font-weight:400; line-height:1.45; color:#FFFFFF; margin-top:10pt; }
+</style>
+</head>
+<body>
+<div class=&quot;quote&quot;>
+  <div class=&quot;bar&quot;></div>
+  <div class=&quot;inner&quot;>
+    <h1>Two answers pick the strategy: how long a bad release may keep serving, and whether traffic can be split.</h1>
+    <p class=&quot;presenter&quot;>PRESENTER · TEAM</p>
+  </div>
+</div>
+<div class=&quot;decisions&quot;>
+  <div class=&quot;d char&quot;>
+    <p class=&quot;n&quot;>01</p>
+    <h2>THE EXIT BUDGET</h2>
+    <p>How long may a bad release serve before we call it an incident?</p>
+  </div>
+  <div class=&quot;d teal&quot;>
+    <p class=&quot;n&quot;>02</p>
+    <h2>THE ROUTER</h2>
+    <p>Can our ingress split traffic by request today? If not, what would it take?</p>
+  </div>
+  <div class=&quot;d char&quot;>
+    <p class=&quot;n&quot;>03</p>
+    <h2>THE DRILL</h2>
+    <p>When did we last roll back on purpose, and what did it cost us to find out?</p>
+  </div>
+</div>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 5;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Arimo'; src:url('./assets/fonts/Arimo-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#FFFFFF; color:#0A0A0A;
+    font-family:'Arimo','Helvetica Neue',Arial,sans-serif;
+    padding:30pt 38pt 26pt 38pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
+  h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
+  .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
+  .rule-h { height:4px; background:#0A0A0A; flex:none; margin-bottom:14pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .creed { flex:none; background:#0A0A0A; padding:14pt 16pt; }
+  .creed p { font-size:16pt; font-weight:700; line-height:1.4; color:#FFFFFF; }
+  .qs { flex:1; min-height:0; display:flex; flex-direction:column; margin-top:14pt; border-top:2px solid #0A0A0A; }
+  .qrow { flex:1 1 0; min-height:0; display:flex; align-items:center; gap:12pt; padding:10pt 0; }
+  .qrow + .qrow { border-top:2px solid #0A0A0A; }
+  .chip { width:22pt; height:22pt; background:#0A0A0A; display:flex; align-items:center; justify-content:center; flex:none; }
+  .chip p { font-size:12pt; font-weight:700; line-height:1.4; color:#FFFFFF; }
+  .qrow > p { font-size:14pt; font-weight:400; line-height:1.45; }
+  footer { flex:none; margin-top:10pt; }
+  .rule-f { height:2px; background:#0A0A0A; }
+  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">05 · OPEN QUESTIONS</p>
+  <h1>What we need to decide</h1>
+  <p class="subline">The rule is short. Holding to it is not. These are the parts still open.</p>
+</header>
+<div class="rule-h"></div>
+<main>
+  <div class="creed">
+    <p>If it can wait, it is a ticket. If no one is needed, it is a script. If nobody is looking, it is a dashboard. What is left is a page.</p>
+  </div>
+  <div class="qs">
+    <div class="qrow"><div class="chip"><p>1</p></div><p>Who may delete an alert, and what do they have to show to do it?</p></div>
+    <div class="qrow"><div class="chip"><p>2</p></div><p>How many pages in one shift is too many, and who makes that call?</p></div>
+    <div class="qrow"><div class="chip"><p>3</p></div><p>Which alerts do we fix at the source before the next rotation?</p></div>
+  </div>
+</main>
+<footer>
+  <div class="rule-f"></div>
+  <p>PRESENTER · TEAM · ALERT DESIGN · SHEET 05/05 · NO CHART, NO EXTERNAL DATA</p>
+</footer>
+</body>
+</html>

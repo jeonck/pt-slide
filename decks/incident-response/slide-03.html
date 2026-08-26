@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Three roles, defined by what they don't do</title>
+<style>
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* 0.5in machine grid: a 36pt base64 SVG tile, not a repeating-linear-gradient. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#0C0D10 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTM1LjUgMFYzNk0wIDM1LjVIMzYiIHN0cm9rZT0iIzE2MTgxRCIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIi8+PC9zdmc+") repeat;
+    background-size:36pt 36pt;
+    color:#E4E6EB;
+    font-family:'SpaceGrotesk',Arial,sans-serif;
+    padding:26pt 34pt 20pt 34pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .kick { display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:7pt; }
+  .kick p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .kick p.idx { font-weight:400; color:#8A8F9A; }
+  /* One-line H1 keeps the hairline at a constant y on every sheet. */
+  h1 { font-size:26pt; font-weight:700; letter-spacing:-0.01em; line-height:1.2; margin-bottom:9pt; white-space:nowrap; }
+  .rule { height:0.75pt; background:#2A2D35; flex:none; margin-bottom:13pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .muted { color:#8A8F9A; }
+  .mono { font-family:'JetBrainsMono',Consolas,monospace; letter-spacing:0.05em; line-height:1.4; }
+  .tag { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .cap { font-family:'JetBrainsMono',Consolas,monospace; font-size:11pt; font-weight:400; letter-spacing:0.05em; line-height:1.4; color:#8A8F9A; white-space:nowrap; }
+  /* Code-block node: the style's one container. Every repeated node declares the same
+     border width so an emphasised sibling never shifts its own content. */
+  .node { background:#16181D; border:1px solid #2A2D35; border-radius:4px; }
+  footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  /* DOES over DOES NOT. The refusal carries the brighter ink because it is the argument. */
+  .cards { flex:1; min-height:0; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:minmax(0,1fr); gap:16pt; }
+  .cards .node { padding:14pt; display:flex; flex-direction:column; }
+  .role { margin-bottom:9pt; }
+  .lbl { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; margin-bottom:5pt; white-space:nowrap; }
+  .lbl.does { color:#3DF5E0; }
+  .lbl.not { color:#9D7BFF; }
+  .split { height:0.75pt; background:#2A2D35; flex:none; margin:10pt 0; }
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">
+    <p>// 03 — ROLES</p>
+    <p class="idx">[ 03 / 06 ]</p>
+  </div>
+  <h1>Three roles, defined by what they don't do</h1>
+</header>
+<div class="rule"></div>
+<main>
+  <div class="cards">
+    <div class="node">
+      <p class="tag role">[ COMMANDER ]</p>
+      <p class="lbl does">// DOES</p>
+      <p class="muted">Declares, assigns each role by name, decides, and keeps the log.</p>
+      <div class="split"></div>
+      <p class="lbl not">// DOES NOT</p>
+      <p>Touch a terminal. A commander who debugs is no longer commanding.</p>
+    </div>
+    <div class="node">
+      <p class="tag role">[ COMMS ]</p>
+      <p class="lbl does">// DOES</p>
+      <p class="muted">Writes to stakeholders on cadence, including when nothing changed.</p>
+      <div class="split"></div>
+      <p class="lbl not">// DOES NOT</p>
+      <p>Diagnose, or promise a fix time. “We don't know yet” is a full update.</p>
+    </div>
+    <div class="node">
+      <p class="tag role">[ INVESTIGATOR ]</p>
+      <p class="lbl does">// DOES</p>
+      <p class="muted">One hypothesis at a time — tested, and the result said out loud.</p>
+      <div class="split"></div>
+      <p class="lbl not">// DOES NOT</p>
+      <p>Answer stakeholders, or change production without announcing it.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <p class="cap">INCIDENT RESPONSE · THE FIRST 30 MINUTES</p>
+  <p class="cap">EACH ROLE IS ONE PERSON, NAMED OUT LOUD</p>
+</footer>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Incident response — the first 30 minutes</title>
+<style>
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'SpaceGrotesk'; src:url('./assets/fonts/SpaceGrotesk-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'JetBrainsMono'; src:url('./assets/fonts/JetBrainsMono-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* 0.5in machine grid: a 36pt base64 SVG tile, not a repeating-linear-gradient. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#0C0D10 url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNiIgaGVpZ2h0PSIzNiI+PHBhdGggZD0iTTM1LjUgMFYzNk0wIDM1LjVIMzYiIHN0cm9rZT0iIzE2MTgxRCIgc3Ryb2tlLXdpZHRoPSIxIiBmaWxsPSJub25lIi8+PC9zdmc+") repeat;
+    background-size:36pt 36pt;
+    color:#E4E6EB;
+    font-family:'SpaceGrotesk',Arial,sans-serif;
+    padding:26pt 34pt 20pt 34pt;
+    display:flex; flex-direction:column;
+  }
+  header { flex:none; }
+  .kick { display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:7pt; }
+  .kick p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .kick p.idx { font-weight:400; color:#8A8F9A; }
+  /* One-line H1 keeps the hairline at a constant y on every sheet. */
+  h1 { font-size:26pt; font-weight:700; letter-spacing:-0.01em; line-height:1.2; margin-bottom:9pt; white-space:nowrap; }
+  .rule { height:0.75pt; background:#2A2D35; flex:none; margin-bottom:13pt; }
+  main { flex:1; min-height:0; display:flex; flex-direction:column; }
+  p { font-size:14pt; font-weight:400; line-height:1.45; }
+  .muted { color:#8A8F9A; }
+  .mono { font-family:'JetBrainsMono',Consolas,monospace; letter-spacing:0.05em; line-height:1.4; }
+  .tag { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
+  .cap { font-family:'JetBrainsMono',Consolas,monospace; font-size:11pt; font-weight:400; letter-spacing:0.05em; line-height:1.4; color:#8A8F9A; white-space:nowrap; }
+  /* Code-block node: the style's one container. Every repeated node declares the same
+     border width so an emphasised sibling never shifts its own content. */
+  .node { background:#16181D; border:1px solid #2A2D35; border-radius:4px; }
+  footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  /* Cover: display title over a glowing cyan hairline, meta strip pinned to the foot. */
+  h1.cover { font-size:38pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; white-space:normal; margin-bottom:18pt; }
+  .glow { width:120pt; height:1px; background:#3DF5E0; box-shadow:0 0 8px #3DF5E0; flex:none; margin-bottom:18pt; }
+  .thesis { font-size:17pt; line-height:1.45; max-width:600pt; }
+  .strip { flex:none; }
+  .strip .rule { margin-bottom:12pt; }
+  .strip .row { display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  .strip p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:400; letter-spacing:0.05em; line-height:1.4; white-space:nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <div class="kick">
+    <p>// RUNBOOK</p>
+    <p class="idx">[ 01 / 06 ]</p>
+  </div>
+</header>
+<main>
+  <div style="flex:0.8; min-height:0;"></div>
+  <h1 class="cover">Incident response:<br>the first 30 minutes</h1>
+  <div class="glow"></div>
+  <p class="thesis">The bottleneck in the first half hour is rarely diagnosis.<br>It is that nobody said who is in charge, and nobody told anyone else.</p>
+  <div style="flex:1; min-height:0;"></div>
+  <div class="strip">
+    <div class="rule" style="margin-bottom:12pt;"></div>
+    <div class="row">
+      <p>PRESENTER · TEAM</p>
+      <p class="muted">INCIDENT RESPONSE RUNBOOK</p>
+    </div>
+  </div>
+</main>
+</body>
+</html>
