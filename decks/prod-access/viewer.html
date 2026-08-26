@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 6</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Who gets into production — standing access is the risk</title>
+<style>
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2');font-weight:600;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:720pt;height:405pt;overflow:hidden;padding:32pt 40pt;
+       background:#0A1A33;color:#E8E5DE;font-family:'Inter',Arial,sans-serif;
+       display:flex;flex-direction:column;}
+  header{flex:none;}
+  .rail{display:flex;justify-content:space-between;align-items:baseline;gap:24pt;}
+  .lbl{font-size:11pt;font-weight:500;letter-spacing:0.08em;line-height:1.4;
+       text-transform:uppercase;color:#9AA6BC;white-space:nowrap;}
+  .lbl.gold{color:#C8A24B;font-weight:600;}
+  h1,h2,h3{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;font-weight:600;}
+  h2{font-size:24pt;line-height:1.3;margin-top:6pt;white-space:nowrap;letter-spacing:0;}
+  .rule-gold{flex:none;height:0.5pt;background:#C8A24B;}
+  header .rule-gold{margin-top:10pt;}
+  main{flex:1;min-height:0;margin-top:14pt;display:flex;flex-direction:column;}
+  footer{flex:none;margin-top:12pt;display:flex;justify-content:space-between;
+         align-items:baseline;gap:24pt;}
+  .foot{flex:none;font-size:10pt;font-weight:400;line-height:1.4;color:#9AA6BC;}
+  .foot.disc{font-weight:500;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  /* --- navy panel module: fill is only 1.5:1 on the canvas, so the gold hairline is what
+         makes it a panel (spec: 0.5pt gold hairline border, radius 0, no fill emphasis) --- */
+  .panel{background:#1F3A5F;border:0.5pt solid #C8A24B;padding:12pt;
+         display:flex;flex-direction:column;}
+  .panel .kick{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+               text-transform:uppercase;color:#C8A24B;}
+  .panel h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .panel .hair{flex:none;height:0.5pt;background:#C8A24B;margin:10pt 0;}
+  .panel .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#E8E5DE;}
+  .d1{font-size:46pt;line-height:1.35;letter-spacing:0;}
+  .d2{font-size:46pt;line-height:1.35;color:#C8A24B;margin-top:2pt;}
+  main .rule-gold{margin-top:24pt;}
+  .cover-row{display:grid;grid-template-columns:368pt 248pt;gap:24pt;margin-top:22pt;
+             align-items:start;}
+  .premise{padding-top:12pt;font-size:16pt;font-weight:400;line-height:1.5;color:#E8E5DE;}
+  .presenter{margin-top:auto;}
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;rail&quot;>
+    <p class=&quot;lbl&quot;>Access governance · Internal</p>
+    <p class=&quot;lbl gold&quot;>Cover · 01 / 06</p>
+  </div>
+</header>
+<main>
+  <h1 class=&quot;d1&quot;>Who gets into production</h1>
+  <h1 class=&quot;d2&quot;>Standing access is the risk</h1>
+  <div class=&quot;rule-gold&quot;></div>
+  <div class=&quot;cover-row&quot;>
+    <p class=&quot;premise&quot;>Nobody decides to hold production credentials forever. They are granted
+      once, for a reason that ends — and the grant does not.</p>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>What replaces it</p>
+      <h3>Break-glass, with an expiry and a written record.</h3>
+    </div>
+  </div>
+  <p class=&quot;lbl presenter&quot;>Presenter · Team</p>
+</main>
+<footer>
+  <p class=&quot;foot&quot;>SOURCE — none. No figures in this deck; the argument is mechanical.</p>
+  <p class=&quot;foot disc&quot;>Internal discussion draft · 01 / 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Why permanent access accumulates</title>
+<style>
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2');font-weight:600;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:720pt;height:405pt;overflow:hidden;padding:32pt 40pt;
+       background:#0A1A33;color:#E8E5DE;font-family:'Inter',Arial,sans-serif;
+       display:flex;flex-direction:column;}
+  header{flex:none;}
+  .rail{display:flex;justify-content:space-between;align-items:baseline;gap:24pt;}
+  .lbl{font-size:11pt;font-weight:500;letter-spacing:0.08em;line-height:1.4;
+       text-transform:uppercase;color:#9AA6BC;white-space:nowrap;}
+  .lbl.gold{color:#C8A24B;font-weight:600;}
+  h1,h2,h3{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;font-weight:600;}
+  h2{font-size:24pt;line-height:1.3;margin-top:6pt;white-space:nowrap;letter-spacing:0;}
+  .rule-gold{flex:none;height:0.5pt;background:#C8A24B;}
+  header .rule-gold{margin-top:10pt;}
+  main{flex:1;min-height:0;margin-top:14pt;display:flex;flex-direction:column;}
+  footer{flex:none;margin-top:12pt;display:flex;justify-content:space-between;
+         align-items:baseline;gap:24pt;}
+  .foot{flex:none;font-size:10pt;font-weight:400;line-height:1.4;color:#9AA6BC;}
+  .foot.disc{font-weight:500;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  /* --- navy panel module: fill is only 1.5:1 on the canvas, so the gold hairline is what
+         makes it a panel (spec: 0.5pt gold hairline border, radius 0, no fill emphasis) --- */
+  .panel{background:#1F3A5F;border:0.5pt solid #C8A24B;padding:12pt;
+         display:flex;flex-direction:column;}
+  .panel .kick{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+               text-transform:uppercase;color:#C8A24B;}
+  .panel h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .panel .hair{flex:none;height:0.5pt;background:#C8A24B;margin:10pt 0;}
+  .panel .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#E8E5DE;}
+  /* spec table vocabulary: 11pt uppercase header + 0.5pt gold bottom rule,
+     1px navy row rules, total row 0.5pt gold top rule + bold */
+  .ledger{display:flex;flex-direction:column;}
+  .row{display:grid;grid-template-columns:28pt 140pt 1fr;gap:12pt;align-items:start;}
+  .thead{padding-bottom:7pt;border-bottom:0.5pt solid #C8A24B;}
+  .th{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+      text-transform:uppercase;color:#C8A24B;white-space:nowrap;}
+  /* every row carries the same rule element; only the colour would ever change, so
+     emphasising one row can never nudge it out of column */
+  .item{padding:6pt 0;border-bottom:1px solid #3A5A85;}
+  .num{font-size:12pt;font-weight:600;letter-spacing:0.06em;line-height:1.4;
+       color:#C8A24B;font-variant-numeric:tabular-nums;}
+  .field{font-size:12pt;font-weight:600;letter-spacing:0.06em;line-height:1.4;
+         text-transform:uppercase;color:#E8E5DE;white-space:nowrap;}
+  .claim{font-size:15pt;font-family:'Source Serif 4',Georgia,serif;font-weight:600;
+         line-height:1.4;}
+  .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#9AA6BC;margin-top:4pt;}
+  .ledger .item:last-of-type{border-bottom-color:transparent;}
+  .total{margin-top:auto;border-top:0.5pt solid #C8A24B;padding-top:12pt;}
+  .total p{font-size:15pt;font-weight:500;line-height:1.45;color:#E8E5DE;}
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;rail&quot;>
+    <p class=&quot;lbl&quot;>Access governance · Internal</p>
+    <p class=&quot;lbl gold&quot;>Section 01 · Accrual</p>
+  </div>
+  <h2>Why permanent access accumulates</h2>
+  <div class=&quot;rule-gold&quot;></div>
+</header>
+<main>
+  <div class=&quot;ledger&quot;>
+    <div class=&quot;row thead&quot;>
+      <p class=&quot;th&quot;>#</p>
+      <p class=&quot;th&quot;>The grant</p>
+      <p class=&quot;th&quot;>What makes it permanent</p>
+    </div>
+    <div class=&quot;row item&quot;>
+      <p class=&quot;num&quot;>01</p>
+      <p class=&quot;field&quot;>Never revoked</p>
+      <div>
+        <p class=&quot;claim&quot;>Granted for an incident, and the incident ended</p>
+        <p class=&quot;mech&quot;>The role outlives the reason. Nothing knows the reason ended.</p>
+      </div>
+    </div>
+    <div class=&quot;row item&quot;>
+      <p class=&quot;num&quot;>02</p>
+      <p class=&quot;field&quot;>Inherited</p>
+      <div>
+        <p class=&quot;claim&quot;>Granted to a group, and the group kept growing</p>
+        <p class=&quot;mech&quot;>Access follows the team, not the task. Joining inherits all of it.</p>
+      </div>
+    </div>
+    <div class=&quot;row item&quot;>
+      <p class=&quot;num&quot;>03</p>
+      <p class=&quot;field&quot;>The exception</p>
+      <div>
+        <p class=&quot;claim&quot;>Granted to unblock a launch, and the launch shipped</p>
+        <p class=&quot;mech&quot;>Removing it costs a conversation. Keeping it costs nothing.</p>
+      </div>
+    </div>
+  </div>
+  <div class=&quot;total&quot;>
+    <p>Access is the only thing we add without a review date.</p>
+  </div>
+</main>
+<footer>
+  <p class=&quot;foot&quot;>SOURCE — none. No figures in this deck; the argument is mechanical.</p>
+  <p class=&quot;foot disc&quot;>Internal discussion draft · 02 / 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What least privilege actually costs</title>
+<style>
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2');font-weight:600;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:720pt;height:405pt;overflow:hidden;padding:32pt 40pt;
+       background:#0A1A33;color:#E8E5DE;font-family:'Inter',Arial,sans-serif;
+       display:flex;flex-direction:column;}
+  header{flex:none;}
+  .rail{display:flex;justify-content:space-between;align-items:baseline;gap:24pt;}
+  .lbl{font-size:11pt;font-weight:500;letter-spacing:0.08em;line-height:1.4;
+       text-transform:uppercase;color:#9AA6BC;white-space:nowrap;}
+  .lbl.gold{color:#C8A24B;font-weight:600;}
+  h1,h2,h3{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;font-weight:600;}
+  h2{font-size:24pt;line-height:1.3;margin-top:6pt;white-space:nowrap;letter-spacing:0;}
+  .rule-gold{flex:none;height:0.5pt;background:#C8A24B;}
+  header .rule-gold{margin-top:10pt;}
+  main{flex:1;min-height:0;margin-top:14pt;display:flex;flex-direction:column;}
+  footer{flex:none;margin-top:12pt;display:flex;justify-content:space-between;
+         align-items:baseline;gap:24pt;}
+  .foot{flex:none;font-size:10pt;font-weight:400;line-height:1.4;color:#9AA6BC;}
+  .foot.disc{font-weight:500;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  /* --- navy panel module: fill is only 1.5:1 on the canvas, so the gold hairline is what
+         makes it a panel (spec: 0.5pt gold hairline border, radius 0, no fill emphasis) --- */
+  .panel{background:#1F3A5F;border:0.5pt solid #C8A24B;padding:12pt;
+         display:flex;flex-direction:column;}
+  .panel .kick{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+               text-transform:uppercase;color:#C8A24B;}
+  .panel h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .panel .hair{flex:none;height:0.5pt;background:#C8A24B;margin:10pt 0;}
+  .panel .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#E8E5DE;}
+  .trip{display:grid;grid-template-columns:repeat(3,200pt);gap:20pt;align-items:stretch;}
+  .note{margin-top:auto;border-top:0.5pt solid #C8A24B;padding-top:12pt;}
+  .note p{font-size:15pt;font-weight:500;line-height:1.45;color:#E8E5DE;}
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;rail&quot;>
+    <p class=&quot;lbl&quot;>Access governance · Internal</p>
+    <p class=&quot;lbl gold&quot;>Section 02 · The price</p>
+  </div>
+  <h2>What least privilege actually costs</h2>
+  <div class=&quot;rule-gold&quot;></div>
+</header>
+<main>
+  <div class=&quot;trip&quot;>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>Latency</p>
+      <h3>The fix waits<br>on a question</h3>
+      <div class=&quot;hair&quot;></div>
+      <p class=&quot;mech&quot;>The one who can repair it must ask first, and asking costs most
+        at 03:00.</p>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>Attention</p>
+      <h3>Someone has to<br>be awake to say yes</h3>
+      <div class=&quot;hair&quot;></div>
+      <p class=&quot;mech&quot;>A permission that expires is requested again, and every request
+        needs someone awake.</p>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>The missing map</p>
+      <h3>You have to know<br>what is needed</h3>
+      <div class=&quot;hair&quot;></div>
+      <p class=&quot;mech&quot;>Knowing what is needed means knowing it per service and per role, and
+        it goes stale.</p>
+    </div>
+  </div>
+  <div class=&quot;note&quot;>
+    <p>Least privilege priced honestly is not free — which is why standing access wins.</p>
+  </div>
+</main>
+<footer>
+  <p class=&quot;foot&quot;>SOURCE — none. No figures in this deck; the argument is mechanical.</p>
+  <p class=&quot;foot disc&quot;>Internal discussion draft · 03 / 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What the elevation record has to capture</title>
+<style>
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2');font-weight:600;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:720pt;height:405pt;overflow:hidden;padding:32pt 40pt;
+       background:#0A1A33;color:#E8E5DE;font-family:'Inter',Arial,sans-serif;
+       display:flex;flex-direction:column;}
+  header{flex:none;}
+  .rail{display:flex;justify-content:space-between;align-items:baseline;gap:24pt;}
+  .lbl{font-size:11pt;font-weight:500;letter-spacing:0.08em;line-height:1.4;
+       text-transform:uppercase;color:#9AA6BC;white-space:nowrap;}
+  .lbl.gold{color:#C8A24B;font-weight:600;}
+  h1,h2,h3{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;font-weight:600;}
+  h2{font-size:24pt;line-height:1.3;margin-top:6pt;white-space:nowrap;letter-spacing:0;}
+  .rule-gold{flex:none;height:0.5pt;background:#C8A24B;}
+  header .rule-gold{margin-top:10pt;}
+  main{flex:1;min-height:0;margin-top:14pt;display:flex;flex-direction:column;}
+  footer{flex:none;margin-top:12pt;display:flex;justify-content:space-between;
+         align-items:baseline;gap:24pt;}
+  .foot{flex:none;font-size:10pt;font-weight:400;line-height:1.4;color:#9AA6BC;}
+  .foot.disc{font-weight:500;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  /* --- navy panel module: fill is only 1.5:1 on the canvas, so the gold hairline is what
+         makes it a panel (spec: 0.5pt gold hairline border, radius 0, no fill emphasis) --- */
+  .panel{background:#1F3A5F;border:0.5pt solid #C8A24B;padding:12pt;
+         display:flex;flex-direction:column;}
+  .panel .kick{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+               text-transform:uppercase;color:#C8A24B;}
+  .panel h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .panel .hair{flex:none;height:0.5pt;background:#C8A24B;margin:10pt 0;}
+  .panel .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#E8E5DE;}
+  .grid4{flex:1;min-height:0;display:grid;grid-template-columns:312pt 312pt;
+         grid-template-rows:minmax(0,1fr) minmax(0,1fr);column-gap:16pt;row-gap:12pt;}
+  .grid4 .panel{padding:8pt 10pt;}
+  .grid4 .kick{font-size:12pt;letter-spacing:0.06em;}
+  .grid4 h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .why{font-size:14pt;font-weight:400;line-height:1.45;color:#9AA6BC;margin-top:6pt;}
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;rail&quot;>
+    <p class=&quot;lbl&quot;>Access governance · Internal</p>
+    <p class=&quot;lbl gold&quot;>Section 03 · The record</p>
+  </div>
+  <h2>What the elevation record has to capture</h2>
+  <div class=&quot;rule-gold&quot;></div>
+</header>
+<main>
+  <div class=&quot;grid4&quot;>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>Who</p>
+      <h3>A named human, not a role</h3>
+      <p class=&quot;why&quot;>A record that names a role names nobody. There is no one left to ask.</p>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>What</p>
+      <h3>The account, role and resource</h3>
+      <p class=&quot;why&quot;>“Production” is a place, not a scope, and proves only that something
+        happened.</p>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>Why</p>
+      <h3>The ticket, written first</h3>
+      <p class=&quot;why&quot;>A reason given afterwards is a reason invented afterwards.</p>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>When it lapsed</p>
+      <h3>The expiry, and who ended it</h3>
+      <p class=&quot;why&quot;>A grant with no observed end is standing access with a form attached.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <p class=&quot;foot&quot;>SOURCE — none. No figures in this deck; the argument is mechanical.</p>
+  <p class=&quot;foot disc&quot;>Internal discussion draft · 04 / 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>A record nobody reads is not a record</title>
+<style>
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2');font-weight:600;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:720pt;height:405pt;overflow:hidden;padding:32pt 40pt;
+       background:#0A1A33;color:#E8E5DE;font-family:'Inter',Arial,sans-serif;
+       display:flex;flex-direction:column;}
+  header{flex:none;}
+  .rail{display:flex;justify-content:space-between;align-items:baseline;gap:24pt;}
+  .lbl{font-size:11pt;font-weight:500;letter-spacing:0.08em;line-height:1.4;
+       text-transform:uppercase;color:#9AA6BC;white-space:nowrap;}
+  .lbl.gold{color:#C8A24B;font-weight:600;}
+  h1,h2,h3{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;font-weight:600;}
+  h2{font-size:24pt;line-height:1.3;margin-top:6pt;white-space:nowrap;letter-spacing:0;}
+  .rule-gold{flex:none;height:0.5pt;background:#C8A24B;}
+  header .rule-gold{margin-top:10pt;}
+  main{flex:1;min-height:0;margin-top:14pt;display:flex;flex-direction:column;}
+  footer{flex:none;margin-top:12pt;display:flex;justify-content:space-between;
+         align-items:baseline;gap:24pt;}
+  .foot{flex:none;font-size:10pt;font-weight:400;line-height:1.4;color:#9AA6BC;}
+  .foot.disc{font-weight:500;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  /* --- navy panel module: fill is only 1.5:1 on the canvas, so the gold hairline is what
+         makes it a panel (spec: 0.5pt gold hairline border, radius 0, no fill emphasis) --- */
+  .panel{background:#1F3A5F;border:0.5pt solid #C8A24B;padding:12pt;
+         display:flex;flex-direction:column;}
+  .panel .kick{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+               text-transform:uppercase;color:#C8A24B;}
+  .panel h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .panel .hair{flex:none;height:0.5pt;background:#C8A24B;margin:10pt 0;}
+  .panel .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#E8E5DE;}
+  .flow{display:flex;align-items:stretch;}
+  .flow .panel{width:200pt;flex:none;}
+  .chev{width:20pt;flex:none;display:flex;align-items:center;justify-content:center;}
+  .note{margin-top:auto;border-top:0.5pt solid #C8A24B;padding-top:12pt;}
+  .note p{font-size:15pt;font-weight:500;line-height:1.45;color:#E8E5DE;}
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;rail&quot;>
+    <p class=&quot;lbl&quot;>Access governance · Internal</p>
+    <p class=&quot;lbl gold&quot;>Section 04 · The read</p>
+  </div>
+  <h2>A record nobody reads is not a record</h2>
+  <div class=&quot;rule-gold&quot;></div>
+</header>
+<main>
+  <div class=&quot;flow&quot;>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>A named reader</p>
+      <h3>“Someone reviews it”<br>means no one does</h3>
+      <div class=&quot;hair&quot;></div>
+      <p class=&quot;mech&quot;>A review that belongs to everyone is always about to happen.</p>
+    </div>
+    <div class=&quot;chev&quot;>
+      <svg width=&quot;9&quot; height=&quot;14&quot; viewBox=&quot;0 0 9 14&quot; aria-hidden=&quot;true&quot;>
+        <polyline points=&quot;1,1 7,7 1,13&quot; fill=&quot;none&quot; stroke=&quot;#C8A24B&quot; stroke-width=&quot;1.2&quot;></polyline>
+      </svg>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>A fixed cadence</p>
+      <h3>On a schedule,<br>or never at all</h3>
+      <div class=&quot;hair&quot;></div>
+      <p class=&quot;mech&quot;>Read weekly, the record is a control. Read after the fact, it is only
+        evidence.</p>
+    </div>
+    <div class=&quot;chev&quot;>
+      <svg width=&quot;9&quot; height=&quot;14&quot; viewBox=&quot;0 0 9 14&quot; aria-hidden=&quot;true&quot;>
+        <polyline points=&quot;1,1 7,7 1,13&quot; fill=&quot;none&quot; stroke=&quot;#C8A24B&quot; stroke-width=&quot;1.2&quot;></polyline>
+      </svg>
+    </div>
+    <div class=&quot;panel&quot;>
+      <p class=&quot;kick&quot;>A consequence</p>
+      <h3>The read must<br>change something</h3>
+      <div class=&quot;hair&quot;></div>
+      <p class=&quot;mech&quot;>If it cannot revoke a role, narrow a scope or close a gap, it is
+        theatre.</p>
+    </div>
+  </div>
+  <div class=&quot;note&quot;>
+    <p>A log with no reader or consequence audits as compliant and controls nothing.</p>
+  </div>
+</main>
+<footer>
+  <p class=&quot;foot&quot;>SOURCE — none. No figures in this deck; the argument is mechanical.</p>
+  <p class=&quot;foot disc&quot;>Internal discussion draft · 05 / 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="6" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-06.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we need to decide</title>
+<style>
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Source Serif 4';src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2');font-weight:600;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block;}
+  @font-face{font-family:'Inter';src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:720pt;height:405pt;overflow:hidden;padding:32pt 40pt;
+       background:#0A1A33;color:#E8E5DE;font-family:'Inter',Arial,sans-serif;
+       display:flex;flex-direction:column;}
+  header{flex:none;}
+  .rail{display:flex;justify-content:space-between;align-items:baseline;gap:24pt;}
+  .lbl{font-size:11pt;font-weight:500;letter-spacing:0.08em;line-height:1.4;
+       text-transform:uppercase;color:#9AA6BC;white-space:nowrap;}
+  .lbl.gold{color:#C8A24B;font-weight:600;}
+  h1,h2,h3{font-family:'Source Serif 4',Georgia,'Times New Roman',serif;font-weight:600;}
+  h2{font-size:24pt;line-height:1.3;margin-top:6pt;white-space:nowrap;letter-spacing:0;}
+  .rule-gold{flex:none;height:0.5pt;background:#C8A24B;}
+  header .rule-gold{margin-top:10pt;}
+  main{flex:1;min-height:0;margin-top:14pt;display:flex;flex-direction:column;}
+  footer{flex:none;margin-top:12pt;display:flex;justify-content:space-between;
+         align-items:baseline;gap:24pt;}
+  .foot{flex:none;font-size:10pt;font-weight:400;line-height:1.4;color:#9AA6BC;}
+  .foot.disc{font-weight:500;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap;}
+  /* --- navy panel module: fill is only 1.5:1 on the canvas, so the gold hairline is what
+         makes it a panel (spec: 0.5pt gold hairline border, radius 0, no fill emphasis) --- */
+  .panel{background:#1F3A5F;border:0.5pt solid #C8A24B;padding:12pt;
+         display:flex;flex-direction:column;}
+  .panel .kick{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+               text-transform:uppercase;color:#C8A24B;}
+  .panel h3{font-size:16pt;line-height:1.4;margin-top:6pt;}
+  .panel .hair{flex:none;height:0.5pt;background:#C8A24B;margin:10pt 0;}
+  .panel .mech{font-size:14pt;font-weight:400;line-height:1.45;color:#E8E5DE;}
+  .close{flex:1;min-height:0;display:grid;grid-template-columns:280pt 336pt;gap:24pt;}
+  .lead{display:flex;flex-direction:column;}
+  .lead h1{font-size:34pt;line-height:1.35;margin-top:12pt;}
+  .lead h1 em{font-style:normal;color:#C8A24B;}
+  .lead .rule-gold{margin-top:16pt;}
+  .recap{font-size:14pt;font-weight:400;line-height:1.45;color:#9AA6BC;margin-top:14pt;}
+  .lead .presenter{margin-top:auto;}
+  .prompts{display:flex;flex-direction:column;}
+  /* every prompt carries the same rule element, so emphasis can never shift one out of column */
+  .q{border-top:0.5pt solid #C8A24B;padding:10pt 0 12pt;}
+  .q .qk{font-size:11pt;font-weight:600;letter-spacing:0.08em;line-height:1.4;
+         text-transform:uppercase;color:#C8A24B;white-space:nowrap;}
+  .q p.ask{font-size:15pt;font-weight:400;line-height:1.5;color:#E8E5DE;margin-top:5pt;}
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;rail&quot;>
+    <p class=&quot;lbl&quot;>Access governance · Internal</p>
+    <p class=&quot;lbl gold&quot;>Closing · 06 / 06</p>
+  </div>
+</header>
+<main>
+  <div class=&quot;close&quot;>
+    <div class=&quot;lead&quot;>
+      <p class=&quot;lbl gold&quot;>Decisions</p>
+      <h1>What we<br>need to<br><em>decide</em></h1>
+      <div class=&quot;rule-gold&quot;></div>
+      <p class=&quot;recap&quot;>Standing access is the risk. Break-glass with an expiry, and a
+        record someone actually reads, is what replaces it.</p>
+      <p class=&quot;lbl presenter&quot;>Presenter · Team</p>
+    </div>
+    <div class=&quot;prompts&quot;>
+      <div class=&quot;q&quot;>
+        <p class=&quot;qk&quot;>01 · Standing access</p>
+        <p class=&quot;ask&quot;>Can standing access go to zero, or is there a floor — and who owns what
+          is left?</p>
+      </div>
+      <div class=&quot;q&quot;>
+        <p class=&quot;qk&quot;>02 · The window</p>
+        <p class=&quot;ask&quot;>How long does the glass stay broken: a fixed window, or the length of the
+          incident?</p>
+      </div>
+      <div class=&quot;q&quot;>
+        <p class=&quot;qk&quot;>03 · The reader</p>
+        <p class=&quot;ask&quot;>Who reads the record, how often, and what are they allowed to change?</p>
+      </div>
+    </div>
+  </div>
+</main>
+<footer>
+  <p class=&quot;foot&quot;>SOURCE — none. No figures in this deck; the argument is mechanical.</p>
+  <p class=&quot;foot disc&quot;>Internal discussion draft · 06 / 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 6;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

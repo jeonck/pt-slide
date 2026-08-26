@@ -26,6 +26,7 @@
 | [`decks/secrets`](decks/secrets/) | **Revocability is the standard** — 영어 패턴 볼드 포스터 덱. 흔한 규칙이 실패하는 이유 → 회전이 싸지는 조건 → 회전 불가는 곧 영구 → 결정 | 5 | `ppt-pattern-bold-poster-keynote` |
 | [`decks/oncall-rotation`](decks/oncall-rotation/) | **On-call rotations people can survive** — 영어 웜 미니멀 다이어그램 덱. 로타는 인력 결정이다 → 인수인계가 실어야 하는 것 → 페이지 상한이 상류에 강제하는 것 → 결정 | 5 | `ppt-warm-minimal-diagram-deck` |
 | [`decks/observability-cost`](decks/observability-cost/) | **Logs cost the most and get read the least** — 영어 에디토리얼 프로덕트 덱. 세 신호가 답하는 서로 다른 질문 → 용량은 곱이고 독자 수는 상수 → 샘플링과 보존은 절약이 아니라 베팅 → 결정 | 6 | `ppt-editorial-product-deck` |
+| [`decks/prod-access`](decks/prod-access/) | **Who gets into production** — 영어 IR 네이비+골드 덱. 상시 권한이 쌓이는 이유 → 최소 권한의 실제 비용 → 승격 기록이 담아야 하는 것 → 아무도 읽지 않는 기록 → 결정 | 6 | `ppt-goldman-ir-deck` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -52,6 +53,7 @@
 | secrets | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/secrets/viewer.html)** · [PDF](decks/secrets/secrets.pdf) · [이미지](decks/secrets/preview/) | [`viewer.html`](decks/secrets/viewer.html) |
 | oncall-rotation | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/oncall-rotation/viewer.html)** · [PDF](decks/oncall-rotation/oncall-rotation.pdf) · [이미지](decks/oncall-rotation/preview/) | [`viewer.html`](decks/oncall-rotation/viewer.html) |
 | observability-cost | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/observability-cost/viewer.html)** · [PDF](decks/observability-cost/observability-cost.pdf) · [이미지](decks/observability-cost/preview/) | [`viewer.html`](decks/observability-cost/viewer.html) |
+| prod-access | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/prod-access/viewer.html)** · [PDF](decks/prod-access/prod-access.pdf) · [이미지](decks/prod-access/preview/) | [`viewer.html`](decks/prod-access/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의

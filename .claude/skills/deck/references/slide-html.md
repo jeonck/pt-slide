@@ -203,10 +203,23 @@ node ./_measure.mjs $PWD/decks/<name>/slide-04.html h2
   내용에 맞춰지므로 언제나 "딱 맞음"으로 나온다. **부모의** 콘텐츠 폭에서 패딩을 뺀 값이 실제
   예산이다.
 
-- **`page.setContent()`로 재지 않는다.** `about:blank` 문서에서는 `file://` `@font-face`가 로드되지
-  않는데 `document.fonts.ready`는 그대로 resolve된다. 그래서 오류 없이 **폴백 서체를 잰다** — 한 덱은
-  이렇게 잰 값이 16~18% 좁게 나왔고, 그 예산으로 쓴 패널이 렌더에서 감겼다. 위 스니펫처럼 실제 슬라이드
-  파일로 `goto` 한다.
+- **빈 페이지에서 재지 않는다. 이 함정은 조용하다.** `page.setContent()`로 만든 문서는 origin이
+  `about:blank`라 `file://` `@font-face`가 로드되지 않는다. `@font-face`를 선언해 넣어도, 그 페이지에서
+  아직 아무도 그 서체를 쓰지 않으면 로드가 시작조차 안 된다. 둘 다 `document.fonts.ready`는 **그대로
+  resolve된다** — 대기 중인 폰트가 없으니까. 그래서 오류 하나 없이 **폴백 서체를 잰다.**
+
+  덱 세 개가 각자 독립적으로 여기 빠졌고, 값이 8~20% 좁게 나왔다. 안전하다고 판정된 문자열들이 렌더에서
+  감겼고, 셋 다 렌더를 열어보고 나서야 알았다. 위 스니펫처럼 **실제 슬라이드 파일로 `goto`** 한다.
+  프로브 페이지를 따로 만들어야 한다면 파일로 저장해서 `goto`하고, 재기 전에 가드를 건다:
+
+  ```js
+  const size = getComputedStyle(el).fontSize;
+  for (const fam of ['Inter', 'SourceSerif4']) {          // 실제로 쓰는 서체
+    if (!document.fonts.check(`${size} ${fam}`)) throw new Error(`${fam} 미로드 — 측정 무효`);
+  }
+  ```
+
+  폴백 수치를 조용히 돌려주느니 던지는 편이 낫다.
 
 슬라이드가 아직 없으면 같은 `@font-face`·폰트 크기를 넣은 임시 HTML **파일**을 만들어 그 파일로
 `goto` 해서 잰다. 어느 쪽이든 추정으로 끝내지 말고, 마지막에는 렌더 이미지에서 실제로 한 줄인지
