@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 0.8in/0.65in on a 960x540 stage, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 40pt / 32pt. Content box 640 x 341pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden; position:relative;
+    background:#0E0E11; color:#9CA3AF;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+    /* Style signature: exactly one abstract accent wash per sheet, from one corner.
+       The spec specifies a radial glow (#8B7BF0 -> #3FB8C4); this repo forbids
+       gradients, so the first stop is used as a flat fill -- a single flat-alpha
+       disc whose centre sits off-canvas past the top-right corner, so only a
+       shallow arc is cropped into the corner. A first attempt kept the centre
+       on the corner itself and rendered as a hard-edged planet -- an object,
+       which this style's Avoid list forbids the glow from becoming.
+       Carried as a data-URI SVG background rather than a positioned element so it
+       is not a sibling of the content. Kept clear of #6B7280 muted ink, the only
+       text it could dim. */
+    background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgMjIwIj48Y2lyY2xlIGN4PSIyMjAiIGN5PSIwIiByPSIyMjAiIGZpbGw9IiM4QjdCRjAiIGZpbGwtb3BhY2l0eT0iMC4xMCIvPjwvc3ZnPg==");
+    background-repeat:no-repeat; background-position:right -170pt top -230pt;
+    background-size:460pt 460pt;
+  }
+    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+     so the source caption lands on the same y on every sheet. */
+  header { flex:none; }
+  .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
+  .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
+                 text-transform:uppercase; color:#6B7280; }
+  .kickerrow p.count { font-family:'JetBrains Mono',monospace; font-weight:400;
+                       letter-spacing:0.05em; text-transform:none; color:#8B7BF0; }
+  h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
+       line-height:1.25; color:#F4F4F5; }
+  main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:10pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  /* space-between spreads the 39pt of spare budget through the rail as even
+     rhythm, instead of leaving it as one hole above the closing strip. */
+  .decisions { flex:1; min-height:0; display:flex; flex-direction:column;
+               justify-content:space-between; }
+  .d { display:flex; gap:14pt; align-items:baseline; }
+  .d p.num { flex:none; width:20pt; font-family:'JetBrains Mono',monospace;
+             font-size:11pt; font-weight:400; line-height:1.4; letter-spacing:0.05em;
+             color:#8B7BF0; }
+  .dtext { min-width:0; }
+  .dtext h3 { font-size:16pt; font-weight:600; line-height:1.35; color:#F4F4F5; }
+  .dtext p { margin-top:6pt; font-size:14pt; font-weight:400; line-height:1.45; }
+  .strip { flex:none; margin-top:20pt; border:1px solid #26262C;
+           border-left:1.5pt solid #8B7BF0; border-radius:6px; padding:12pt 14pt; }
+  .strip p { font-size:17pt; font-weight:400; line-height:1.5; color:#F4F4F5; }
+</style>
+</head>
+<body>
+<header>
+  <div class="kickerrow"><p>Decisions</p><p class="count">05 / 05</p></div>
+  <h2>What we need to decide</h2>
+</header>
+<main>
+  <div class="decisions">
+    <div class="d">
+      <p class="num">01</p>
+      <div class="dtext">
+        <h3>Which gaps do we close?</h3>
+        <p>Name them, price them, give each an owner and a date.</p>
+      </div>
+    </div>
+    <div class="d">
+      <p class="num">02</p>
+      <div class="dtext">
+        <h3>Which gaps do we admit to?</h3>
+        <p>Write them down as known-untested surface, not as an oversight.</p>
+      </div>
+    </div>
+    <div class="d">
+      <p class="num">03</p>
+      <div class="dtext">
+        <h3>What does a staging pass stop meaning?</h3>
+        <p>Agree the sentence we say instead, and put it in the release template.</p>
+      </div>
+    </div>
+  </div>
+  <div class="strip">
+    <p>Until we decide, a staging pass means one thing: the code ran somewhere.</p>
+  </div>
+</main>
+<footer>
+  <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
+</footer>
+</body>
+</html>

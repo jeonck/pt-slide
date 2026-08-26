@@ -1,0 +1,311 @@
+{
+  "schemaVersion": 2,
+  "verdict": "proceed",
+  "generatedAt": "2026-08-26T15:46:27.996Z",
+  "slideMode": "presentation",
+  "resolution": "2160p",
+  "previewDir": ".slides-grab/gate-preview",
+  "reportPath": ".slides-grab/design-gate-report.md",
+  "passA": {
+    "reportPath": "/home/user/pt-slide/decks/backup-restore/gate-pass-a.md",
+    "summary": "# Pass A: System Contract / Constraint Integrity",
+    "verdict": "PASS",
+    "unresolvedCritical": 0,
+    "blockingFindings": [],
+    "checks": [
+      {
+        "name": "System consistency",
+        "status": "pass"
+      },
+      {
+        "name": "Color discipline",
+        "status": "pass"
+      },
+      {
+        "name": "AI slop tropes",
+        "status": "pass"
+      },
+      {
+        "name": "Content discipline",
+        "status": "pass"
+      }
+    ],
+    "evidenceFiles": [
+      "slide-01.png",
+      "slide-02.png",
+      "slide-03.png",
+      "slide-04.png",
+      "slide-05.png"
+    ],
+    "slideFingerprints": [
+      {
+        "file": "slide-01.html",
+        "sha256": "eb856228adc80e06e586e21fa931c61ad699da6689574eff3918ccbc98f37d25"
+      },
+      {
+        "file": "slide-02.html",
+        "sha256": "d6236cec051ba37679a02959f1be3a7fafbcf8ae5e8c88e6481385038bc8b906"
+      },
+      {
+        "file": "slide-03.html",
+        "sha256": "3971d70cc79c3b3942bebe9ab07e7268cfc1f8ddc55f9c705b43d42b4767e2b0"
+      },
+      {
+        "file": "slide-04.html",
+        "sha256": "4c202413769f881638203a10fca17aa4636513469fa1b8ce60baa2da9124b804"
+      },
+      {
+        "file": "slide-05.html",
+        "sha256": "5a0387bc6f481a14e5702be833e745fd72a113b461c3a03dd62147f10d115806"
+      }
+    ]
+  },
+  "passB": {
+    "reportPath": "/home/user/pt-slide/decks/backup-restore/gate-pass-b.md",
+    "summary": "# Pass B: Audience Impact / Expressive Readability",
+    "verdict": "PASS",
+    "unresolvedCritical": 0,
+    "blockingFindings": [],
+    "checks": [
+      {
+        "name": "Composition & hierarchy",
+        "status": "pass"
+      },
+      {
+        "name": "Typography & legibility",
+        "status": "pass"
+      },
+      {
+        "name": "Korean/CJK word-break integrity",
+        "status": "pass"
+      },
+      {
+        "name": "Review Litmus",
+        "status": "pass"
+      }
+    ],
+    "evidenceFiles": [
+      "slide-01.png",
+      "slide-02.png",
+      "slide-03.png",
+      "slide-04.png",
+      "slide-05.png"
+    ],
+    "slideFingerprints": [
+      {
+        "file": "slide-01.html",
+        "sha256": "eb856228adc80e06e586e21fa931c61ad699da6689574eff3918ccbc98f37d25"
+      },
+      {
+        "file": "slide-02.html",
+        "sha256": "d6236cec051ba37679a02959f1be3a7fafbcf8ae5e8c88e6481385038bc8b906"
+      },
+      {
+        "file": "slide-03.html",
+        "sha256": "3971d70cc79c3b3942bebe9ab07e7268cfc1f8ddc55f9c705b43d42b4767e2b0"
+      },
+      {
+        "file": "slide-04.html",
+        "sha256": "4c202413769f881638203a10fca17aa4636513469fa1b8ce60baa2da9124b804"
+      },
+      {
+        "file": "slide-05.html",
+        "sha256": "5a0387bc6f481a14e5702be833e745fd72a113b461c3a03dd62147f10d115806"
+      }
+    ]
+  },
+  "gateValidation": {
+    "status": "passed",
+    "failures": [],
+    "passA": {
+      "label": "Pass A",
+      "verdict": "PASS",
+      "confidence": "High",
+      "unresolvedCritical": 0,
+      "blockingFindings": [],
+      "checks": [
+        {
+          "name": "System consistency",
+          "status": "pass"
+        },
+        {
+          "name": "Color discipline",
+          "status": "pass"
+        },
+        {
+          "name": "AI slop tropes",
+          "status": "pass"
+        },
+        {
+          "name": "Content discipline",
+          "status": "pass"
+        }
+      ],
+      "evidenceFiles": [
+        "slide-01.png",
+        "slide-02.png",
+        "slide-03.png",
+        "slide-04.png",
+        "slide-05.png"
+      ],
+      "slideFingerprints": [
+        {
+          "file": "slide-01.html",
+          "sha256": "eb856228adc80e06e586e21fa931c61ad699da6689574eff3918ccbc98f37d25"
+        },
+        {
+          "file": "slide-02.html",
+          "sha256": "d6236cec051ba37679a02959f1be3a7fafbcf8ae5e8c88e6481385038bc8b906"
+        },
+        {
+          "file": "slide-03.html",
+          "sha256": "3971d70cc79c3b3942bebe9ab07e7268cfc1f8ddc55f9c705b43d42b4767e2b0"
+        },
+        {
+          "file": "slide-04.html",
+          "sha256": "4c202413769f881638203a10fca17aa4636513469fa1b8ce60baa2da9124b804"
+        },
+        {
+          "file": "slide-05.html",
+          "sha256": "5a0387bc6f481a14e5702be833e745fd72a113b461c3a03dd62147f10d115806"
+        }
+      ]
+    },
+    "passB": {
+      "label": "Pass B",
+      "verdict": "PASS",
+      "confidence": "High",
+      "unresolvedCritical": 0,
+      "blockingFindings": [],
+      "checks": [
+        {
+          "name": "Composition & hierarchy",
+          "status": "pass"
+        },
+        {
+          "name": "Typography & legibility",
+          "status": "pass"
+        },
+        {
+          "name": "Korean/CJK word-break integrity",
+          "status": "pass"
+        },
+        {
+          "name": "Review Litmus",
+          "status": "pass"
+        }
+      ],
+      "evidenceFiles": [
+        "slide-01.png",
+        "slide-02.png",
+        "slide-03.png",
+        "slide-04.png",
+        "slide-05.png"
+      ],
+      "slideFingerprints": [
+        {
+          "file": "slide-01.html",
+          "sha256": "eb856228adc80e06e586e21fa931c61ad699da6689574eff3918ccbc98f37d25"
+        },
+        {
+          "file": "slide-02.html",
+          "sha256": "d6236cec051ba37679a02959f1be3a7fafbcf8ae5e8c88e6481385038bc8b906"
+        },
+        {
+          "file": "slide-03.html",
+          "sha256": "3971d70cc79c3b3942bebe9ab07e7268cfc1f8ddc55f9c705b43d42b4767e2b0"
+        },
+        {
+          "file": "slide-04.html",
+          "sha256": "4c202413769f881638203a10fca17aa4636513469fa1b8ce60baa2da9124b804"
+        },
+        {
+          "file": "slide-05.html",
+          "sha256": "5a0387bc6f481a14e5702be833e745fd72a113b461c3a03dd62147f10d115806"
+        }
+      ]
+    }
+  },
+  "slideFingerprints": [
+    {
+      "file": "slide-01.html",
+      "sha256": "eb856228adc80e06e586e21fa931c61ad699da6689574eff3918ccbc98f37d25"
+    },
+    {
+      "file": "slide-02.html",
+      "sha256": "d6236cec051ba37679a02959f1be3a7fafbcf8ae5e8c88e6481385038bc8b906"
+    },
+    {
+      "file": "slide-03.html",
+      "sha256": "3971d70cc79c3b3942bebe9ab07e7268cfc1f8ddc55f9c705b43d42b4767e2b0"
+    },
+    {
+      "file": "slide-04.html",
+      "sha256": "4c202413769f881638203a10fca17aa4636513469fa1b8ce60baa2da9124b804"
+    },
+    {
+      "file": "slide-05.html",
+      "sha256": "5a0387bc6f481a14e5702be833e745fd72a113b461c3a03dd62147f10d115806"
+    }
+  ],
+  "localAssetFingerprints": [
+    {
+      "file": "./assets/fonts/EBGaramond-400-Italic.woff2",
+      "sha256": "fc5851c4466e73bec048bb62d65f8abadf70d602816687e6d364214e35fa8abb"
+    },
+    {
+      "file": "./assets/fonts/EBGaramond-400.woff2",
+      "sha256": "912929dba0faab5e151849ea5e988adba3080ad6d2bcc4dbff27aa427896498d"
+    },
+    {
+      "file": "./assets/fonts/PlayfairDisplay-400-Italic.woff2",
+      "sha256": "eabce94d4a69e439cd050755c31f9894ac8a78f93e58b063c6c01f370474e1de"
+    },
+    {
+      "file": "./assets/fonts/PlayfairDisplay-400.woff2",
+      "sha256": "1fe9ad5d8b2ebd8ecb8fbd05bed1e3fdfa52dae3f1a04e1c219918442fe9394d"
+    },
+    {
+      "file": "./assets/fonts/EBGaramond-600.woff2",
+      "sha256": "6a195b7e4f518d53813581f415d7956e02049dd2762b4b9a3af80d56b4257e28"
+    }
+  ],
+  "passReportFingerprints": [
+    {
+      "file": "gate-pass-a.md",
+      "sha256": "b14f04c6ff58f5fba9ef0b9bc84d3b9b4639ef92b617d5afee307aca5e8f832e"
+    },
+    {
+      "file": "gate-pass-b.md",
+      "sha256": "5bb7bcbd8aba62f5dec079375b3e1072618d96423ff9ec04c2be924d658c24e5"
+    }
+  ],
+  "previewFingerprints": [
+    {
+      "file": ".slides-grab/gate-preview/slide-01.png",
+      "sha256": "54618055f07c5381a28dc20de30d1ed022a5a04c706b3e5427916bd23d2589d1"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-02.png",
+      "sha256": "661a4b335971d2d83a2de0614f0721e8a3e51830c0584540b4531ab3cbbace3f"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-03.png",
+      "sha256": "bdac1b68cbb59367244a3c3466780de127810a160ba4ca6334da2db0d861ef67"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-04.png",
+      "sha256": "355a8a3a0da54a00124c7f35f3f5541c32e6444292b17fddabcdb18d720378c8"
+    },
+    {
+      "file": ".slides-grab/gate-preview/slide-05.png",
+      "sha256": "c2aabec5dbb0bae6074852df3ad3c41805e060a738dc04dca90dcf87a9c4cd35"
+    }
+  ],
+  "templateFidelity": {
+    "status": "not-applicable",
+    "slides": [],
+    "findings": [],
+    "referencePreviewFingerprints": []
+  }
+}

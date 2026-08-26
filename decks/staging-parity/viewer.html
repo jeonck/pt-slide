@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 5</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Why staging lies</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 0.8in/0.65in on a 960x540 stage, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 40pt / 32pt. Content box 640 x 341pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden; position:relative;
+    background:#0E0E11; color:#9CA3AF;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+    /* Style signature: exactly one abstract accent wash per sheet, from one corner.
+       The spec specifies a radial glow (#8B7BF0 -> #3FB8C4); this repo forbids
+       gradients, so the first stop is used as a flat fill -- a single flat-alpha
+       disc whose centre sits off-canvas past the top-right corner, so only a
+       shallow arc is cropped into the corner. A first attempt kept the centre
+       on the corner itself and rendered as a hard-edged planet -- an object,
+       which this style's Avoid list forbids the glow from becoming.
+       Carried as a data-URI SVG background rather than a positioned element so it
+       is not a sibling of the content. Kept clear of #6B7280 muted ink, the only
+       text it could dim. */
+    background-image:url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgMjIwIj48Y2lyY2xlIGN4PSIyMjAiIGN5PSIwIiByPSIyMjAiIGZpbGw9IiM4QjdCRjAiIGZpbGwtb3BhY2l0eT0iMC4xMCIvPjwvc3ZnPg==&quot;);
+    background-repeat:no-repeat; background-position:right -170pt top -230pt;
+    background-size:460pt 460pt;
+  }
+    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+     so the source caption lands on the same y on every sheet. */
+  header { flex:none; }
+  .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
+  .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
+                 text-transform:uppercase; color:#6B7280; }
+  .kickerrow p.count { font-family:'JetBrains Mono',monospace; font-weight:400;
+                       letter-spacing:0.05em; text-transform:none; color:#8B7BF0; }
+  h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
+       line-height:1.25; color:#F4F4F5; }
+  main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:10pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  /* Cover: the block is centred on the canvas, the lines inside it are not —
+     the style's Avoid list forbids centring the body lines themselves. */
+  main { justify-content:center; }
+  .accentrule { flex:none; width:44pt; height:2pt; background:#8B7BF0; }
+  h1 { flex:none; margin-top:16pt; font-size:44pt; font-weight:600;
+       letter-spacing:-0.02em; line-height:1.2; color:#F4F4F5; }
+  .lede { flex:none; margin-top:14pt; width:520pt; font-size:17pt;
+          font-weight:400; line-height:1.5; }
+  .byline { flex:none; margin-top:20pt; font-family:'JetBrains Mono',monospace;
+            font-size:11pt; font-weight:400; line-height:1.4; letter-spacing:0.05em;
+            color:#6B7280; }
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;kickerrow&quot;><p>Platform engineering · internal</p><p class=&quot;count&quot;>01 / 05</p></div>
+</header>
+<main>
+  <div class=&quot;accentrule&quot;></div>
+  <h1>Why staging lies</h1>
+  <p class=&quot;lede&quot;>Every place staging differs from production is where the incidents come from. A green run is evidence about staging.</p>
+  <p class=&quot;byline&quot;>Presenter · Team</p>
+</main>
+<footer>
+  <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>A green run is evidence about staging</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 0.8in/0.65in on a 960x540 stage, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 40pt / 32pt. Content box 640 x 341pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden; position:relative;
+    background:#0E0E11; color:#9CA3AF;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+    /* Style signature: exactly one abstract accent wash per sheet, from one corner.
+       The spec specifies a radial glow (#8B7BF0 -> #3FB8C4); this repo forbids
+       gradients, so the first stop is used as a flat fill -- a single flat-alpha
+       disc whose centre sits off-canvas past the top-right corner, so only a
+       shallow arc is cropped into the corner. A first attempt kept the centre
+       on the corner itself and rendered as a hard-edged planet -- an object,
+       which this style's Avoid list forbids the glow from becoming.
+       Carried as a data-URI SVG background rather than a positioned element so it
+       is not a sibling of the content. Kept clear of #6B7280 muted ink, the only
+       text it could dim. */
+    background-image:url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgMjIwIj48Y2lyY2xlIGN4PSIyMjAiIGN5PSIwIiByPSIyMjAiIGZpbGw9IiM4QjdCRjAiIGZpbGwtb3BhY2l0eT0iMC4xMCIvPjwvc3ZnPg==&quot;);
+    background-repeat:no-repeat; background-position:right -170pt top -230pt;
+    background-size:460pt 460pt;
+  }
+    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+     so the source caption lands on the same y on every sheet. */
+  header { flex:none; }
+  .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
+  .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
+                 text-transform:uppercase; color:#6B7280; }
+  .kickerrow p.count { font-family:'JetBrains Mono',monospace; font-weight:400;
+                       letter-spacing:0.05em; text-transform:none; color:#8B7BF0; }
+  h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
+       line-height:1.25; color:#F4F4F5; }
+  main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:10pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  /* Style's horizontal process diagram: unfilled hairline nodes, 1.25pt accent
+     connectors, mono step numbers. 3 x 190pt + 2 x 35pt connectors = 640pt. */
+  .flow { flex:1; min-height:0; display:flex; align-items:stretch; }
+  .node { width:190pt; flex:none; border:1px solid #26262C; border-radius:6px;
+          padding:14pt; display:flex; flex-direction:column; }
+  /* Every node carries the same 1px border; the highlighted step changes only the
+     colour. Changing its width would push that node's text out of line with its
+     siblings — the alignment is what this style is. */
+  .node.active { border-color:#8B7BF0; }
+  .node p.num { font-family:'JetBrains Mono',monospace; font-size:11pt; font-weight:400;
+                line-height:1.4; letter-spacing:0.05em; color:#8B7BF0; }
+  .node h3 { margin-top:6pt; font-size:14pt; font-weight:600; line-height:1.3; color:#F4F4F5; }
+  .node p.nb { margin-top:8pt; font-size:14pt; font-weight:400; line-height:1.45; }
+  .conn { width:35pt; flex:none; display:flex; align-items:center; justify-content:center; }
+  .callout { flex:none; margin-top:16pt; border:1px solid #26262C;
+             border-left:1.5pt solid #8B7BF0; border-radius:6px; padding:16pt; }
+  .callout p { font-size:17pt; font-weight:400; line-height:1.5; color:#F4F4F5; }
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;kickerrow&quot;><p>The premise</p><p class=&quot;count&quot;>02 / 05</p></div>
+  <h2>A green run is evidence about staging</h2>
+</header>
+<main>
+  <div class=&quot;flow&quot;>
+    <div class=&quot;node&quot;>
+      <p class=&quot;num&quot;>01</p>
+      <h3>Build a model</h3>
+      <p class=&quot;nb&quot;>Staging is production with the expensive parts removed.</p>
+    </div>
+    <div class=&quot;conn&quot;>
+      <svg width=&quot;35pt&quot; height=&quot;10pt&quot; viewBox=&quot;0 0 35 10&quot; aria-hidden=&quot;true&quot;>
+        <line x1=&quot;0&quot; y1=&quot;5&quot; x2=&quot;28&quot; y2=&quot;5&quot; stroke=&quot;#8B7BF0&quot; stroke-width=&quot;1.25&quot;/>
+        <polygon points=&quot;28,1.5 35,5 28,8.5&quot; fill=&quot;#8B7BF0&quot;/>
+      </svg>
+    </div>
+    <div class=&quot;node&quot;>
+      <p class=&quot;num&quot;>02</p>
+      <h3>Test the model</h3>
+      <p class=&quot;nb&quot;>The suite exercises that model and comes back green.</p>
+    </div>
+    <div class=&quot;conn&quot;>
+      <svg width=&quot;35pt&quot; height=&quot;10pt&quot; viewBox=&quot;0 0 35 10&quot; aria-hidden=&quot;true&quot;>
+        <line x1=&quot;0&quot; y1=&quot;5&quot; x2=&quot;28&quot; y2=&quot;5&quot; stroke=&quot;#8B7BF0&quot; stroke-width=&quot;1.25&quot;/>
+        <polygon points=&quot;28,1.5 35,5 28,8.5&quot; fill=&quot;#8B7BF0&quot;/>
+      </svg>
+    </div>
+    <div class=&quot;node active&quot;>
+      <p class=&quot;num&quot;>03</p>
+      <h3>Claim the original</h3>
+      <p class=&quot;nb&quot;>We report the result as if it were a fact about production.</p>
+    </div>
+  </div>
+  <div class=&quot;callout&quot;>
+    <p>A green staging run is a true statement about staging. It turns false the moment we read it as a statement about production.</p>
+  </div>
+</main>
+<footer>
+  <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Four gaps, and what each one hides</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 0.8in/0.65in on a 960x540 stage, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 40pt / 32pt. Content box 640 x 341pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden; position:relative;
+    background:#0E0E11; color:#9CA3AF;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+    /* Style signature: exactly one abstract accent wash per sheet, from one corner.
+       The spec specifies a radial glow (#8B7BF0 -> #3FB8C4); this repo forbids
+       gradients, so the first stop is used as a flat fill -- a single flat-alpha
+       disc whose centre sits off-canvas past the top-right corner, so only a
+       shallow arc is cropped into the corner. A first attempt kept the centre
+       on the corner itself and rendered as a hard-edged planet -- an object,
+       which this style's Avoid list forbids the glow from becoming.
+       Carried as a data-URI SVG background rather than a positioned element so it
+       is not a sibling of the content. Kept clear of #6B7280 muted ink, the only
+       text it could dim. */
+    background-image:url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgMjIwIj48Y2lyY2xlIGN4PSIyMjAiIGN5PSIwIiByPSIyMjAiIGZpbGw9IiM4QjdCRjAiIGZpbGwtb3BhY2l0eT0iMC4xMCIvPjwvc3ZnPg==&quot;);
+    background-repeat:no-repeat; background-position:right -170pt top -230pt;
+    background-size:460pt 460pt;
+  }
+    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+     so the source caption lands on the same y on every sheet. */
+  header { flex:none; }
+  .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
+  .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
+                 text-transform:uppercase; color:#6B7280; }
+  .kickerrow p.count { font-family:'JetBrains Mono',monospace; font-weight:400;
+                       letter-spacing:0.05em; text-transform:none; color:#8B7BF0; }
+  h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
+       line-height:1.25; color:#F4F4F5; }
+  main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:10pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  /* minmax(0,1fr) on both tracks: a 1fr track will not shrink below its content,
+     so an unbudgeted third line in one card would push the whole grid down. */
+  .grid { flex:1; min-height:0; display:grid; grid-template-columns:1fr 1fr;
+          grid-template-rows:minmax(0,1fr) minmax(0,1fr); gap:10pt; }
+  .card { border:1px solid #26262C; border-radius:6px; padding:14pt;
+          display:flex; flex-direction:column; }
+  .chead { display:flex; align-items:baseline; gap:10pt; }
+  .chead p { font-family:'JetBrains Mono',monospace; font-size:11pt; font-weight:400;
+             line-height:1.4; letter-spacing:0.05em; color:#8B7BF0; }
+  .chead h3 { font-size:14pt; font-weight:600; line-height:1.3; color:#F4F4F5; }
+  .card p.cb { margin-top:10pt; font-size:15pt; font-weight:400; line-height:1.5; }
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;kickerrow&quot;><p>What a green run never touched</p><p class=&quot;count&quot;>03 / 05</p></div>
+  <h2>Four gaps, and what each one hides</h2>
+</header>
+<main>
+  <div class=&quot;grid&quot;>
+    <div class=&quot;card&quot;>
+      <div class=&quot;chead&quot;><p>01</p><h3>Data</h3></div>
+      <p class=&quot;cb&quot;>Fixtures are small, clean and recent. Your worst row is none of those.</p>
+    </div>
+    <div class=&quot;card&quot;>
+      <div class=&quot;chead&quot;><p>02</p><h3>Traffic shape</h3></div>
+      <p class=&quot;cb&quot;>Tests arrive one at a time. Production arrives all at once.</p>
+    </div>
+    <div class=&quot;card&quot;>
+      <div class=&quot;chead&quot;><p>03</p><h3>Mocked dependencies</h3></div>
+      <p class=&quot;cb&quot;>A mock returns what you expected. The real one returns a timeout.</p>
+    </div>
+    <div class=&quot;card&quot;>
+      <div class=&quot;chead&quot;><p>04</p><h3>Scale and topology</h3></div>
+      <p class=&quot;cb&quot;>One node cannot show what only happens between nodes.</p>
+    </div>
+  </div>
+</main>
+<footer>
+  <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Two honest options, and one we keep choosing</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 0.8in/0.65in on a 960x540 stage, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 40pt / 32pt. Content box 640 x 341pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden; position:relative;
+    background:#0E0E11; color:#9CA3AF;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+    /* Style signature: exactly one abstract accent wash per sheet, from one corner.
+       The spec specifies a radial glow (#8B7BF0 -> #3FB8C4); this repo forbids
+       gradients, so the first stop is used as a flat fill -- a single flat-alpha
+       disc whose centre sits off-canvas past the top-right corner, so only a
+       shallow arc is cropped into the corner. A first attempt kept the centre
+       on the corner itself and rendered as a hard-edged planet -- an object,
+       which this style's Avoid list forbids the glow from becoming.
+       Carried as a data-URI SVG background rather than a positioned element so it
+       is not a sibling of the content. Kept clear of #6B7280 muted ink, the only
+       text it could dim. */
+    background-image:url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgMjIwIj48Y2lyY2xlIGN4PSIyMjAiIGN5PSIwIiByPSIyMjAiIGZpbGw9IiM4QjdCRjAiIGZpbGwtb3BhY2l0eT0iMC4xMCIvPjwvc3ZnPg==&quot;);
+    background-repeat:no-repeat; background-position:right -170pt top -230pt;
+    background-size:460pt 460pt;
+  }
+    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+     so the source caption lands on the same y on every sheet. */
+  header { flex:none; }
+  .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
+  .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
+                 text-transform:uppercase; color:#6B7280; }
+  .kickerrow p.count { font-family:'JetBrains Mono',monospace; font-weight:400;
+                       letter-spacing:0.05em; text-transform:none; color:#8B7BF0; }
+  h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
+       line-height:1.25; color:#F4F4F5; }
+  main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:10pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  .cols { flex:1; min-height:0; display:flex; gap:12pt; }
+  /* Both columns carry the identical 1px hairline. The style's comparison pattern
+     marks a recommended column; neither is marked here, because the recommendation
+     is the room's to make and slide 05 asks for it. */
+  .col { flex:1; min-width:0; border:1px solid #26262C; border-radius:6px;
+         padding:14pt; display:flex; flex-direction:column; }
+  .col h3 { font-size:18pt; font-weight:600; line-height:1.3; color:#F4F4F5; }
+  /* The price comes second, not last: it is the reason the fork is a fork.
+     #9CA3AF rather than #6B7280 so it stays legible where the wash reaches. */
+  .col p.sub { margin-top:4pt; font-size:14pt; font-weight:400; line-height:1.45;
+               color:#9CA3AF; }
+  /* #2E2E36 (surface bar), not the #26262C border token: at 1px on this bg the
+     border token reads as absent inside a card that already has a #26262C frame. */
+  .rule { margin:10pt 0 12pt; height:1px; background:#2E2E36; }
+  .col ul { list-style:none; }
+  .col li { position:relative; padding-left:12pt; font-size:14pt; font-weight:400;
+            line-height:1.45; }
+  .col li + li { margin-top:8pt; }
+  .col li::before { content:''; position:absolute; left:0; top:7pt;
+                    width:3pt; height:3pt; background:#8B7BF0; }
+  .strip { flex:none; margin-top:12pt; border:1px solid #26262C;
+           border-left:1.5pt solid #8B7BF0; border-radius:6px; padding:12pt 14pt; }
+  .strip p { font-size:17pt; font-weight:400; line-height:1.5; color:#F4F4F5; }
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;kickerrow&quot;><p>The fork</p><p class=&quot;count&quot;>04 / 05</p></div>
+  <h2>Two honest options, and one we keep choosing</h2>
+</header>
+<main>
+  <div class=&quot;cols&quot;>
+    <div class=&quot;col&quot;>
+      <h3>Close the gap</h3>
+      <p class=&quot;sub&quot;>Price: a second production, fully staffed.</p>
+      <div class=&quot;rule&quot;></div>
+      <ul>
+        <li>Production-shaped data, refreshed</li>
+        <li>Real dependencies, not mocks</li>
+        <li>Load and topology that match</li>
+      </ul>
+    </div>
+    <div class=&quot;col&quot;>
+      <h3>Shrink staging</h3>
+      <p class=&quot;sub&quot;>Price: production tooling we do not have.</p>
+      <div class=&quot;rule&quot;></div>
+      <ul>
+        <li>Boot and wiring proved, nothing more</li>
+        <li>Correctness moves behind flags</li>
+        <li>Canaries and fast rollback carry it</li>
+      </ul>
+    </div>
+  </div>
+  <div class=&quot;strip&quot;>
+    <p>Both are honest. Keeping the gap and keeping the claim is not.</p>
+  </div>
+</main>
+<footer>
+  <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'JetBrains Mono'; src:url('./assets/fonts/JetBrainsMono-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Spec margins 0.8in/0.65in on a 960x540 stage, scaled 0.75 and
+     rounded to the 8pt spacing unit -> 40pt / 32pt. Content box 640 x 341pt. */
+  body {
+    width:720pt; height:405pt; overflow:hidden; position:relative;
+    background:#0E0E11; color:#9CA3AF;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+    /* Style signature: exactly one abstract accent wash per sheet, from one corner.
+       The spec specifies a radial glow (#8B7BF0 -> #3FB8C4); this repo forbids
+       gradients, so the first stop is used as a flat fill -- a single flat-alpha
+       disc whose centre sits off-canvas past the top-right corner, so only a
+       shallow arc is cropped into the corner. A first attempt kept the centre
+       on the corner itself and rendered as a hard-edged planet -- an object,
+       which this style's Avoid list forbids the glow from becoming.
+       Carried as a data-URI SVG background rather than a positioned element so it
+       is not a sibling of the content. Kept clear of #6B7280 muted ink, the only
+       text it could dim. */
+    background-image:url(&quot;data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMjAgMjIwIj48Y2lyY2xlIGN4PSIyMjAiIGN5PSIwIiByPSIyMjAiIGZpbGw9IiM4QjdCRjAiIGZpbGwtb3BhY2l0eT0iMC4xMCIvPjwvc3ZnPg==&quot;);
+    background-repeat:no-repeat; background-position:right -170pt top -230pt;
+    background-size:460pt 460pt;
+  }
+    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+     so the source caption lands on the same y on every sheet. */
+  header { flex:none; }
+  .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
+  .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
+                 text-transform:uppercase; color:#6B7280; }
+  .kickerrow p.count { font-family:'JetBrains Mono',monospace; font-weight:400;
+                       letter-spacing:0.05em; text-transform:none; color:#8B7BF0; }
+  h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
+       line-height:1.25; color:#F4F4F5; }
+  main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:10pt; text-align:right; }
+  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  /* space-between spreads the 39pt of spare budget through the rail as even
+     rhythm, instead of leaving it as one hole above the closing strip. */
+  .decisions { flex:1; min-height:0; display:flex; flex-direction:column;
+               justify-content:space-between; }
+  .d { display:flex; gap:14pt; align-items:baseline; }
+  .d p.num { flex:none; width:20pt; font-family:'JetBrains Mono',monospace;
+             font-size:11pt; font-weight:400; line-height:1.4; letter-spacing:0.05em;
+             color:#8B7BF0; }
+  .dtext { min-width:0; }
+  .dtext h3 { font-size:16pt; font-weight:600; line-height:1.35; color:#F4F4F5; }
+  .dtext p { margin-top:6pt; font-size:14pt; font-weight:400; line-height:1.45; }
+  .strip { flex:none; margin-top:20pt; border:1px solid #26262C;
+           border-left:1.5pt solid #8B7BF0; border-radius:6px; padding:12pt 14pt; }
+  .strip p { font-size:17pt; font-weight:400; line-height:1.5; color:#F4F4F5; }
+</style>
+</head>
+<body>
+<header>
+  <div class=&quot;kickerrow&quot;><p>Decisions</p><p class=&quot;count&quot;>05 / 05</p></div>
+  <h2>What we need to decide</h2>
+</header>
+<main>
+  <div class=&quot;decisions&quot;>
+    <div class=&quot;d&quot;>
+      <p class=&quot;num&quot;>01</p>
+      <div class=&quot;dtext&quot;>
+        <h3>Which gaps do we close?</h3>
+        <p>Name them, price them, give each an owner and a date.</p>
+      </div>
+    </div>
+    <div class=&quot;d&quot;>
+      <p class=&quot;num&quot;>02</p>
+      <div class=&quot;dtext&quot;>
+        <h3>Which gaps do we admit to?</h3>
+        <p>Write them down as known-untested surface, not as an oversight.</p>
+      </div>
+    </div>
+    <div class=&quot;d&quot;>
+      <p class=&quot;num&quot;>03</p>
+      <div class=&quot;dtext&quot;>
+        <h3>What does a staging pass stop meaning?</h3>
+        <p>Agree the sentence we say instead, and put it in the release template.</p>
+      </div>
+    </div>
+  </div>
+  <div class=&quot;strip&quot;>
+    <p>Until we decide, a staging pass means one thing: the code ran somewhere.</p>
+  </div>
+</main>
+<footer>
+  <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 5;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

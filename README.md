@@ -20,6 +20,8 @@
 | [`decks/ci-pipeline`](decks/ci-pipeline/) | **CI pipeline: what belongs in it** — 영어 정밀 그리드 덱. CI가 매 커밋에 답하는 질문 → CI/머지 후/스케줄 경계 → 신호를 지키는 두 정책 → 이미 느릴 때 → 결정 | 6 | `ppt-precision-fintech-deck` |
 | [`decks/iac-drift`](decks/iac-drift/) | **Infrastructure drift** — 영어 스위스 에디토리얼 덱. 손으로 고친 변경이 계획을 무효로 만드는 고리 → 콘솔이 이기는 이유 → 경로를 하나로 만드는 세 수 → 결정 | 5 | `ppt-swiss-editorial-bold` |
 | [`decks/postmortem`](decks/postmortem/) | **Blameless postmortems** — 영어 신문 조판 덱. 회고가 쓰이는 용도 → 그 말이 요구하는 세 가지 양보 → 사람이 사실대로 말하게 되는 조건 → 결정 | 6 | `ppt-print-first-newspaper` |
+| [`decks/staging-parity`](decks/staging-parity/) | **Why staging lies** — 영어 엔지니어드 다크 덱. 그린 런이 증명하는 것 → 네 가지 간극과 각각이 숨기는 것 → 정직한 두 선택지 → 결정 | 5 | `ppt-engineered-dark-deck` |
+| [`decks/backup-restore`](decks/backup-restore/) | **A backup you have never restored** — 영어 헤리티지 럭셔리 덱. 백업이 조용히 실패하는 지점 → 장난감 데이터로는 증명되지 않는다 → 훈련의 산출물은 고쳐진 런북 → 결정 | 5 | `ppt-heritage-luxury-deck` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -40,6 +42,8 @@
 | ci-pipeline | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/ci-pipeline/viewer.html)** · [PDF](decks/ci-pipeline/ci-pipeline.pdf) · [이미지](decks/ci-pipeline/preview/) | [`viewer.html`](decks/ci-pipeline/viewer.html) |
 | iac-drift | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/iac-drift/viewer.html)** · [PDF](decks/iac-drift/iac-drift.pdf) · [이미지](decks/iac-drift/preview/) | [`viewer.html`](decks/iac-drift/viewer.html) |
 | postmortem | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/postmortem/viewer.html)** · [PDF](decks/postmortem/postmortem.pdf) · [이미지](decks/postmortem/preview/) | [`viewer.html`](decks/postmortem/viewer.html) |
+| staging-parity | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/staging-parity/viewer.html)** · [PDF](decks/staging-parity/staging-parity.pdf) · [이미지](decks/staging-parity/preview/) | [`viewer.html`](decks/staging-parity/viewer.html) |
+| backup-restore | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/backup-restore/viewer.html)** · [PDF](decks/backup-restore/backup-restore.pdf) · [이미지](decks/backup-restore/preview/) | [`viewer.html`](decks/backup-restore/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의
