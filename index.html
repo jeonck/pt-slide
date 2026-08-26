@@ -40,6 +40,9 @@
     color: var(--bg); background: var(--accent); padding: 6px 12px;
   }
   .links a.ghost { color: var(--accent); background: transparent; border: 1px solid var(--accent); }
+  .card .meta { color: var(--muted); font-size: 0.82rem; }
+  .card .meta code { font-size: 0.95em; }
+  kbd { font: inherit; font-size: 0.9em; border: 1px solid var(--border); padding: 0 5px; }
   .note { color: var(--muted); font-size: 0.88rem; margin-top: 12px; }
   footer { margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.86rem; }
   footer a { color: var(--accent); }
@@ -49,30 +52,182 @@
 <main>
   <h1>pt-slide</h1>
   <p class="lede">
-    <a href="https://github.com/NomaDamas/slides-grab">slides-grab</a>로 만든 프레젠테이션 덱.
+    <a href="https://github.com/NomaDamas/slides-grab">slides-grab</a>로 만든 프레젠테이션 덱 19종.
     슬라이드는 720pt × 405pt 시맨틱 HTML이고, 아래 뷰어에서 그대로 열린다.
+    뷰어에서는 <kbd>←</kbd> <kbd>→</kbd>로 넘기고 <kbd>F</kbd>로 전체화면이 된다.
   </p>
 
-  <h2>덱</h2>
+  <h2>덱 19종</h2>
   <div class="cards">
     <div class="card">
       <h3>인공지능의 미래와 업무 자동화</h3>
-      <p>사내 공유용 한국어 발표 덱 5장. 커버 → 변화 진단 → 자동화 3단계 → 도입 준비 → Q&amp;A.
-         스타일은 <code>ppt-korea-policy-navy</code>.</p>
+      <p>사내 공유용 한국어 발표 덱. 커버 → 변화 진단 → 자동화 3단계 → 도입 준비 → Q&amp;A</p>
+      <p class="meta">5장 · <code>ppt-korea-policy-navy</code></p>
       <div class="links">
         <a href="./decks/test-deck/viewer.html">뷰어 열기</a>
         <a class="ghost" href="./decks/test-deck/ai-automation-deck.pdf">PDF</a>
       </div>
     </div>
-
+    <div class="card">
+      <h3>From RAG to Agentic RAG</h3>
+      <p>영어 기술 덱. 클래식 RAG의 한계 → 검색이 루프가 되는 전환 → 도입 패턴 → 비용과 결정 → Q&amp;A</p>
+      <p class="meta">6장 · <code>ppt-blueprint-schematic-deck</code></p>
+      <div class="links">
+        <a href="./decks/agentic-rag/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/agentic-rag/agentic-rag.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>MLOps Platform Roadmap</h3>
+      <p>영어 컨설팅 익스히빗. 진단 → 역량 지도 → 3단계 시퀀스 → build vs buy → 결정 → 논의</p>
+      <p class="meta">7장 · <code>ppt-consulting-precision-grid</code></p>
+      <div class="links">
+        <a href="./decks/mlops-platform/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/mlops-platform/mlops-platform.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Feature Store adoption review</h3>
+      <p>영어 고스트 덱. 무엇을 푸는가 → 무엇인가 → 언제 도입하나 → 비용 → 결정</p>
+      <p class="meta">6장 · <code>ppt-mckinsey-ghost-deck</code></p>
+      <div class="links">
+        <a href="./decks/feature-store/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/feature-store/feature-store.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Model Registry operating guide</h3>
+      <p>영어 대장(ledger) 덱. 무엇을 기록하나 → 승격 원장 → 운영 규칙 4개 → 미결 사항</p>
+      <p class="meta">5장 · <code>ppt-archival-index-deck</code></p>
+      <div class="links">
+        <a href="./decks/model-registry/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/model-registry/model-registry.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Alert design: what deserves a page</h3>
+      <p>영어 모노크롬 리스크 덱. 세 목적지(page·ticket·dashboard) → 페이지의 자격을 묻는 시험 3문 → 탈락한 알럿의 처분 → 결정</p>
+      <p class="meta">5장 · <code>ppt-monochrome-risk</code></p>
+      <div class="links">
+        <a href="./decks/alert-design/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/alert-design/alert-design.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Incident response: the first 30 minutes</h3>
+      <p>영어 다크 테크 런북. 기술이 아닌 세 가지 실패 → 역할이 하지 않는 일 → 체크포인트 5 → 심각도가 지우는 의무 → 결정</p>
+      <p class="meta">6장 · <code>ppt-dark-tech</code></p>
+      <div class="links">
+        <a href="./decks/incident-response/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/incident-response/incident-response.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Deployment strategies</h3>
+      <p>영어 블록 인포그래픽. rolling·blue-green·canary 비교 → 전략을 정하는 두 질문 → 각 전략의 전제 조건 → 결정</p>
+      <p class="meta">5장 · <code>ppt-bold-block-infographic-deck</code></p>
+      <div class="links">
+        <a href="./decks/deployment-strategies/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/deployment-strategies/deployment-strategies.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>CI pipeline: what belongs in it</h3>
+      <p>영어 정밀 그리드 덱. CI가 매 커밋에 답하는 질문 → CI/머지 후/스케줄 경계 → 신호를 지키는 두 정책 → 이미 느릴 때 → 결정</p>
+      <p class="meta">6장 · <code>ppt-precision-fintech-deck</code></p>
+      <div class="links">
+        <a href="./decks/ci-pipeline/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/ci-pipeline/ci-pipeline.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Infrastructure drift</h3>
+      <p>영어 스위스 에디토리얼 덱. 손으로 고친 변경이 계획을 무효로 만드는 고리 → 콘솔이 이기는 이유 → 경로를 하나로 만드는 세 수 → 결정</p>
+      <p class="meta">5장 · <code>ppt-swiss-editorial-bold</code></p>
+      <div class="links">
+        <a href="./decks/iac-drift/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/iac-drift/iac-drift.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Blameless postmortems</h3>
+      <p>영어 신문 조판 덱. 회고가 쓰이는 용도 → 그 말이 요구하는 세 가지 양보 → 사람이 사실대로 말하게 되는 조건 → 결정</p>
+      <p class="meta">6장 · <code>ppt-print-first-newspaper</code></p>
+      <div class="links">
+        <a href="./decks/postmortem/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/postmortem/postmortem.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Why staging lies</h3>
+      <p>영어 엔지니어드 다크 덱. 그린 런이 증명하는 것 → 네 가지 간극과 각각이 숨기는 것 → 정직한 두 선택지 → 결정</p>
+      <p class="meta">5장 · <code>ppt-engineered-dark-deck</code></p>
+      <div class="links">
+        <a href="./decks/staging-parity/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/staging-parity/staging-parity.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>A backup you have never restored</h3>
+      <p>영어 헤리티지 럭셔리 덱. 백업이 조용히 실패하는 지점 → 장난감 데이터로는 증명되지 않는다 → 훈련의 산출물은 고쳐진 런북 → 결정</p>
+      <p class="meta">5장 · <code>ppt-heritage-luxury-deck</code></p>
+      <div class="links">
+        <a href="./decks/backup-restore/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/backup-restore/backup-restore.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Service level objectives</h3>
+      <p>영어 모노크롬 인프라 덱. SLO는 지표가 아니라 스위치다 → 에러 버짓 → 적어두지 않은 예외 → 스위치가 아니게 되는 세 경로 → 결정</p>
+      <p class="meta">6장 · <code>ppt-monochrome-infrastructure-deck</code></p>
+      <div class="links">
+        <a href="./decks/slo/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/slo/slo.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Revocability is the standard</h3>
+      <p>영어 패턴 볼드 포스터 덱. 흔한 규칙이 실패하는 이유 → 회전이 싸지는 조건 → 회전 불가는 곧 영구 → 결정</p>
+      <p class="meta">5장 · <code>ppt-pattern-bold-poster-keynote</code></p>
+      <div class="links">
+        <a href="./decks/secrets/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/secrets/secrets.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>On-call rotations people can survive</h3>
+      <p>영어 웜 미니멀 다이어그램 덱. 로타는 인력 결정이다 → 인수인계가 실어야 하는 것 → 페이지 상한이 상류에 강제하는 것 → 결정</p>
+      <p class="meta">5장 · <code>ppt-warm-minimal-diagram-deck</code></p>
+      <div class="links">
+        <a href="./decks/oncall-rotation/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/oncall-rotation/oncall-rotation.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Logs cost the most and get read the least</h3>
+      <p>영어 에디토리얼 프로덕트 덱. 세 신호가 답하는 서로 다른 질문 → 용량은 곱이고 독자 수는 상수 → 샘플링과 보존은 절약이 아니라 베팅 → 결정</p>
+      <p class="meta">6장 · <code>ppt-editorial-product-deck</code></p>
+      <div class="links">
+        <a href="./decks/observability-cost/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/observability-cost/observability-cost.pdf">PDF</a>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Who gets into production</h3>
+      <p>영어 IR 네이비+골드 덱. 상시 권한이 쌓이는 이유 → 최소 권한의 실제 비용 → 승격 기록이 담아야 하는 것 → 아무도 읽지 않는 기록 → 결정</p>
+      <p class="meta">6장 · <code>ppt-goldman-ir-deck</code></p>
+      <div class="links">
+        <a href="./decks/prod-access/viewer.html">뷰어 열기</a>
+        <a class="ghost" href="./decks/prod-access/prod-access.pdf">PDF</a>
+      </div>
+    </div>
     <div class="card">
       <h3>번들 스타일 92종 견본</h3>
-      <p><code>slides-grab list-styles</code>가 출력하는 스타일마다 한 장씩. 스타일을 고를 때 보는 카탈로그다.
-         각 장에 팔레트·타이포·레이아웃 축과 <code>--style</code>에 넣을 id가 찍혀 있다.</p>
+      <p>`slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그</p>
+      <p class="meta">92장 · <code>92종 전부</code></p>
       <div class="links">
         <a href="./decks/style-showcase/viewer.html">뷰어 열기</a>
         <a class="ghost" href="./decks/style-showcase/slides-grab-style-showcase.pdf">PDF</a>
-        <a class="ghost" href="./decks/style-showcase/viewer.html#">92종 훑어보기</a>
       </div>
     </div>
   </div>
@@ -84,7 +239,7 @@
 
   <footer>
     이 사이트는 저장소를 그대로 배포한다. <code>main</code>에 푸시하면
-    <code>.github/workflows/pages.yml</code>이 다시 배포한다. 덱 목록과 만드는 법은 저장소 README에 있다.
+    <code>.github/workflows/pages.yml</code>이 다시 배포한다. 덱 만드는 법은 저장소 README에 있다.
   </footer>
 </main>
 </body>
