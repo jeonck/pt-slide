@@ -159,6 +159,20 @@ decks/ai-roadmap 에 '제조 현장의 AI 품질검사' 8장 덱 만들어줘
 (`references/design-gate.md`), 이 환경에서 실제로 났던 오류와 해법(`references/troubleshooting.md`)이
 같이 들어 있다.
 
+## 라이선스
+
+이 저장소의 코드·스크립트·스킬·슬라이드는 [MIT](LICENSE)다.
+
+**폰트는 별개다.** 각 덱의 `assets/fonts/`에 임베드된 웹폰트는 전부 **SIL Open Font License 1.1**이고,
+라이선스 원문이 폰트 파일과 같은 폴더에 함께 들어 있다. MIT가 이 폰트들에까지 적용되는 것은 아니니,
+재배포할 때 그 `*-LICENSE.txt` 파일을 같이 두면 된다 — OFL이 요구하는 것은 그게 전부다.
+
+임베드된 서체: Anton, Archivo, Archivo Black, Arimo, EB Garamond, Geist, IBM Plex Mono, Inter,
+JetBrains Mono, Noto Serif, Playfair Display, Pretendard, Source Serif 4, Space Grotesk, Work Sans.
+
+`slides-grab` 자체와 번들 스타일 92종은 [NomaDamas/slides-grab](https://github.com/NomaDamas/slides-grab)의
+라이선스를 따른다.
+
 ## 알아둘 것
 
 - **폰트는 로컬 임베드.** 한글 폰트가 없는 환경에서도 그대로 렌더되도록 Pretendard(와 견본 덱의 Latin 서체 4종)를 각 덱의 `assets/fonts/`에 넣고 상대경로로 참조한다. 저장된 슬라이드 HTML에 원격 URL은 없다 — slides-grab 규칙이기도 하다.
