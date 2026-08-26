@@ -121,16 +121,21 @@ npx slides-grab design-gate --slides-dir decks/<name> --verdict proceed \
 
 ```bash
 npx slides-grab build-viewer --slides-dir decks/<name>
-node scripts/fix-viewer-sandbox.mjs decks/<name>                        # 뷰어 폰트가 뜨게 (아래)
+node scripts/patch-viewer.mjs decks/<name>                              # 뷰어 폰트·화살표 키 (아래)
 npx slides-grab pdf          --slides-dir decks/<name> --output decks/<name>/<name>.pdf --resolution 1080p
 node scripts/build-contact-sheets.mjs decks/<name>/gate-preview --web   # README용 preview/ 이미지
 ```
 
-**`build-viewer` 뒤에는 반드시 `fix-viewer-sandbox.mjs`를 돌린다.** 생성된 뷰어는 슬라이드를
-`<iframe srcdoc sandbox="allow-scripts">`로 넣는데, `allow-same-origin`이 없으면 그 프레임의 origin이
-`null`이 된다. `@font-face` 요청은 항상 CORS 요청이라, 정적 호스트(GitHub Pages 포함)는
-`Access-Control-Allow-Origin` 없이 응답하고 **woff2가 전부 실패한다.** 오류는 콘솔에만 뜨고 화면은
-폴백 서체로 그려지므로, 로컬에서 슬라이드를 직접 열어본 사람은 알아채지 못한다.
+**`build-viewer` 뒤에는 반드시 `patch-viewer.mjs`를 돌린다.** 생성된 뷰어에는 결함이 둘 있고, 둘 다
+`build-viewer`를 다시 돌릴 때마다 되살아난다.
+
+- **폰트.** 슬라이드가 `<iframe srcdoc sandbox="allow-scripts">`에 들어가는데, `allow-same-origin`이
+  없으면 그 프레임의 origin이 `null`이 된다. `@font-face` 요청은 항상 CORS 요청이라 정적
+  호스트(GitHub Pages 포함)는 `Access-Control-Allow-Origin` 없이 응답하고 **woff2가 전부 실패한다.**
+  오류는 콘솔에만 뜨고 화면은 폴백 서체로 그려진다.
+- **화살표 키.** 뷰어는 자기 document에 키 핸들러를 걸어두는데, 슬라이드를 한 번 클릭하면 포커스가
+  iframe 안으로 들어가고 **프레임 안의 키 이벤트는 부모로 올라오지 않는다.** 그때부터 조용히 멈춘다.
+  프레임이 같은 출처가 됐으므로(위 수정 덕분에) 부모 쪽에서 각 프레임 document에 핸들러를 걸어준다.
 
 PDF 해상도는 1080p면 충분하다 — 기본 2160p는 92장 기준 12MB까지 가고, 1080p로 4.9MB가 된다.
 

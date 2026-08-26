@@ -109,7 +109,7 @@ validate → png(증거 재촬영) → Pass A / Pass B 리포트 갱신 → slid
 | [`scripts/new-deck.mjs`](scripts/new-deck.mjs) | 새 덱 스캐폴딩 — 폴더, 로컬 임베드용 Pretendard(`--display`면 Latin 서체까지), 아웃라인 뼈대 |
 | [`scripts/build-style-showcase.mjs`](scripts/build-style-showcase.mjs) | 스타일 스펙에서 팔레트·타이포·레이아웃을 읽어 견본 92장을 생성 |
 | [`scripts/build-contact-sheets.mjs`](scripts/build-contact-sheets.mjs) | 렌더된 PNG를 3×4 컨택트 시트로 묶음. 기본은 리뷰용 큰 타일, `--web`은 README에 붙일 `preview/` 이미지 |
-| [`scripts/fix-viewer-sandbox.mjs`](scripts/fix-viewer-sandbox.mjs) | `build-viewer`가 만든 뷰어의 iframe 샌드박스를 고쳐 웹에서 폰트가 뜨게 함. `build-viewer` 뒤에 매번 실행 |
+| [`scripts/patch-viewer.mjs`](scripts/patch-viewer.mjs) | `build-viewer`가 만든 뷰어를 보정 — 웹에서 폰트가 뜨게 하고, 슬라이드를 클릭한 뒤에도 화살표 키가 듣게 함. `build-viewer` 뒤에 매번 실행 |
 | [`.github/workflows/pages.yml`](.github/workflows/pages.yml) | `main` 푸시마다 저장소를 <https://jeonck.github.io/pt-slide/>로 배포 |
 
 ```bash

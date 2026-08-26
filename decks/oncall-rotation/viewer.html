@@ -1343,5 +1343,29 @@
     document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
     rescale();
   </script>
+
+<script>
+  // slides-grab-patch: key-forwarding
+  // Clicking a slide focuses its iframe; key events there never reach this document.
+  // The frames are same-origin, so bind the parent's handler onto each framed
+  // document from out here. Re-bound on load: srcdoc frames can reparse.
+  (() => {
+    const NAV = ['ArrowRight', 'ArrowLeft', ' ', 'Home', 'End'];
+    const forward = (frame) => {
+      let doc;
+      try { doc = frame.contentDocument; } catch { return; }
+      if (!doc || doc.__sgKeys) return;
+      doc.__sgKeys = true;
+      doc.addEventListener('keydown', (e) => {
+        if (NAV.includes(e.key)) e.preventDefault();
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: e.key, bubbles: true }));
+      });
+    };
+    for (const frame of document.querySelectorAll('iframe')) {
+      forward(frame);
+      frame.addEventListener('load', () => forward(frame));
+    }
+  })();
+</script>
 </body>
 </html>

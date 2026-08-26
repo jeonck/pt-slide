@@ -90,8 +90,8 @@ Confidence 값은 저 셋 중 하나여야 한다. `Medium-High` 같은 값은 �
 `python -m http.server` 둘 다 해당한다. 페이지는 그려지고 콘솔에만 오류가 남는다.
 
 ```bash
-node scripts/fix-viewer-sandbox.mjs            # 전체
-node scripts/fix-viewer-sandbox.mjs decks/<name>
+node scripts/patch-viewer.mjs                  # 전체
+node scripts/patch-viewer.mjs decks/<name>
 ```
 
 슬라이드에는 `<script>`가 없으므로 `allow-scripts`는 필요 없다. 이걸 `allow-same-origin`으로 바꾼다.
@@ -100,6 +100,16 @@ node scripts/fix-viewer-sandbox.mjs decks/<name>
 
 확인은 브라우저에서 뷰어를 HTTP로 띄우고 프레임 문서의 `document.fonts`가 실제로 `loaded`인지 본다 —
 `file://`로 열면 이 결함이 재현되지 않는다.
+
+## 뷰어에서 화살표 키가 듣지 않는다
+
+처음에는 되다가 슬라이드를 한 번 클릭하면 멈춘다. 뷰어는 자기 document에 키 핸들러를 걸어두는데,
+클릭이 포커스를 iframe 안으로 옮기고 **프레임 안 keydown은 부모 document로 버블링하지 않는다.**
+
+`node scripts/patch-viewer.mjs`가 부모 쪽에서 각 프레임 document에 핸들러를 걸어 해결한다. 프레임
+안 스크립트는 샌드박스에 막혀 있지만, 같은 출처라 **부모가 밖에서** 리스너를 붙일 수 있다.
+
+이 결함은 클릭하지 않고 테스트하면 재현되지 않는다. 확인할 때는 슬라이드를 한 번 클릭한 다음 키를 누른다.
 
 ## 화살표가 노드에 닿으면 `sibling-overlap` 경고가 난다
 
