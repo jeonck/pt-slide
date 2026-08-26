@@ -121,9 +121,16 @@ npx slides-grab design-gate --slides-dir decks/<name> --verdict proceed \
 
 ```bash
 npx slides-grab build-viewer --slides-dir decks/<name>
+node scripts/fix-viewer-sandbox.mjs decks/<name>                        # 뷰어 폰트가 뜨게 (아래)
 npx slides-grab pdf          --slides-dir decks/<name> --output decks/<name>/<name>.pdf --resolution 1080p
 node scripts/build-contact-sheets.mjs decks/<name>/gate-preview --web   # README용 preview/ 이미지
 ```
+
+**`build-viewer` 뒤에는 반드시 `fix-viewer-sandbox.mjs`를 돌린다.** 생성된 뷰어는 슬라이드를
+`<iframe srcdoc sandbox="allow-scripts">`로 넣는데, `allow-same-origin`이 없으면 그 프레임의 origin이
+`null`이 된다. `@font-face` 요청은 항상 CORS 요청이라, 정적 호스트(GitHub Pages 포함)는
+`Access-Control-Allow-Origin` 없이 응답하고 **woff2가 전부 실패한다.** 오류는 콘솔에만 뜨고 화면은
+폴백 서체로 그려지므로, 로컬에서 슬라이드를 직접 열어본 사람은 알아채지 못한다.
 
 PDF 해상도는 1080p면 충분하다 — 기본 2160p는 92장 기준 12MB까지 가고, 1080p로 4.9MB가 된다.
 

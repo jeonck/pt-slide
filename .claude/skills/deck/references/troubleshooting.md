@@ -79,6 +79,28 @@ Confidence 값은 저 셋 중 하나여야 한다. `Medium-High` 같은 값은 �
 
 그래서 렌더 확인은 선택이 아니다. `png`로 뽑아 실제로 열어본다.
 
+## 뷰어를 브라우저로 열면 폰트가 다르게 나온다
+
+슬라이드 파일(`slide-01.html`)을 직접 열면 멀쩡한데 `viewer.html`로 보면 서체가 다르다. 한글이면
+두부가 되기도 한다.
+
+`build-viewer`가 만드는 뷰어는 각 슬라이드를 `<iframe srcdoc sandbox="allow-scripts">`에 넣는다.
+`allow-same-origin`이 없으면 그 문서의 origin이 `null`이 되고, `@font-face` 요청은 **항상** CORS
+요청이라 `Access-Control-Allow-Origin`을 주지 않는 정적 호스트에서는 전부 실패한다. GitHub Pages,
+`python -m http.server` 둘 다 해당한다. 페이지는 그려지고 콘솔에만 오류가 남는다.
+
+```bash
+node scripts/fix-viewer-sandbox.mjs            # 전체
+node scripts/fix-viewer-sandbox.mjs decks/<name>
+```
+
+슬라이드에는 `<script>`가 없으므로 `allow-scripts`는 필요 없다. 이걸 `allow-same-origin`으로 바꾼다.
+둘을 **같이** 주면 프레임 안 콘텐츠가 자기 샌드박스를 해제할 수 있으니 그렇게 하지 않는다.
+`build-viewer`를 다시 돌리면 원상복구되므로 그때마다 다시 실행한다.
+
+확인은 브라우저에서 뷰어를 HTTP로 띄우고 프레임 문서의 `document.fonts`가 실제로 `loaded`인지 본다 —
+`file://`로 열면 이 결함이 재현되지 않는다.
+
 ## 화살표가 노드에 닿으면 `sibling-overlap` 경고가 난다
 
 다이어그램에서 엣지가 목표 노드 테두리에 닿으면 바운딩 박스가 겹쳐 경고가 뜬다.
