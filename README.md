@@ -23,6 +23,7 @@
 | [`decks/staging-parity`](decks/staging-parity/) | **Why staging lies** — 영어 엔지니어드 다크 덱. 그린 런이 증명하는 것 → 네 가지 간극과 각각이 숨기는 것 → 정직한 두 선택지 → 결정 | 5 | `ppt-engineered-dark-deck` |
 | [`decks/backup-restore`](decks/backup-restore/) | **A backup you have never restored** — 영어 헤리티지 럭셔리 덱. 백업이 조용히 실패하는 지점 → 장난감 데이터로는 증명되지 않는다 → 훈련의 산출물은 고쳐진 런북 → 결정 | 5 | `ppt-heritage-luxury-deck` |
 | [`decks/slo`](decks/slo/) | **Service level objectives** — 영어 모노크롬 인프라 덱. SLO는 지표가 아니라 스위치다 → 에러 버짓 → 적어두지 않은 예외 → 스위치가 아니게 되는 세 경로 → 결정 | 6 | `ppt-monochrome-infrastructure-deck` |
+| [`decks/secrets`](decks/secrets/) | **Revocability is the standard** — 영어 패턴 볼드 포스터 덱. 흔한 규칙이 실패하는 이유 → 회전이 싸지는 조건 → 회전 불가는 곧 영구 → 결정 | 5 | `ppt-pattern-bold-poster-keynote` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -46,6 +47,7 @@
 | staging-parity | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/staging-parity/viewer.html)** · [PDF](decks/staging-parity/staging-parity.pdf) · [이미지](decks/staging-parity/preview/) | [`viewer.html`](decks/staging-parity/viewer.html) |
 | backup-restore | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/backup-restore/viewer.html)** · [PDF](decks/backup-restore/backup-restore.pdf) · [이미지](decks/backup-restore/preview/) | [`viewer.html`](decks/backup-restore/viewer.html) |
 | slo | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/slo/viewer.html)** · [PDF](decks/slo/slo.pdf) · [이미지](decks/slo/preview/) | [`viewer.html`](decks/slo/viewer.html) |
+| secrets | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/secrets/viewer.html)** · [PDF](decks/secrets/secrets.pdf) · [이미지](decks/secrets/preview/) | [`viewer.html`](decks/secrets/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의
