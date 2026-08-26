@@ -26,9 +26,14 @@ permissions:
   pages: write
   id-token: write
 
+# cancel-in-progress: true, not the usual false. Several pushes in a row are normal
+# here (one per deck), and with false each queues behind the last — six pushes meant
+# the newest content was three runs and a quarter-hour away from being live, which is
+# how a fix can look like it did not work. This is a static site with no release
+# semantics to protect, so superseding an older deploy loses nothing.
 concurrency:
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   deploy:
@@ -45,9 +50,22 @@ jobs:
         with:
           enablement: true
 
+      # Stage the site instead of uploading the checkout as-is. decks/*/.slides-grab/
+      # holds 2160p gate evidence the reports cite — 17MB of a 46MB artifact that the
+      # site never serves. Dropping it makes every deploy meaningfully faster.
+      - name: Stage the site
+        run: |
+          mkdir -p _site
+          tar -cf - --exclude='./.git' \
+                    --exclude='./_site' \
+                    --exclude='./node_modules' \
+                    --exclude='./decks/*/.slides-grab' \
+                    . | tar -xf - -C _site
+          du -sh _site
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: .
+          path: _site
 
       - id: deployment
         uses: actions/deploy-pages@v4
