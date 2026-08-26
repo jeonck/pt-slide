@@ -4,7 +4,8 @@ name: Deploy GitHub Pages
 # real pages. GitHub serves .html from the repo tree as source; Pages serves it
 # as a page, which is the whole point of this workflow.
 #
-# Live at https://jeonck.github.io/pt-slide/ — every push to main redeploys.
+# Live at https://<owner>.github.io/<repo>/ — every push to main redeploys. A fork gets
+# its own address; nothing here needs editing for that.
 #
 # Settings -> Pages -> Source is set to "GitHub Actions". That first toggle had to be
 # done by a human: the workflow token deploys to an existing Pages site but cannot

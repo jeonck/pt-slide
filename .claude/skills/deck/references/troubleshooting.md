@@ -38,7 +38,7 @@ touch $B/chromium_headless_shell-$WANT/INSTALLATION_COMPLETE $B/chromium_headles
 
 ## `curl: (56) CONNECT tunnel failed, response 403`
 
-egress 프록시가 그 호스트를 막고 있다. jsDelivr, `jeonck.github.io` 등이 여기 해당한다.
+egress 프록시가 그 호스트를 막고 있다. jsDelivr 같은 CDN, 그리고 이 저장소가 배포된 GitHub Pages 도메인이 여기 해당한다.
 
 npm 레지스트리는 열려 있으므로 웹폰트·라이브러리는 npm 패키지로 받는다:
 

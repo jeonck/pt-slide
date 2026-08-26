@@ -3,7 +3,7 @@
 [slides-grab](https://github.com/NomaDamas/slides-grab)로 만든 프레젠테이션 덱 모음.
 슬라이드는 전부 편집·검색 가능한 시맨틱 HTML(720pt × 405pt)이고, 여기서 PDF·PNG·PPTX로 내보낸다.
 
-**🔗 <https://jeonck.github.io/pt-slide/>** — 두 덱을 브라우저에서 바로 볼 수 있다.
+**🔗 <https://jeonck.github.io/pt-slide/>** — 덱을 브라우저에서 바로 볼 수 있다.
 
 ## 덱
 
@@ -71,6 +71,32 @@
 
 ![test-deck 5장](decks/test-deck/preview/slides-01-05.png)
 
+## 포크해서 쓰기
+
+이 저장소는 **템플릿으로 쓰라고 열어둔 것**이다. 덱 자체보다 `.claude/skills/deck/`에 들어 있는
+작업 규칙이 본체다 — 두 축 예산, 계수 실측, `validate`가 통과시키는 결함 목록, 게이트 절차.
+
+**스킬만 복사해 가면 동작하지 않는다.** 스킬은 파이프라인 세 지점에서 이 저장소의 스크립트를 부른다
+(`new-deck.mjs`, `patch-viewer.mjs`, `build-contact-sheets.mjs`). 저장소째 가져가는 것이 맞다.
+
+1. **포크하거나 "Use this template"으로 새 저장소를 만든다.**
+2. **Settings → Pages → Source를 `GitHub Actions`로 바꾼다.** 이건 사람이 한 번 눌러야 한다 —
+   워크플로 토큰은 이미 켜진 Pages에 배포만 할 수 있고 사이트를 처음 만들지는 못한다
+   (`actions/configure-pages`가 `Resource not accessible by integration`을 낸다).
+3. 사이트 주소는 자동으로 `https://<owner>.github.io/<repo>/`가 된다. 워크플로는 손댈 필요가 없다.
+   위 표의 뷰어 링크만 이 저장소를 가리키니, **예제 덱이 필요 없으면 `decks/`를 비우고** 자기 덱을
+   만들면 된다.
+4. ```bash
+   npm install
+   npx playwright install chromium
+   ```
+5. Claude Code에서 한 줄이면 된다 — `decks/<name> 에 '<주제>' <N>장 덱 만들어줘`.
+
+**알아둘 환경 전제.** 이 저장소는 *한글 폰트가 없고 CDN이 막힌* 컨테이너에서 만들어졌다. 그래서 폰트를
+덱마다 로컬 임베드하고 npm에서 받는다. 폰트가 갖춰진 환경에서는 불필요한 수고지만 해롭지는 않고,
+결과물이 어디서든 같게 렌더된다는 이점은 남는다. `references/troubleshooting.md`의 Playwright 빌드
+번호 심링크 항목은 그 컨테이너 전용 우회이니, 같은 증상이 아니면 무시해도 된다.
+
 ## 시작하기
 
 Node.js ≥ 20 필요.
@@ -100,7 +126,7 @@ npx slides-grab pdf          --slides-dir $DECK --output $DECK/deck.pdf
 validate → png(증거 재촬영) → Pass A / Pass B 리포트 갱신 → slides-grab design-gate --verdict proceed
 ```
 
-두 덱 모두 `gate-pass-a.md`(시스템 계약)와 `gate-pass-b.md`(청중 임팩트) 리포트, 그리고 `.slides-grab/`에 영수증이 들어 있다.
+각 덱에 `gate-pass-a.md`(시스템 계약)와 `gate-pass-b.md`(청중 임팩트) 리포트, 그리고 `.slides-grab/`에 영수증이 들어 있다.
 
 ## 스크립트
 

@@ -21,7 +21,7 @@ description: Build, revise or export a presentation deck in this repo with slide
 | 발표자 | `발표자 · 소속` 자리표시자. 이름을 지어내지 않는다 |
 | 완료 지점 | validate → 디자인 게이트 → viewer + PDF + preview 이미지 → README → main 푸시 |
 
-푸시하면 `.github/workflows/pages.yml`이 <https://jeonck.github.io/pt-slide/> 로 자동 배포한다. 끝나면 그 덱의 뷰어 URL을 알려준다.
+푸시하면 `.github/workflows/pages.yml`이 그 저장소의 Pages(`https://<owner>.github.io/<repo>/`)로 자동 배포한다. 끝나면 그 덱의 뷰어 URL을 알려준다 — 주소는 원격을 보고 만들지, 다른 저장소 주소를 옮겨 적지 않는다.
 
 ## 파이프라인
 
