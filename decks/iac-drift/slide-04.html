@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Make one path the only path</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  h2 { flex:none; margin-bottom:14pt; }
+  .ledger { flex:none; display:flex; flex-direction:column; }
+  /* Every row carries the same 3pt rule; only its colour changes, so no row shifts. */
+  .lrule { height:3pt; background:#111111; }
+  .lrule.mark { background:#FF4A1C; }
+  .lrow { display:flex; align-items:flex-start; gap:12pt; padding:5pt 0; }
+  .lab { width:200pt; flex:none; font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:13pt; letter-spacing:-0.02em; line-height:1.35; text-transform:uppercase; }
+  .what { flex:1; font-size:14pt; font-weight:400; line-height:1.45; }
+  .close { flex:none; margin-top:auto; font-size:16pt; font-weight:500; line-height:1.45; }
+</style>
+</head>
+<body>
+<div class="rail"><p>04 · One path, the only path</p><p>04 / 05</p></div>
+<div class="rule rule-top"></div>
+<main>
+  <h2>Make one path the only path</h2>
+  <div class="ledger">
+    <div class="lrule"></div>
+    <div class="lrow">
+      <div class="badge"><p>1</p></div>
+      <h3 class="lab">Read-only by default</h3>
+      <p class="what">Human roles in production carry read and describe. Write belongs to the pipeline&rsquo;s identity, and to nothing else.</p>
+    </div>
+    <div class="lrule"></div>
+    <div class="lrow">
+      <div class="badge"><p>2</p></div>
+      <h3 class="lab">Break-glass expires</h3>
+      <p class="what">Elevation is one click, time-boxed, and it writes a record: who, what, why, and when it lapsed.</p>
+    </div>
+    <div class="lrule mark"></div>
+    <div class="lrow">
+      <div class="badge"><p>3</p></div>
+      <h3 class="lab">Close the gap</h3>
+      <p class="what">Every use of the glass files a ticket against the paved path: the slow step, the missing field.</p>
+    </div>
+    <div class="lrule"></div>
+  </div>
+  <p class="close">Do the first two without the third and the drift just moves out of sight.</p>
+</main>
+<div class="rule rule-bot"></div>
+<footer class="rail"><p>Infrastructure drift</p><p>The third move is the one that gets skipped</p></footer>
+</body>
+</html>

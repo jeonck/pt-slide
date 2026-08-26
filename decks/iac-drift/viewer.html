@@ -1,0 +1,1286 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 5</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Infrastructure drift — the change someone made by hand</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  main { justify-content:center; }
+  .l1 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:46pt; letter-spacing:-0.03em; line-height:1.2; text-transform:uppercase; }
+  .l2row { display:flex; align-items:stretch; gap:20pt; margin-top:2pt; }
+  .l2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:132pt; letter-spacing:-0.03em; line-height:1.2; text-transform:uppercase; color:#FF4A1C; flex:none; }
+  /* rect-color-block, radius 0, no shadow. Invert ink on #111111 reads ~16:1. */
+  .thesis { flex:1; background:#111111; padding:16pt 18pt; display:flex; flex-direction:column; justify-content:center; }
+  .thesis p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:17pt; letter-spacing:-0.02em; line-height:1.3; color:#F2F0EB; text-transform:uppercase; }
+  .subline { font-size:18pt; font-weight:400; line-height:1.45; margin-top:12pt; max-width:600pt; }
+</style>
+</head>
+<body>
+<div class=&quot;rail&quot;><p>Platform engineering · internal</p><p>01 / 05</p></div>
+<div class=&quot;rule rule-top&quot;></div>
+<main>
+  <h1 class=&quot;l1&quot;>Infrastructure</h1>
+  <div class=&quot;l2row&quot;>
+    <h2 class=&quot;l2&quot;>Drift</h2>
+    <div class=&quot;thesis&quot;>
+      <p>The change</p>
+      <p>someone made</p>
+      <p>by hand</p>
+    </div>
+  </div>
+  <p class=&quot;subline&quot;>Drift is not a tooling problem. The console is still a valid write path.</p>
+</main>
+<div class=&quot;rule rule-bot&quot;></div>
+<footer class=&quot;rail&quot;><p>Presenter · Team</p><p>Infrastructure drift</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>The plan stops being true</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  h2 { flex:none; margin-bottom:16pt; }
+  .loop { flex:none; display:flex; align-items:center; }
+  /* Four stations. Boxes stretch to a common height so the badges sit on one line. */
+  .stn { width:145pt; min-height:102pt; flex:none; border:2pt solid #111111; padding:12pt; display:flex; flex-direction:column; align-self:stretch; }
+  .stn p { font-size:14pt; font-weight:400; line-height:1.45; margin-top:8pt; }
+  .conn { width:20pt; height:20pt; flex:none; }
+  .ret { flex:none; width:640pt; height:24pt; margin-top:6pt; }
+  .close { flex:none; margin-top:auto; font-size:18pt; font-weight:400; line-height:1.45; max-width:620pt; }
+  .close strong { font-weight:700; }
+</style>
+</head>
+<body>
+<div class=&quot;rail&quot;><p>02 · What drift actually costs</p><p>02 / 05</p></div>
+<div class=&quot;rule rule-top&quot;></div>
+<main>
+  <h2>The plan stops being true</h2>
+  <div class=&quot;loop&quot;>
+    <div class=&quot;stn&quot;><div class=&quot;badge&quot;><p>1</p></div><p>A change is made in the console</p></div>
+    <svg class=&quot;conn&quot; viewBox=&quot;0 0 20 20&quot; width=&quot;20&quot; height=&quot;20&quot; aria-hidden=&quot;true&quot;><line x1=&quot;0&quot; y1=&quot;10&quot; x2=&quot;7&quot; y2=&quot;10&quot; stroke=&quot;#111111&quot; stroke-width=&quot;3&quot;/><polygon points=&quot;20,10 7,4 7,16&quot; fill=&quot;#111111&quot;/></svg>
+    <div class=&quot;stn&quot;><div class=&quot;badge&quot;><p>2</p></div><p>Plan shows a diff nobody ordered</p></div>
+    <svg class=&quot;conn&quot; viewBox=&quot;0 0 20 20&quot; width=&quot;20&quot; height=&quot;20&quot; aria-hidden=&quot;true&quot;><line x1=&quot;0&quot; y1=&quot;10&quot; x2=&quot;7&quot; y2=&quot;10&quot; stroke=&quot;#111111&quot; stroke-width=&quot;3&quot;/><polygon points=&quot;20,10 7,4 7,16&quot; fill=&quot;#111111&quot;/></svg>
+    <div class=&quot;stn&quot;><div class=&quot;badge&quot;><p>3</p></div><p>Apply is now risky, so it waits</p></div>
+    <svg class=&quot;conn&quot; viewBox=&quot;0 0 20 20&quot; width=&quot;20&quot; height=&quot;20&quot; aria-hidden=&quot;true&quot;><line x1=&quot;0&quot; y1=&quot;10&quot; x2=&quot;7&quot; y2=&quot;10&quot; stroke=&quot;#111111&quot; stroke-width=&quot;3&quot;/><polygon points=&quot;20,10 7,4 7,16&quot; fill=&quot;#111111&quot;/></svg>
+    <div class=&quot;stn&quot;><div class=&quot;badge&quot;><p>4</p></div><p>The next change skips the pipeline</p></div>
+  </div>
+  <svg class=&quot;ret&quot; viewBox=&quot;0 0 640 24&quot; width=&quot;640&quot; height=&quot;24&quot; aria-hidden=&quot;true&quot;>
+    <defs><marker id=&quot;ah&quot; viewBox=&quot;0 0 10 10&quot; refX=&quot;9&quot; refY=&quot;5&quot; markerWidth=&quot;5&quot; markerHeight=&quot;5&quot; markerUnits=&quot;strokeWidth&quot; orient=&quot;auto&quot;><path d=&quot;M 0 0 L 10 5 L 0 10 Z&quot; fill=&quot;#FF4A1C&quot;/></marker></defs>
+    <polyline points=&quot;567.5,1.5 567.5,17 72.5,17 72.5,4&quot; fill=&quot;none&quot; stroke=&quot;#FF4A1C&quot; stroke-width=&quot;3&quot; marker-end=&quot;url(#ah)&quot;/>
+  </svg>
+  <p class=&quot;close&quot;>Nothing here is a tooling failure. The loop closes on itself &amp;mdash; <strong>each lap makes the next change by hand more reasonable than the last.</strong></p>
+</main>
+<div class=&quot;rule rule-bot&quot;></div>
+<footer class=&quot;rail&quot;><p>Infrastructure drift</p><p>The drift loop</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Why the console keeps winning</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  h2 { flex:none; margin-bottom:16pt; }
+  .cols { flex:none; display:flex; gap:20pt; }
+  .col { width:200pt; flex:none; display:flex; flex-direction:column; }
+  .claim { font-size:16pt; font-weight:600; line-height:1.3; margin-top:10pt; }
+  /* Spot colour, one per slide: the rule that separates the claim from its mechanism. */
+  .hr-accent { height:3pt; background:#FF4A1C; margin:10pt 0; }
+  .why { font-size:14pt; font-weight:400; line-height:1.45; }
+  .callout { flex:none; margin-top:auto; background:#111111; padding:16pt 20pt; }
+  .callout p { font-size:16pt; font-weight:500; line-height:1.45; color:#F2F0EB; }
+</style>
+</head>
+<body>
+<div class=&quot;rail&quot;><p>03 · Why people reach for it</p><p>03 / 05</p></div>
+<div class=&quot;rule rule-top&quot;></div>
+<main>
+  <h2>Why the console keeps winning</h2>
+  <div class=&quot;cols&quot;>
+    <div class=&quot;col&quot;>
+      <div class=&quot;badge&quot;><p>1</p></div>
+      <h3 class=&quot;claim&quot;>Faster during an incident</h3>
+      <div class=&quot;hr-accent&quot;></div>
+      <p class=&quot;why&quot;>The pipeline answers in minutes. The pager answers in seconds.</p>
+    </div>
+    <div class=&quot;col&quot;>
+      <div class=&quot;badge&quot;><p>2</p></div>
+      <h3 class=&quot;claim&quot;>The pipeline is blocked</h3>
+      <div class=&quot;hr-accent&quot;></div>
+      <p class=&quot;why&quot;>Queued behind unrelated changes, waiting on a sleeping reviewer.</p>
+    </div>
+    <div class=&quot;col&quot;>
+      <div class=&quot;badge&quot;><p>3</p></div>
+      <h3 class=&quot;claim&quot;>The module has no field</h3>
+      <div class=&quot;hr-accent&quot;></div>
+      <p class=&quot;why&quot;>The abstraction is behind the provider. There is no code to write.</p>
+    </div>
+  </div>
+  <div class=&quot;callout&quot;><p>Every one of these is a gap in the paved path, not a failure of discipline.</p></div>
+</main>
+<div class=&quot;rule rule-bot&quot;></div>
+<footer class=&quot;rail&quot;><p>Infrastructure drift</p><p>Take the reasons seriously</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Make one path the only path</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  h2 { flex:none; margin-bottom:14pt; }
+  .ledger { flex:none; display:flex; flex-direction:column; }
+  /* Every row carries the same 3pt rule; only its colour changes, so no row shifts. */
+  .lrule { height:3pt; background:#111111; }
+  .lrule.mark { background:#FF4A1C; }
+  .lrow { display:flex; align-items:flex-start; gap:12pt; padding:5pt 0; }
+  .lab { width:200pt; flex:none; font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:13pt; letter-spacing:-0.02em; line-height:1.35; text-transform:uppercase; }
+  .what { flex:1; font-size:14pt; font-weight:400; line-height:1.45; }
+  .close { flex:none; margin-top:auto; font-size:16pt; font-weight:500; line-height:1.45; }
+</style>
+</head>
+<body>
+<div class=&quot;rail&quot;><p>04 · One path, the only path</p><p>04 / 05</p></div>
+<div class=&quot;rule rule-top&quot;></div>
+<main>
+  <h2>Make one path the only path</h2>
+  <div class=&quot;ledger&quot;>
+    <div class=&quot;lrule&quot;></div>
+    <div class=&quot;lrow&quot;>
+      <div class=&quot;badge&quot;><p>1</p></div>
+      <h3 class=&quot;lab&quot;>Read-only by default</h3>
+      <p class=&quot;what&quot;>Human roles in production carry read and describe. Write belongs to the pipeline&amp;rsquo;s identity, and to nothing else.</p>
+    </div>
+    <div class=&quot;lrule&quot;></div>
+    <div class=&quot;lrow&quot;>
+      <div class=&quot;badge&quot;><p>2</p></div>
+      <h3 class=&quot;lab&quot;>Break-glass expires</h3>
+      <p class=&quot;what&quot;>Elevation is one click, time-boxed, and it writes a record: who, what, why, and when it lapsed.</p>
+    </div>
+    <div class=&quot;lrule mark&quot;></div>
+    <div class=&quot;lrow&quot;>
+      <div class=&quot;badge&quot;><p>3</p></div>
+      <h3 class=&quot;lab&quot;>Close the gap</h3>
+      <p class=&quot;what&quot;>Every use of the glass files a ticket against the paved path: the slow step, the missing field.</p>
+    </div>
+    <div class=&quot;lrule&quot;></div>
+  </div>
+  <p class=&quot;close&quot;>Do the first two without the third and the drift just moves out of sight.</p>
+</main>
+<div class=&quot;rule rule-bot&quot;></div>
+<footer class=&quot;rail&quot;><p>Infrastructure drift</p><p>The third move is the one that gets skipped</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we have to decide</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  main { flex-direction:row; gap:24pt; align-items:center; }
+  .giant { width:320pt; flex:none; }
+  .giant h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:60pt; letter-spacing:-0.03em; line-height:1.2; text-transform:uppercase; }
+  .giant h2.spot { color:#FF4A1C; }
+  .asks { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
+  .ask { display:flex; align-items:flex-start; gap:12pt; padding-top:10pt; }
+  .ask p { flex:1; font-size:15pt; font-weight:400; line-height:1.45; }
+  .arule { height:3pt; background:#111111; }
+  .arule + .arule, .ask + .arule { margin-top:12pt; }
+  .ask + .arule { margin-top:12pt; }
+</style>
+</head>
+<body>
+<div class=&quot;rail&quot;><p>05 · What we have to decide</p><p>05 / 05</p></div>
+<div class=&quot;rule rule-top&quot;></div>
+<main>
+  <div class=&quot;giant&quot;>
+    <h2>What we</h2>
+    <h2>have to</h2>
+    <h2 class=&quot;spot&quot;>Decide</h2>
+  </div>
+  <div class=&quot;asks&quot;>
+    <div class=&quot;arule&quot;></div>
+    <div class=&quot;ask&quot;><div class=&quot;badge&quot;><p>1</p></div><p>Who holds the break-glass, and how long before it lapses?</p></div>
+    <div class=&quot;arule&quot;></div>
+    <div class=&quot;ask&quot;><div class=&quot;badge&quot;><p>2</p></div><p>Which gap do we close first: the slow step or the missing field?</p></div>
+    <div class=&quot;arule&quot;></div>
+    <div class=&quot;ask&quot;><div class=&quot;badge&quot;><p>3</p></div><p>What do we do with the drift that is already in production?</p></div>
+    <div class=&quot;arule&quot;></div>
+  </div>
+</main>
+<div class=&quot;rule rule-bot&quot;></div>
+<footer class=&quot;rail&quot;><p>Presenter · Team</p><p>Infrastructure drift</p></footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 5;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

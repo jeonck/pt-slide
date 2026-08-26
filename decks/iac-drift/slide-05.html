@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>What we have to decide</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  main { flex-direction:row; gap:24pt; align-items:center; }
+  .giant { width:320pt; flex:none; }
+  .giant h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:60pt; letter-spacing:-0.03em; line-height:1.2; text-transform:uppercase; }
+  .giant h2.spot { color:#FF4A1C; }
+  .asks { flex:1; min-width:0; display:flex; flex-direction:column; justify-content:center; }
+  .ask { display:flex; align-items:flex-start; gap:12pt; padding-top:10pt; }
+  .ask p { flex:1; font-size:15pt; font-weight:400; line-height:1.45; }
+  .arule { height:3pt; background:#111111; }
+  .arule + .arule, .ask + .arule { margin-top:12pt; }
+  .ask + .arule { margin-top:12pt; }
+</style>
+</head>
+<body>
+<div class="rail"><p>05 · What we have to decide</p><p>05 / 05</p></div>
+<div class="rule rule-top"></div>
+<main>
+  <div class="giant">
+    <h2>What we</h2>
+    <h2>have to</h2>
+    <h2 class="spot">Decide</h2>
+  </div>
+  <div class="asks">
+    <div class="arule"></div>
+    <div class="ask"><div class="badge"><p>1</p></div><p>Who holds the break-glass, and how long before it lapses?</p></div>
+    <div class="arule"></div>
+    <div class="ask"><div class="badge"><p>2</p></div><p>Which gap do we close first: the slow step or the missing field?</p></div>
+    <div class="arule"></div>
+    <div class="ask"><div class="badge"><p>3</p></div><p>What do we do with the drift that is already in production?</p></div>
+    <div class="arule"></div>
+  </div>
+</main>
+<div class="rule rule-bot"></div>
+<footer class="rail"><p>Presenter · Team</p><p>Infrastructure drift</p></footer>
+</body>
+</html>

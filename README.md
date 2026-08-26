@@ -18,6 +18,7 @@
 | [`decks/incident-response`](decks/incident-response/) | **Incident response: the first 30 minutes** — 영어 다크 테크 런북. 기술이 아닌 세 가지 실패 → 역할이 하지 않는 일 → 체크포인트 5 → 심각도가 지우는 의무 → 결정 | 6 | `ppt-dark-tech` |
 | [`decks/deployment-strategies`](decks/deployment-strategies/) | **Deployment strategies** — 영어 블록 인포그래픽. rolling·blue-green·canary 비교 → 전략을 정하는 두 질문 → 각 전략의 전제 조건 → 결정 | 5 | `ppt-bold-block-infographic-deck` |
 | [`decks/ci-pipeline`](decks/ci-pipeline/) | **CI pipeline: what belongs in it** — 영어 정밀 그리드 덱. CI가 매 커밋에 답하는 질문 → CI/머지 후/스케줄 경계 → 신호를 지키는 두 정책 → 이미 느릴 때 → 결정 | 6 | `ppt-precision-fintech-deck` |
+| [`decks/iac-drift`](decks/iac-drift/) | **Infrastructure drift** — 영어 스위스 에디토리얼 덱. 손으로 고친 변경이 계획을 무효로 만드는 고리 → 콘솔이 이기는 이유 → 경로를 하나로 만드는 세 수 → 결정 | 5 | `ppt-swiss-editorial-bold` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -36,6 +37,7 @@
 | incident-response | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/incident-response/viewer.html)** · [PDF](decks/incident-response/incident-response.pdf) · [이미지](decks/incident-response/preview/) | [`viewer.html`](decks/incident-response/viewer.html) |
 | deployment-strategies | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/deployment-strategies/viewer.html)** · [PDF](decks/deployment-strategies/deployment-strategies.pdf) · [이미지](decks/deployment-strategies/preview/) | [`viewer.html`](decks/deployment-strategies/viewer.html) |
 | ci-pipeline | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/ci-pipeline/viewer.html)** · [PDF](decks/ci-pipeline/ci-pipeline.pdf) · [이미지](decks/ci-pipeline/preview/) | [`viewer.html`](decks/ci-pipeline/viewer.html) |
+| iac-drift | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/iac-drift/viewer.html)** · [PDF](decks/iac-drift/iac-drift.pdf) · [이미지](decks/iac-drift/preview/) | [`viewer.html`](decks/iac-drift/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의

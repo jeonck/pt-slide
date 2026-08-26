@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Why the console keeps winning</title>
+<style>
+  @font-face { font-family:'ArchivoBlack'; src:url('./assets/fonts/ArchivoBlack-400.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas: 720x405pt. Margins 40/32pt = the spec's 0.7in/0.6in scaled by 0.75 and
+     rounded to the 8pt spacing unit. Content width 640pt = 12 cols of 46.67 + 8pt gutters. */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F2F0EB; color:#111111;
+    font-family:'Inter',sans-serif;
+    padding:32pt 40pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture. Both rails are siblings of main, so main{flex:1;min-height:0}
+     pins them to a constant y on every sheet. */
+  .rail { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:24pt; }
+  .rail p { font-size:11pt; font-weight:500; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .rule { flex:none; height:3pt; background:#111111; }
+  .rule-top { margin-top:8pt; }
+  .rule-bot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:16pt; display:flex; flex-direction:column; }
+  footer { flex:none; margin-top:8pt; }
+  h2 { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:34pt; letter-spacing:-0.02em; line-height:1.2; }
+  /* Square number badge: spec's diagram vocabulary. 1.4 leading even inside a fixed box. */
+  .badge { flex:none; width:22pt; height:22pt; background:#111111; display:flex; align-items:center; justify-content:center; }
+  .badge p { font-family:'ArchivoBlack',sans-serif; font-weight:900; font-size:12pt; line-height:1.4; color:#F2F0EB; letter-spacing:0; }
+  h2 { flex:none; margin-bottom:16pt; }
+  .cols { flex:none; display:flex; gap:20pt; }
+  .col { width:200pt; flex:none; display:flex; flex-direction:column; }
+  .claim { font-size:16pt; font-weight:600; line-height:1.3; margin-top:10pt; }
+  /* Spot colour, one per slide: the rule that separates the claim from its mechanism. */
+  .hr-accent { height:3pt; background:#FF4A1C; margin:10pt 0; }
+  .why { font-size:14pt; font-weight:400; line-height:1.45; }
+  .callout { flex:none; margin-top:auto; background:#111111; padding:16pt 20pt; }
+  .callout p { font-size:16pt; font-weight:500; line-height:1.45; color:#F2F0EB; }
+</style>
+</head>
+<body>
+<div class="rail"><p>03 · Why people reach for it</p><p>03 / 05</p></div>
+<div class="rule rule-top"></div>
+<main>
+  <h2>Why the console keeps winning</h2>
+  <div class="cols">
+    <div class="col">
+      <div class="badge"><p>1</p></div>
+      <h3 class="claim">Faster during an incident</h3>
+      <div class="hr-accent"></div>
+      <p class="why">The pipeline answers in minutes. The pager answers in seconds.</p>
+    </div>
+    <div class="col">
+      <div class="badge"><p>2</p></div>
+      <h3 class="claim">The pipeline is blocked</h3>
+      <div class="hr-accent"></div>
+      <p class="why">Queued behind unrelated changes, waiting on a sleeping reviewer.</p>
+    </div>
+    <div class="col">
+      <div class="badge"><p>3</p></div>
+      <h3 class="claim">The module has no field</h3>
+      <div class="hr-accent"></div>
+      <p class="why">The abstraction is behind the provider. There is no code to write.</p>
+    </div>
+  </div>
+  <div class="callout"><p>Every one of these is a gap in the paved path, not a failure of discipline.</p></div>
+</main>
+<div class="rule rule-bot"></div>
+<footer class="rail"><p>Infrastructure drift</p><p>Take the reasons seriously</p></footer>
+</body>
+</html>
