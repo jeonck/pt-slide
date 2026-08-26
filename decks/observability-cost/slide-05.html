@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>You cannot argue with one line item</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .strip {
+    background:#FCFAF5; border:0.75pt solid #DAD3C4; border-radius:4px;
+    padding:12pt 16pt;
+    display:flex; align-items:baseline; gap:24pt;
+  }
+  .strip h3 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:24pt; letter-spacing:-0.005em; line-height:1.35;
+    flex:none;
+  }
+  .strip p { font-size:14pt; font-weight:400; line-height:1.5; color:#7A7164; }
+
+  .axes {
+    margin-top:18pt;
+    display:grid; grid-template-columns:repeat(3, 1fr);
+  }
+  .axes > section { border-left:0.75pt solid #DAD3C4; padding:0 16pt; }
+  .axes > section:first-child { border-left-color:transparent; padding-left:0; }
+  .axes .micro { padding-bottom:6pt; }
+  .axes p.txt { font-size:14pt; font-weight:400; line-height:1.5; text-wrap:balance; }
+  .close-05 { margin-top:auto; }
+  .close-05 p { font-size:16pt; font-weight:400; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Platform engineering · Observability budget</p>
+  <div class="hairline"></div>
+</header>
+
+<main>
+  <h2>You cannot argue with one line item</h2>
+
+  <div class="strip">
+    <h3>Observability</h3>
+    <p>One line. One owner. One available question: keep it or cut it.</p>
+  </div>
+
+  <div class="axes">
+    <section>
+      <p class="micro">By signal</p>
+      <p class="txt">Metrics, logs and traces have different curves. Price them apart.</p>
+    </section>
+    <section>
+      <p class="micro">By verbosity</p>
+      <p class="txt">Debug level in production is a choice. Someone has to make it.</p>
+    </section>
+    <section>
+      <p class="micro">By window</p>
+      <p class="txt">Hot days, warm weeks, cold archive — three prices, not one.</p>
+    </section>
+  </div>
+
+  <div class="close-05">
+    <p>One line item can only be approved or refused. Three can be negotiated.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="hairline"></div>
+  <div class="foot-row">
+    <p class="foot-page">05 / 06</p>
+    <p class="foot-source">Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>

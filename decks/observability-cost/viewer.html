@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 6</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Logs cost the most and get read the least</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  h1 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:56pt; letter-spacing:-0.01em; line-height:1.35;
+    margin-bottom:22pt;
+  }
+  .presenter { margin-top:auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class=&quot;kicker&quot;>Platform engineering · Observability budget</p>
+  <div class=&quot;hairline&quot;></div>
+</header>
+
+<main>
+  <h1>Logs cost the most<br>and get read the least</h1>
+
+  <div class=&quot;accent-note&quot;>
+    <p>Metrics, logs and traces answer different questions and have different cost
+    curves. One line item hides all three.</p>
+  </div>
+
+  <p class=&quot;micro presenter&quot;>Presenter · Team</p>
+</main>
+
+<footer>
+  <div class=&quot;hairline&quot;></div>
+  <div class=&quot;foot-row&quot;>
+    <p class=&quot;foot-page&quot;>01 / 06</p>
+    <p class=&quot;foot-source&quot;>Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Three signals answer three different questions</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .compare {
+    flex:1; min-height:0;
+    display:grid;
+    grid-template-columns:112pt repeat(3, 1fr);
+    grid-template-rows:auto repeat(3, minmax(min-content, 1fr));
+    column-gap:0;
+  }
+  .compare > * { border-left:0.75pt solid transparent; }
+  .compare .col { border-left-color:#DAD3C4; padding-left:16pt; padding-right:16pt; }
+  .compare .rail { padding-right:16pt; }
+
+  /* every signal header reserves the 3pt mark; only its colour changes */
+  .signal {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:20pt; letter-spacing:-0.005em; line-height:1.35;
+    border-top:3pt solid transparent;
+    padding-top:4pt; padding-bottom:10pt;
+  }
+  .signal.col-mark { border-top-color:#B5503A; color:#B5503A; }
+  .compare .rowlab { padding-top:12pt; }
+  .compare .cell { padding-top:11pt; }
+  .cell p { font-size:14pt; font-weight:400; line-height:1.5; text-wrap:balance; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class=&quot;kicker&quot;>Platform engineering · Observability budget</p>
+  <div class=&quot;hairline&quot;></div>
+</header>
+
+<main>
+  <h2>Three signals answer three different questions</h2>
+
+  <div class=&quot;compare&quot;>
+    <div class=&quot;rail&quot;></div>
+    <h3 class=&quot;col signal&quot;>Metrics</h3>
+    <h3 class=&quot;col col-mark signal&quot;>Logs</h3>
+    <h3 class=&quot;col signal&quot;>Traces</h3>
+
+    <p class=&quot;rail rowlab micro&quot;>Answers</p>
+    <div class=&quot;col cell&quot;><p>Is it happening, and how much</p></div>
+    <div class=&quot;col cell&quot;><p>What the code actually did</p></div>
+    <div class=&quot;col cell&quot;><p>Where the time went, hop by hop</p></div>
+
+    <p class=&quot;rail rowlab micro&quot;>Blind to</p>
+    <div class=&quot;col cell&quot;><p>Which request. Which user.</p></div>
+    <div class=&quot;col cell&quot;><p>Where the time went</p></div>
+    <div class=&quot;col cell&quot;><p>What the code was thinking</p></div>
+
+    <p class=&quot;rail rowlab micro&quot;>Grows with</p>
+    <div class=&quot;col cell&quot;><p>Label cardinality, not traffic</p></div>
+    <div class=&quot;col cell&quot;><p>Traffic, replicas and days kept</p></div>
+    <div class=&quot;col cell&quot;><p>Sampled share, span width</p></div>
+  </div>
+</main>
+
+<footer>
+  <div class=&quot;hairline&quot;></div>
+  <div class=&quot;foot-row&quot;>
+    <p class=&quot;foot-page&quot;>02 / 06</p>
+    <p class=&quot;foot-source&quot;>Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Volume grows with traffic. Readership does not.</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .panels { flex:1; min-height:0; display:flex; gap:20pt; align-items:stretch; }
+  .panel {
+    flex:1;
+    background:#FCFAF5; border:0.75pt solid #DAD3C4; border-radius:4px;
+    padding:14pt;
+    display:flex; flex-direction:column;
+  }
+  .panel .micro { padding-bottom:10pt; }
+  .factors {
+    list-style:none; flex:1; min-height:0;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .factors li {
+    display:grid; grid-template-columns:14pt 1fr;
+    font-size:14pt; font-weight:400; line-height:1.5;
+  }
+  .op { color:#B5503A; font-weight:600; }
+  .lede-close { margin-top:16pt; }
+  .lede-close p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .em { color:#B5503A; font-weight:600; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class=&quot;kicker&quot;>Platform engineering · Observability budget</p>
+  <div class=&quot;hairline&quot;></div>
+</header>
+
+<main>
+  <h2>Volume grows with traffic. Readership does not.</h2>
+
+  <div class=&quot;panels&quot;>
+    <section class=&quot;panel&quot;>
+      <p class=&quot;micro&quot;>What multiplies</p>
+      <ul class=&quot;factors&quot;>
+        <li><span></span><span>Requests per second</span></li>
+        <li><span class=&quot;op&quot;>×</span><span>Log lines emitted per request</span></li>
+        <li><span class=&quot;op&quot;>×</span><span>Replicas emitting the same line</span></li>
+        <li><span class=&quot;op&quot;>×</span><span>Days retained, indexed, replicated</span></li>
+      </ul>
+    </section>
+
+    <section class=&quot;panel&quot;>
+      <p class=&quot;micro&quot;>What does not</p>
+      <ul class=&quot;factors&quot;>
+        <li><span></span><span>Incidents, one at a time</span></li>
+        <li><span></span><span>Engineers who open logs at all</span></li>
+        <li><span></span><span>The window they read: minutes</span></li>
+        <li><span></span><span>The three queries they know</span></li>
+      </ul>
+    </section>
+  </div>
+
+  <div class=&quot;lede-close&quot;>
+    <p>Cost is a <span class=&quot;em&quot;>product</span>. Readership is a
+    <span class=&quot;em&quot;>constant</span>. That gap is the whole argument.</p>
+  </div>
+</main>
+
+<footer>
+  <div class=&quot;hairline&quot;></div>
+  <div class=&quot;foot-row&quot;>
+    <p class=&quot;foot-page&quot;>03 / 06</p>
+    <p class=&quot;foot-source&quot;>Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Sampling and retention are bets, not savings</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .ledger { display:grid; grid-template-columns:150pt 1fr 1fr; }
+  .ledger > * { border-left:0.75pt solid transparent; }
+  .ledger .c2, .ledger .c3 { border-left-color:#DAD3C4; padding-left:18pt; }
+  .ledger .c1 { padding-right:18pt; }
+  .ledger .head { padding-bottom:10pt; }
+  .ledger .r { padding:14pt 0; }
+  .ledger .r.c2, .ledger .r.c3 { padding-left:18pt; }
+  .ledger .rule-row { grid-column:1 / -1; height:0.75pt; background:#DAD3C4; border-left:none; }
+  .term {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:18pt; letter-spacing:-0.005em; line-height:1.35;
+  }
+  .ledger .r p.val { font-size:14pt; font-weight:400; line-height:1.5; }
+  .close-04 { margin-top:auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class=&quot;kicker&quot;>Platform engineering · Observability budget</p>
+  <div class=&quot;hairline&quot;></div>
+</header>
+
+<main>
+  <h2>Sampling and retention are bets, not savings</h2>
+
+  <div class=&quot;ledger&quot;>
+    <p class=&quot;c1 head micro&quot;>The trade</p>
+    <p class=&quot;c2 head micro&quot;>What it keeps</p>
+    <p class=&quot;c3 head micro&quot;>What it spends</p>
+
+    <h3 class=&quot;c1 r term&quot;>Sampling</h3>
+    <div class=&quot;c2 r&quot;><p class=&quot;val&quot;>The shape of normal traffic</p></div>
+    <div class=&quot;c3 r&quot;><p class=&quot;val&quot;>The one request that mattered</p></div>
+
+    <div class=&quot;rule-row&quot;></div>
+
+    <h3 class=&quot;c1 r term&quot;>Retention</h3>
+    <div class=&quot;c2 r&quot;><p class=&quot;val&quot;>What is happening right now</p></div>
+    <div class=&quot;c3 r&quot;><p class=&quot;val&quot;>Whether it happened before</p></div>
+  </div>
+
+  <div class=&quot;accent-note close-04&quot;>
+    <p>You find out which bet you took at 03:00, from a query that returns nothing.
+    Nobody called it a bet when it was placed.</p>
+  </div>
+</main>
+
+<footer>
+  <div class=&quot;hairline&quot;></div>
+  <div class=&quot;foot-row&quot;>
+    <p class=&quot;foot-page&quot;>04 / 06</p>
+    <p class=&quot;foot-source&quot;>Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>You cannot argue with one line item</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .strip {
+    background:#FCFAF5; border:0.75pt solid #DAD3C4; border-radius:4px;
+    padding:12pt 16pt;
+    display:flex; align-items:baseline; gap:24pt;
+  }
+  .strip h3 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:24pt; letter-spacing:-0.005em; line-height:1.35;
+    flex:none;
+  }
+  .strip p { font-size:14pt; font-weight:400; line-height:1.5; color:#7A7164; }
+
+  .axes {
+    margin-top:18pt;
+    display:grid; grid-template-columns:repeat(3, 1fr);
+  }
+  .axes > section { border-left:0.75pt solid #DAD3C4; padding:0 16pt; }
+  .axes > section:first-child { border-left-color:transparent; padding-left:0; }
+  .axes .micro { padding-bottom:6pt; }
+  .axes p.txt { font-size:14pt; font-weight:400; line-height:1.5; text-wrap:balance; }
+  .close-05 { margin-top:auto; }
+  .close-05 p { font-size:16pt; font-weight:400; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class=&quot;kicker&quot;>Platform engineering · Observability budget</p>
+  <div class=&quot;hairline&quot;></div>
+</header>
+
+<main>
+  <h2>You cannot argue with one line item</h2>
+
+  <div class=&quot;strip&quot;>
+    <h3>Observability</h3>
+    <p>One line. One owner. One available question: keep it or cut it.</p>
+  </div>
+
+  <div class=&quot;axes&quot;>
+    <section>
+      <p class=&quot;micro&quot;>By signal</p>
+      <p class=&quot;txt&quot;>Metrics, logs and traces have different curves. Price them apart.</p>
+    </section>
+    <section>
+      <p class=&quot;micro&quot;>By verbosity</p>
+      <p class=&quot;txt&quot;>Debug level in production is a choice. Someone has to make it.</p>
+    </section>
+    <section>
+      <p class=&quot;micro&quot;>By window</p>
+      <p class=&quot;txt&quot;>Hot days, warm weeks, cold archive — three prices, not one.</p>
+    </section>
+  </div>
+
+  <div class=&quot;close-05&quot;>
+    <p>One line item can only be approved or refused. Three can be negotiated.</p>
+  </div>
+</main>
+
+<footer>
+  <div class=&quot;hairline&quot;></div>
+  <div class=&quot;foot-row&quot;>
+    <p class=&quot;foot-page&quot;>05 / 06</p>
+    <p class=&quot;foot-source&quot;>Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="6" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-06.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  main { flex-direction:row; gap:20pt; }
+  .left { width:260pt; flex:none; display:flex; flex-direction:column; }
+  .left h1 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:44pt; letter-spacing:-0.01em; line-height:1.35;
+  }
+  .left p.stand { margin-top:auto; font-size:14pt; font-weight:400; line-height:1.5; color:#7A7164; }
+
+  .right { flex:1; min-width:0; display:flex; flex-direction:column; }
+  .dec { display:grid; grid-template-columns:30pt 1fr; padding-bottom:10pt; }
+  .dec + .dec { padding-top:10pt; }
+  .badge {
+    width:22pt; height:22pt; border-radius:50%;
+    border:0.75pt solid #DAD3C4;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .badge p {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:12pt; line-height:1.4; color:#1F1B16;
+  }
+  .dec h3 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:18pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:4pt;
+  }
+  .dec p.q { font-size:14pt; font-weight:400; line-height:1.5; color:#7A7164; }
+  .divider { height:0.75pt; background:#DAD3C4; }
+  .close-06 { margin-top:auto; }
+  .close-06 p { font-size:14pt; font-weight:400; line-height:1.5; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class=&quot;kicker&quot;>Platform engineering · Observability budget</p>
+  <div class=&quot;hairline&quot;></div>
+</header>
+
+<main>
+  <section class=&quot;left&quot;>
+    <h1>What we<br>need to<br>decide</h1>
+    <p class=&quot;stand&quot;>Three decisions. Each one makes part of the bill arguable.</p>
+  </section>
+
+  <section class=&quot;right&quot;>
+    <div class=&quot;dec&quot;>
+      <div class=&quot;badge&quot;><p>1</p></div>
+      <div>
+        <h3>What gets sampled</h3>
+        <p class=&quot;q&quot;>Which signals, at what share, changed by whom</p>
+      </div>
+    </div>
+    <div class=&quot;divider&quot;></div>
+
+    <div class=&quot;dec&quot;>
+      <div class=&quot;badge&quot;><p>2</p></div>
+      <div>
+        <h3>What gets dropped</h3>
+        <p class=&quot;q&quot;>Which lines never leave the process at all</p>
+      </div>
+    </div>
+    <div class=&quot;divider&quot;></div>
+
+    <div class=&quot;dec&quot;>
+      <div class=&quot;badge&quot;><p>3</p></div>
+      <div>
+        <h3>Who owns retention</h3>
+        <p class=&quot;q&quot;>One named owner for each window we pay for</p>
+      </div>
+    </div>
+
+    <div class=&quot;accent-note close-06&quot;>
+      <p>None of the three is a tooling decision.</p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class=&quot;hairline&quot;></div>
+  <div class=&quot;foot-row&quot;>
+    <p class=&quot;foot-page&quot;>06 / 06</p>
+    <p class=&quot;foot-source&quot;>Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 6;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>

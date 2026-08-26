@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sampling and retention are bets, not savings</title>
+<style>
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Source Serif 4'; src:url('./assets/fonts/SourceSerif4-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Regular.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-Medium.woff2') format('woff2'); font-weight:500; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-SemiBold.woff2') format('woff2'); font-weight:600; font-display:block; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    padding:32pt 40pt;
+    font-family:'Inter','Helvetica Neue',Helvetica,sans-serif;
+    background:#F7F4EE; color:#1F1B16;
+    display:flex; flex-direction:column;
+  }
+
+  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
+  header { flex:none; }
+  .kicker {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .hairline { height:0.75pt; background:#DAD3C4; }
+  header .hairline { margin-top:8pt; }
+
+  main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
+
+  h2 {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:26pt; letter-spacing:-0.005em; line-height:1.35;
+    margin-bottom:14pt;
+  }
+
+  footer { flex:none; margin-top:16pt; }
+  .foot-row {
+    display:flex; justify-content:space-between; align-items:baseline;
+    padding-top:8pt; gap:24pt;
+  }
+  .foot-row p { font-size:11pt; font-weight:400; line-height:1.4; color:#7A7164; }
+  .foot-page { letter-spacing:0.10em; }
+  .foot-source { text-align:right; }
+
+  /* ---- shared editorial devices ---- */
+  .micro {
+    font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
+    line-height:1.4; color:#7A7164;
+  }
+  .accent-note { border-left:6pt solid #B5503A; padding-left:16pt; }
+  .accent-note p { font-size:16pt; font-weight:400; line-height:1.5; }
+  .ledger { display:grid; grid-template-columns:150pt 1fr 1fr; }
+  .ledger > * { border-left:0.75pt solid transparent; }
+  .ledger .c2, .ledger .c3 { border-left-color:#DAD3C4; padding-left:18pt; }
+  .ledger .c1 { padding-right:18pt; }
+  .ledger .head { padding-bottom:10pt; }
+  .ledger .r { padding:14pt 0; }
+  .ledger .r.c2, .ledger .r.c3 { padding-left:18pt; }
+  .ledger .rule-row { grid-column:1 / -1; height:0.75pt; background:#DAD3C4; border-left:none; }
+  .term {
+    font-family:'Source Serif 4',Lora,Georgia,serif;
+    font-weight:600; font-size:18pt; letter-spacing:-0.005em; line-height:1.35;
+  }
+  .ledger .r p.val { font-size:14pt; font-weight:400; line-height:1.5; }
+  .close-04 { margin-top:auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Platform engineering · Observability budget</p>
+  <div class="hairline"></div>
+</header>
+
+<main>
+  <h2>Sampling and retention are bets, not savings</h2>
+
+  <div class="ledger">
+    <p class="c1 head micro">The trade</p>
+    <p class="c2 head micro">What it keeps</p>
+    <p class="c3 head micro">What it spends</p>
+
+    <h3 class="c1 r term">Sampling</h3>
+    <div class="c2 r"><p class="val">The shape of normal traffic</p></div>
+    <div class="c3 r"><p class="val">The one request that mattered</p></div>
+
+    <div class="rule-row"></div>
+
+    <h3 class="c1 r term">Retention</h3>
+    <div class="c2 r"><p class="val">What is happening right now</p></div>
+    <div class="c3 r"><p class="val">Whether it happened before</p></div>
+  </div>
+
+  <div class="accent-note close-04">
+    <p>You find out which bet you took at 03:00, from a query that returns nothing.
+    Nobody called it a bet when it was placed.</p>
+  </div>
+</main>
+
+<footer>
+  <div class="hairline"></div>
+  <div class="foot-row">
+    <p class="foot-page">04 / 06</p>
+    <p class="foot-source">Source: none — this deck cites no cost figures; the argument is structural.</p>
+  </div>
+</footer>
+
+</body>
+</html>
