@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Three concessions the word actually asks for</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+</style>
+</head>
+<body>
+<header>
+  <p class="kick">Blameless review · Platform engineering</p>
+  <p class="kick folio">Sheet 03 / 06</p>
+</header>
+<div class="rule-section"></div>
+<main>
+  <h2>Three concessions the word actually asks for</h2>
+  <div class="rule-hair" style="margin-top:10pt"></div>
+  <div class="cols c3">
+    <div class="col">
+      <p class="kick red">Concession one</p>
+      <h3>No names in the cause field</h3>
+      <p class="body">A name is not a mechanism. &ldquo;Ran the wrong command&rdquo; names
+      where the system allowed it. The field takes conditions: what was reachable, what was
+      open.</p>
+    </div>
+    <div class="vrule"></div>
+    <div class="col">
+      <p class="kick">Concession two</p>
+      <h3>An owner and a date</h3>
+      <p class="body">One person, not a team; a calendar date, not a quarter. When a team owns
+      it, nobody is late, because nobody was ever due. Without both, it is a wish, not a
+      plan.</p>
+    </div>
+    <div class="vrule"></div>
+    <div class="col">
+      <p class="kick">Concession three</p>
+      <h3>A repeat is a new incident</h3>
+      <p class="body">If the same failure returns and nobody reopened the record, it is not the
+      old one again. It is evidence the first fix never landed: new review, new owner, new
+      date.</p>
+    </div>
+  </div>
+</main>
+<div class="rule-hair rule-foot"></div>
+<footer>
+  <p class="kick">Source &mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class="kick folio">Postmortem &middot; 03</p>
+</footer>
+</body>
+</html>

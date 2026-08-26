@@ -1,0 +1,1620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 6</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Postmortem — what the word actually costs</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+  /* Cover only. Masthead 72pt: measured 541pt of the 656pt measure (caps coefficient 0.751). */
+  h1 { font-family:'Playfair Display', serif; font-weight:900; font-size:64pt; letter-spacing:-0.01em; line-height:1.35; margin-top:10pt; }
+  .mast-rule { margin-top:8pt; }
+  main { justify-content:flex-start; }
+  .standfirst { font-family:'Playfair Display', serif; font-weight:400; font-size:17pt; line-height:1.45; color:#1C1B17; }
+  .cover-cols { grid-template-columns:minmax(0,1.1fr) 0.5pt minmax(0,1fr); }
+  .meta { font-size:14pt; line-height:1.45; color:#2E2C26; }
+  .meta + .kick { margin-top:8pt; }
+  .kick + .meta { margin-top:4pt; }
+  .meta-rule { margin-top:6pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kick&quot;>Blameless review · Platform engineering</p>
+  <p class=&quot;kick folio&quot;>Sheet 01 / 06</p>
+</header>
+<div class=&quot;rule-section&quot;></div>
+<h1>POSTMORTEM</h1>
+<div class=&quot;rule-section mast-rule&quot;></div>
+<main>
+  <p class=&quot;kick red&quot;>The cost of the word</p>
+  <h2>What the word actually costs</h2>
+  <div class=&quot;rule-hair&quot; style=&quot;margin-top:10pt&quot;></div>
+  <div class=&quot;cols cover-cols&quot;>
+    <div class=&quot;col&quot;>
+      <p class=&quot;standfirst&quot;>&amp;ldquo;Don&amp;rsquo;t blame people&amp;rdquo; is not a tone. It is a set of
+      concessions an organisation has to make, and mostly does not. What follows is what they
+      cost, and who has to pay.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Byline</p>
+      <p class=&quot;meta&quot;>Presenter &amp;middot; Team</p>
+      <div class=&quot;rule-hair meta-rule&quot;></div>
+      <p class=&quot;meta&quot;><strong class=&quot;lead&quot;>Source &amp;mdash; none.</strong> No metric, rate or
+      duration appears in this deck; the argument is mechanical.</p>
+    </div>
+  </div>
+</main>
+<div class=&quot;rule-hair rule-foot&quot;></div>
+<footer>
+  <p class=&quot;kick&quot;>Source &amp;mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class=&quot;kick folio&quot;>Postmortem &amp;middot; 01</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What a review is for, and what it gets used for</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kick&quot;>Blameless review · Platform engineering</p>
+  <p class=&quot;kick folio&quot;>Sheet 02 / 06</p>
+</header>
+<div class=&quot;rule-section&quot;></div>
+<main>
+  <h2>What a review is for, and what it gets used for</h2>
+  <div class=&quot;rule-hair&quot; style=&quot;margin-top:10pt&quot;></div>
+  <div class=&quot;cols c3&quot;>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick red&quot;>What it is for</p>
+      <h3>Changing the system</h3>
+      <p class=&quot;body&quot;>A review earns its hour by changing the thing that failed &amp;mdash; a guard,
+      a default, a removed foot-gun. If nothing outside the document changes, the hour bought
+      a document.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>What it gets used for</p>
+      <h3>Settling whether one person was careless</h3>
+      <p class=&quot;body&quot;>The room can also answer a cheaper question, and closing it closes the
+      ticket. It ends the search at the first human in the chain, which is never where the
+      chain ends.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>How to tell them apart</p>
+      <h3>Read the last paragraph</h3>
+      <p class=&quot;body&quot;>One review ends in work the system will carry out. The other ends in an
+      assurance that someone now knows better. That is not a control; it leaves with the
+      person.</p>
+    </div>
+  </div>
+</main>
+<div class=&quot;rule-hair rule-foot&quot;></div>
+<footer>
+  <p class=&quot;kick&quot;>Source &amp;mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class=&quot;kick folio&quot;>Postmortem &amp;middot; 02</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Three concessions the word actually asks for</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kick&quot;>Blameless review · Platform engineering</p>
+  <p class=&quot;kick folio&quot;>Sheet 03 / 06</p>
+</header>
+<div class=&quot;rule-section&quot;></div>
+<main>
+  <h2>Three concessions the word actually asks for</h2>
+  <div class=&quot;rule-hair&quot; style=&quot;margin-top:10pt&quot;></div>
+  <div class=&quot;cols c3&quot;>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick red&quot;>Concession one</p>
+      <h3>No names in the cause field</h3>
+      <p class=&quot;body&quot;>A name is not a mechanism. &amp;ldquo;Ran the wrong command&amp;rdquo; names
+      where the system allowed it. The field takes conditions: what was reachable, what was
+      open.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Concession two</p>
+      <h3>An owner and a date</h3>
+      <p class=&quot;body&quot;>One person, not a team; a calendar date, not a quarter. When a team owns
+      it, nobody is late, because nobody was ever due. Without both, it is a wish, not a
+      plan.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Concession three</p>
+      <h3>A repeat is a new incident</h3>
+      <p class=&quot;body&quot;>If the same failure returns and nobody reopened the record, it is not the
+      old one again. It is evidence the first fix never landed: new review, new owner, new
+      date.</p>
+    </div>
+  </div>
+</main>
+<div class=&quot;rule-hair rule-foot&quot;></div>
+<footer>
+  <p class=&quot;kick&quot;>Source &amp;mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class=&quot;kick folio&quot;>Postmortem &amp;middot; 03</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What makes people tell the truth in one</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+  /* Two columns here, three on the neighbouring sheets: a paper varies its column count. */
+  .c2a { grid-template-columns:minmax(0,0.8fr) 0.5pt minmax(0,1.2fr); }
+  /* Every row carries the same rule and the same padding, including the first: an emphasis
+     applied to one row only would shift that row off the column. */
+  ul { list-style:none; margin-top:8pt; }
+  li { border-top:0.5pt solid #1C1B17; padding:4pt 0; }
+  li p { font-size:14pt; line-height:1.45; color:#2E2C26; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kick&quot;>Blameless review · Platform engineering</p>
+  <p class=&quot;kick folio&quot;>Sheet 04 / 06</p>
+</header>
+<div class=&quot;rule-section&quot;></div>
+<main>
+  <h2>What makes people tell the truth in one</h2>
+  <div class=&quot;rule-hair&quot; style=&quot;margin-top:10pt&quot;></div>
+  <div class=&quot;cols c2a&quot;>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick red&quot;>What the room is deciding</p>
+      <h3>Every account is a bet</h3>
+      <p class=&quot;body&quot;>The person who knows what happened is also the person with the most to
+      lose by saying it. They are estimating what the transcript gets used for later, and the
+      estimate is usually right. Change the estimate, not the tone.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Four conditions, none of them tone</p>
+      <ul>
+        <li><p><strong class=&quot;lead&quot;>It is not evidence.</strong> Nothing said here reaches a
+        performance file or a promotion packet.</p></li>
+        <li><p><strong class=&quot;lead&quot;>Not knowing is sayable.</strong> &amp;ldquo;I did not know that
+        flag existed&amp;rdquo; has to cost nothing to say.</p></li>
+        <li><p><strong class=&quot;lead&quot;>Timeline before conclusion.</strong> Order the facts first,
+        or the room reverse-engineers a culprit.</p></li>
+        <li><p><strong class=&quot;lead&quot;>The closest person reads it.</strong> Whoever was at the
+        keyboard writes it, or signs it before filing.</p></li>
+      </ul>
+    </div>
+  </div>
+</main>
+<div class=&quot;rule-hair rule-foot&quot;></div>
+<footer>
+  <p class=&quot;kick&quot;>Source &amp;mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class=&quot;kick folio&quot;>Postmortem &amp;middot; 04</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Keeping the word, dropping the bill</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+  .c2b { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1.4fr); }
+  ul { list-style:none; margin-top:8pt; }
+  li { border-top:0.5pt solid #1C1B17; padding:12pt 0; }
+  li p { font-size:15pt; line-height:1.45; color:#2E2C26; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kick&quot;>Blameless review · Platform engineering</p>
+  <p class=&quot;kick folio&quot;>Sheet 05 / 06</p>
+</header>
+<div class=&quot;rule-section&quot;></div>
+<main>
+  <h2>Keeping the word, dropping the bill</h2>
+  <div class=&quot;rule-hair&quot; style=&quot;margin-top:10pt&quot;></div>
+  <div class=&quot;cols c2b&quot;>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick red&quot;>Where it goes quietly</p>
+      <h3>Saying it is free</h3>
+      <p class=&quot;body&quot;>The word survives because saying it costs nothing. The concessions are
+      not free, so the concessions are what gets dropped &amp;mdash; quietly, one meeting at a
+      time. Nobody decides to drop them; they are simply never paid.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Read your last review for these</p>
+      <ul>
+        <li><p><strong class=&quot;lead&quot;>The cause field says &amp;ldquo;human error.&amp;rdquo;</strong>
+        The search stopped at the first person it found.</p></li>
+        <li><p><strong class=&quot;lead&quot;>Action items are owned by a team.</strong> Nobody is late,
+        because nobody was ever due.</p></li>
+        <li><p><strong class=&quot;lead&quot;>The same failure is filed twice.</strong> Two titles, one
+        condition nobody fixed.</p></li>
+      </ul>
+    </div>
+  </div>
+</main>
+<div class=&quot;rule-hair rule-foot&quot;></div>
+<footer>
+  <p class=&quot;kick&quot;>Source &amp;mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class=&quot;kick folio&quot;>Postmortem &amp;middot; 05</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+        <iframe class="slide-frame" data-slide="6" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-06.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>What we need to decide</title>
+<style>
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-900.woff2') format('woff2'); font-weight:900; font-display:block; }
+  @font-face { font-family:'Playfair Display'; src:url('./assets/fonts/PlayfairDisplay-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-400.woff2') format('woff2'); font-weight:400; font-display:block; }
+  @font-face { font-family:'Noto Serif'; src:url('./assets/fonts/NotoSerif-700.woff2') format('woff2'); font-weight:700; font-display:block; }
+  @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-500.woff2') format('woff2'); font-weight:500; font-display:block; }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  /* Canvas 720x405pt. Margins 32/24pt = spec's 0.6in/0.5in scaled 0.75 and rounded to the
+     8pt unit. Content box 656 x 357pt. Column gap 16pt (0.25in x 0.75 -> 13.5, rounded up). */
+  body {
+    width:720pt; height:405pt; overflow:hidden;
+    background:#F4F1E8; color:#1C1B17;
+    font-family:'Noto Serif', serif;
+    padding:24pt 32pt;
+    display:flex; flex-direction:column;
+  }
+  /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
+     Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
+     every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
+  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  footer { margin-top:7pt; }
+  .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
+  .kick.red { color:#A8231B; }
+  .kick.folio { flex:none; white-space:nowrap; }
+  .rule-section { flex:none; height:2pt; background:#1C1B17; margin-top:6pt; }
+  .rule-hair { flex:none; height:0.5pt; background:#1C1B17; }
+  .rule-foot { margin-top:12pt; }
+  main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
+  h2 { font-family:'Playfair Display', serif; font-weight:900; font-size:28pt; letter-spacing:-0.01em; line-height:1.25; }
+  /* Subhead block gets a min-height on EVERY column, not just the ones that wrap: a subhead
+     that wrapped in one column only would push that column's prose off the shared baseline. */
+  h3 { font-family:'Playfair Display', serif; font-weight:900; font-size:16pt; letter-spacing:-0.01em; line-height:1.3; min-height:41.6pt; margin-top:6pt; text-wrap:balance; }
+  .cols { flex:1; min-height:0; display:grid; column-gap:16pt; margin-top:10pt; }
+  .c3 { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1fr) 0.5pt minmax(0,1fr); }
+  .vrule { background:#1C1B17; }
+  .col { display:flex; flex-direction:column; }
+  .col p + p { margin-top:9pt; }
+  .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .lead { font-weight:700; color:#1C1B17; }
+  /* One-line subheads on this sheet, so the block is one line tall on all three columns. */
+  h3 { min-height:20.8pt; }
+  .close-rule { flex:none; height:2pt; background:#A8231B; margin-top:12pt; }
+  .close { font-family:'Playfair Display', serif; font-weight:400; font-size:17pt; line-height:1.4; color:#1C1B17; margin-top:10pt; }
+</style>
+</head>
+<body>
+<header>
+  <p class=&quot;kick&quot;>Blameless review · Platform engineering</p>
+  <p class=&quot;kick folio&quot;>Sheet 06 / 06</p>
+</header>
+<div class=&quot;rule-section&quot;></div>
+<main>
+  <h2>What we need to decide</h2>
+  <div class=&quot;rule-hair&quot; style=&quot;margin-top:10pt&quot;></div>
+  <div class=&quot;cols c3&quot;>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Decision one</p>
+      <h3>Who writes it</h3>
+      <p class=&quot;body&quot;>The person at the keyboard, the service owner, or an author who was not
+      on the incident? Name the default, and name who may override it.</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Decision two</p>
+      <h3>What the deadline is</h3>
+      <p class=&quot;body&quot;>How many working days from resolution to a filed review? And who is
+      allowed to say it slips, to whom, and on what record?</p>
+    </div>
+    <div class=&quot;vrule&quot;></div>
+    <div class=&quot;col&quot;>
+      <p class=&quot;kick&quot;>Decision three</p>
+      <h3>When items are not done</h3>
+      <p class=&quot;body&quot;>What happens on the date? &amp;ldquo;Nothing&amp;rdquo; is a permitted answer.
+      It only has to be the answer we chose out loud, before the date.</p>
+    </div>
+  </div>
+  <div class=&quot;close-rule&quot;></div>
+  <p class=&quot;close&quot;>Blameless costs three concessions. We pay them, or we stop using the word.</p>
+</main>
+<div class=&quot;rule-hair rule-foot&quot;></div>
+<footer>
+  <p class=&quot;kick&quot;>Source &amp;mdash; none. Every claim here is mechanical, not measured.</p>
+  <p class=&quot;kick folio&quot;>Postmortem &amp;middot; 06</p>
+</footer>
+</body>
+</html>
+" sandbox="allow-scripts"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 6;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+</body>
+</html>
