@@ -29,7 +29,7 @@
  *   node scripts/build-pptx.mjs decks/slo       # one deck
  *   node scripts/build-pptx.mjs --force         # rebuild even if up to date
  *   node scripts/build-pptx.mjs --probe-text    # only report text-engine blockers
- *   node scripts/build-pptx.mjs --text decks/slo  # editable text where the deck qualifies
+ *   node scripts/build-pptx.mjs --raster        # force raster even where text would work
  */
 
 import { execFileSync } from 'node:child_process';
@@ -40,11 +40,12 @@ import { tmpdir } from 'node:os';
 const argv = process.argv.slice(2);
 const force = argv.includes('--force');
 const probeOnly = argv.includes('--probe-text');
-// Off by default on purpose. Raster embeds the very PNGs the design gate reviewed, so
-// what ships is what was checked. The text engine re-lays the slide out of the DOM and
-// there is no PowerPoint renderer here to confirm the result, so opting into it is a
-// deliberate choice the author makes and then checks in PowerPoint themselves.
-const wantText = argv.includes('--text');
+// Editable text is the point of shipping a PPTX at all, so the text engine is the
+// default wherever the deck qualifies. Decks that do not qualify still get raster —
+// an unopenable file would be worse than an uneditable one. `--raster` forces raster
+// even for a qualifying deck.
+const forceRaster = argv.includes('--raster');
+const wantText = !forceRaster;
 const dirs = argv.filter((a) => !a.startsWith('--'));
 
 const decks = (dirs.length ? dirs : globSync('decks/*/').map((d) => d.replace(/\/$/, '')))
@@ -118,7 +119,7 @@ for (const deck of decks) {
   try {
     run(['--slides-dir', deck, '--output', out, '--engine', engine, ...opts]);
     const kb = Math.round(statSync(out).size / 1024);
-    const note = wantText && !probe.ok ? '  (text 불가 → raster)' : '';
+    const note = wantText && !probe.ok ? '  ← text 엔진 거부, raster로 대체' : '';
     console.log(`${name.padEnd(28)} ${engine.padEnd(6)} ${out}  ${kb}KB${note}`);
     built++;
   } catch (err) {

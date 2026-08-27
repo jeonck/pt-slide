@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/alert-design/gate-preview/slide-01.png, decks/alert-design/gate-preview/slide-02.png, decks/alert-design/gate-preview/slide-03.png, decks/alert-design/gate-preview/slide-04.png, decks/alert-design/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 00d33e7e028788b881e897262a0e89c6ad4cb1c3882cd2f6e65790ac641845e2, slide-02.html: 2766d3754b83b44ba48e4e329fb702e880d15d18ce77dd753d1d619e6abf7fb2, slide-03.html: 48fefd3a6e27b1e6b553330a806e7e49775edef4fbc016cd441be03b44e28fa1, slide-04.html: ee8055f04efd0a33db02f62de3b2dd7a680fc9d909f090afe580f3dc7b29c063, slide-05.html: 065f55cda3086cdbedfb56857e4460e28b386422cd3c097225239af5b5ad24c3
+Slide fingerprints: slide-01.html: b5202bbfbc9b35e73a5c5c461a2dfb7e134b63d52fec6fa0eb0c29c7e84a4393, slide-02.html: 6e7eaa7f5898199d39dbe4ff05b9b6a970e8b5ab220d44dab1d1a369e9edab9f, slide-03.html: f26e577d11927066eab30c873dbc4b6474c9f6e876b31a708d64b95dd1cf2423, slide-04.html: 4f7577daf5ac45da721df0844359a89a52c5056a1dec930a9e549509319031ec, slide-05.html: 1491819064e9e48977b9203e2ecf72f2270b82b821c5dd6b036fc6852abe2356
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -74,3 +74,4 @@ Mechanical audits run over the sources rather than eyeballed:
 | slide-03 | `diagram.render` says "SVG precise, no div blocks", but the gate nodes are HTML boxes | Note | This repo requires slide text in semantic tags so the PPTX text engine and screen readers can reach it. Nodes are drawn to the spec's geometry (0px radius, 2px `#0A0A0A` border, 22pt black chip); only the connectors are SVG | tracked |
 | slide-03 | Three gates plus a terminal bar, not the spec's "4–5 horizontal steps" | Note | The argument has exactly three tests; a fourth would have to be invented. The full-width black bar is the fourth stage — the outcome | tracked |
 | slide-01, slide-05 | Presenter reads `PRESENTER · TEAM` | Note | Intentional placeholder | tracked |
+| all | 하단 여백을 26pt → 38pt로 올렸다. 파워포인트 text 엔진이 텍스트 상자를 아래 가장자리에서 0.5in(36pt) 이상 떼도록 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 렌더 재확인 결과 넘침·레이아웃 변화 없음 | fixed |
