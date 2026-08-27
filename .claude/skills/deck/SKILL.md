@@ -127,6 +127,7 @@ npx slides-grab design-gate --slides-dir decks/<name> --verdict proceed \
 npx slides-grab build-viewer --slides-dir decks/<name>
 node scripts/patch-viewer.mjs decks/<name>                              # 뷰어 폰트·화살표 키 (아래)
 npx slides-grab pdf          --slides-dir decks/<name> --output decks/<name>/<name>.pdf --resolution 1080p
+node scripts/build-pptx.mjs   decks/<name>                              # PPTX (raster 기본)
 node scripts/build-contact-sheets.mjs decks/<name>/gate-preview --web   # README용 preview/ 이미지
 ```
 
@@ -140,6 +141,10 @@ node scripts/build-contact-sheets.mjs decks/<name>/gate-preview --web   # README
 - **화살표 키.** 뷰어는 자기 document에 키 핸들러를 걸어두는데, 슬라이드를 한 번 클릭하면 포커스가
   iframe 안으로 들어가고 **프레임 안의 키 이벤트는 부모로 올라오지 않는다.** 그때부터 조용히 멈춘다.
   프레임이 같은 출처가 됐으므로(위 수정 덕분에) 부모 쪽에서 각 프레임 document에 핸들러를 걸어준다.
+
+PPTX는 뷰어·PDF와 나란히 두는 세 번째 산출물이다. 기본은 raster — 장마다 이미지 한 장이라 게이트에서
+검토한 화면이 그대로 나간다. 편집 가능한 텍스트를 원하면 `--text`가 있지만 덱이 파워포인트 규칙을
+만족해야 하고, 그 두 규칙은 `references/slide-html.md`의 "PPTX로 내보내기"에 있다.
 
 PDF 해상도는 1080p면 충분하다 — 기본 2160p는 92장 기준 12MB까지 가고, 1080p로 4.9MB가 된다.
 

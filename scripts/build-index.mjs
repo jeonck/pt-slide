@@ -28,6 +28,7 @@ const decks = [...README.matchAll(ROW)].map(([, name, title, desc, count, style]
   count: Number(count),
   style: style.replace(/`/g, '').trim(),
   pdf: globSync(`decks/${name}/*.pdf`)[0],
+  pptx: globSync(`decks/${name}/*.pptx`)[0],
 }));
 
 if (!decks.length) throw new Error('no deck rows matched in README.md — has the table changed shape?');
@@ -40,7 +41,8 @@ const card = (d) => `    <div class="card">
       <p class="meta">${d.count}장 · <code>${esc(d.style)}</code></p>
       <div class="links">
         <a href="./decks/${d.name}/viewer.html">뷰어 열기</a>${
-  d.pdf ? `\n        <a class="ghost" href="./${d.pdf}">PDF</a>` : ''}
+  d.pdf ? `\n        <a class="ghost" href="./${d.pdf}">PDF</a>` : ''}${
+  d.pptx ? `\n        <a class="ghost" href="./${d.pptx}">PPTX</a>` : ''}
       </div>
     </div>`;
 
