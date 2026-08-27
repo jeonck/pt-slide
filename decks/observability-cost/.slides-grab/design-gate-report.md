@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-26T15:49:54.348Z
+Generated: 2026-08-27T15:30:03.312Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/observability-cost/gate-preview/slide-01.png, decks/observability-cost/gate-preview/slide-02.png, decks/observability-cost/gate-preview/slide-03.png, decks/observability-cost/gate-preview/slide-04.png, decks/observability-cost/gate-preview/slide-05.png, decks/observability-cost/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3, slide-02.html: b303808fceeaea96183c8bf99125f9650faceacadf1056f95256c9eedaa5556f, slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653, slide-04.html: cd525e4c0d029029eba5a5080f5df1a7e129e345188c769bfd90c2e4e4f85c8a, slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63, slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
+Slide fingerprints: slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3, slide-02.html: 971e3bb0b33ae2218bfdb82a526cac22c41a0798f4cfc2011f914e50d13bc50c, slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653, slide-04.html: a23b2501673e96a7435d953d51129958dd7fa3c538daa5e0a404d31bb9fe0093, slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63, slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -90,6 +90,7 @@ and leading declaration, cross-checked against that contract, plus a read of eac
 | all | `slide.header_band` scales to 35.1–91.8pt; the 26pt heading finishes at 111.2pt, ~19pt past its nominal bottom. | Note | Accepted — raising it would set the heading inside the hairline | recorded in design-debt.md §5 |
 | 03 | Three `×` operators are accent-coloured at 14pt, against this deck's own "no accent ink below 16pt" rule. | Note | Accepted — operators, not prose; 4.58:1 clears the 4.5:1 body bar regardless | recorded in design-debt.md N1 |
 | 05 | First axis column's inner measure is 196.6pt against 180.6pt for columns 2 and 3, because it carries no divider or left padding. | Note | Accepted — flush alignment to the 12-column grid judged more important than three identical measures | recorded in design-debt.md N2 |
+| slide-02/04 | 그리드 자식이던 텍스트 요소를 래퍼 `<div>`로 감싸고, 배치·테두리 클래스는 래퍼로 서체 클래스는 안쪽에 남겼다. `.signal`은 상자와 글자로 쪼갰다 | Note | text 엔진이 텍스트 요소의 border를 거부한다. 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -97,8 +98,8 @@ and leading declaration, cross-checked against that contract, plus a read of eac
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/observability-cost/gate-preview/slide-01.png, decks/observability-cost/gate-preview/slide-02.png, decks/observability-cost/gate-preview/slide-03.png, decks/observability-cost/gate-preview/slide-04.png, decks/observability-cost/gate-preview/slide-05.png, decks/observability-cost/gate-preview/slide-06.png, decks/observability-cost/contact-sheets/sheet-01.png
-Slide fingerprints: slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3, slide-02.html: b303808fceeaea96183c8bf99125f9650faceacadf1056f95256c9eedaa5556f, slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653, slide-04.html: cd525e4c0d029029eba5a5080f5df1a7e129e345188c769bfd90c2e4e4f85c8a, slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63, slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
+Evidence: decks/observability-cost/gate-preview/slide-01.png, decks/observability-cost/gate-preview/slide-02.png, decks/observability-cost/gate-preview/slide-03.png, decks/observability-cost/gate-preview/slide-04.png, decks/observability-cost/gate-preview/slide-05.png, decks/observability-cost/gate-preview/slide-06.png
+Slide fingerprints: slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3, slide-02.html: 971e3bb0b33ae2218bfdb82a526cac22c41a0798f4cfc2011f914e50d13bc50c, slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653, slide-04.html: a23b2501673e96a7435d953d51129958dd7fa3c538daa5e0a404d31bb9fe0093, slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63, slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -183,6 +184,7 @@ presentation resolution and every claim below names what was looked at.
 | 05, 02 | Runt lines: `apart.` alone on line 3 of the first axis column; `traffic` alone on line 2 of a slide-02 cell. | Minor | `text-wrap: balance` on both rules; verified in the re-render | fixed, re-rendered |
 | all | Serif leading raised from the spec's 1.15 to 1.35 (the face clips below it), point sizes floored rather than scaled to 8.25/7.5pt, cover and closing display set above the scaled value. | Note | Deliberate deviations | recorded in design-debt.md §1–3 |
 | all | Style chart tokens `#C8BFAD` / `#9B917F` and the 40pt `kpi` token left unused — there is no chart and no figure in this deck. | Note | Intentional; stated to the audience in the fixed source caption on all six sheets | recorded in design-debt.md §4 |
+| slide-02/04 | 그리드 자식이던 텍스트 요소를 래퍼 `<div>`로 감싸고, 배치·테두리 클래스는 래퍼로 서체 클래스는 안쪽에 남겼다. `.signal`은 상자와 글자로 쪼갰다 | Note | text 엔진이 텍스트 요소의 border를 거부한다. 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
@@ -190,8 +192,8 @@ Status: not-applicable
 ## Slide Fingerprints
 
 - slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3
-- slide-02.html: b303808fceeaea96183c8bf99125f9650faceacadf1056f95256c9eedaa5556f
+- slide-02.html: 971e3bb0b33ae2218bfdb82a526cac22c41a0798f4cfc2011f914e50d13bc50c
 - slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653
-- slide-04.html: cd525e4c0d029029eba5a5080f5df1a7e129e345188c769bfd90c2e4e4f85c8a
+- slide-04.html: a23b2501673e96a7435d953d51129958dd7fa3c538daa5e0a404d31bb9fe0093
 - slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63
 - slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f

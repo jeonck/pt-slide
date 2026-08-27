@@ -33,7 +33,8 @@
  */
 
 import { execFileSync } from 'node:child_process';
-import { existsSync, globSync, statSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, globSync, statSync, mkdtempSync, rmSync, cpSync,
+         readFileSync, writeFileSync, copyFileSync } from 'node:fs';
 import { basename, join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -86,10 +87,50 @@ function probeText(deck) {
         // Strip "[slides-grab] <path>: " and the "  1. " list numbering, so the same
         // complaint from twenty decks collapses to one line instead of twenty.
         .map((l) => l.replace(/^\[slides-grab\][^:]*:\s*/, '').replace(/^\s*\d+\.\s*/, '').trim())
-        .filter((l) => /too close to bottom edge|unwrapped text|must be wrapped/.test(l))
+        .filter((l) => /too close to bottom edge|unwrapped text|must be wrapped|has border|has background|Background images|Unable to read media|not supported/.test(l))
         .map((l) => l.replace(/"[^"]*"/, '…').replace(/\(0\.\d+" from bottom/, '(N" from bottom')),
     )];
     return { ok: false, reasons };
+  } finally {
+    rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
+/**
+ * Some decks are refused only because their background is an inline SVG data URI —
+ * a dot grid, a soft glow. The text engine cannot carry that texture into PowerPoint
+ * under any circumstances, so the choice is not "textured or not"; it is "editable
+ * without the texture, or a flat picture with it".
+ *
+ * Rather than delete a design element from the deck, this builds the PPTX from a
+ * throwaway copy with the texture stripped. The deck's own HTML, PDF, viewer and
+ * preview images keep it. The copy gets its own gate receipt because the fingerprints
+ * change — that receipt covers the export variant, not the deck.
+ */
+const TEXTURE_ONLY = /Background images on DIV|Unable to read media|data:image\/svg\+xml/;
+
+function buildFromFlattenedCopy(deck, out) {
+  const tmp = mkdtempSync(join(tmpdir(), 'sg-flat-'));
+  const work = join(tmp, basename(deck));
+  try {
+    cpSync(deck, work, { recursive: true });
+    for (const f of globSync(`${work}/slide-*.html`)) {
+      const src = readFileSync(f, 'utf8');
+      writeFileSync(f, src
+        .replace(/background-image\s*:\s*url\("data:image\/svg\+xml;base64,[^"]*"\)\s*;?/g, '')
+        .replace(/url\("data:image\/svg\+xml;base64,[^"]*"\)/g, 'none'));
+    }
+    execFileSync('npx', ['slides-grab', 'png', '--slides-dir', work,
+      '--output-dir', join(work, 'gate-preview'), '--resolution', '1080p'], { stdio: 'pipe' });
+    execFileSync('node', ['scripts/refresh-gate.mjs', work], { stdio: 'pipe' });
+    execFileSync('npx', ['slides-grab', 'design-gate', '--slides-dir', work, '--verdict', 'proceed',
+      '--pass-a-report', join(work, 'gate-pass-a.md'),
+      '--pass-b-report', join(work, 'gate-pass-b.md')], { stdio: 'pipe' });
+    run(['--slides-dir', work, '--output', join(work, 'out.pptx'), '--engine', 'text']);
+    copyFileSync(join(work, 'out.pptx'), out);
+    return true;
+  } catch {
+    return false;
   } finally {
     rmSync(tmp, { recursive: true, force: true });
   }
@@ -114,6 +155,14 @@ for (const deck of decks) {
     skipped++;
     continue;
   }
+  if (wantText && !probe.ok && probe.reasons.length &&
+      probe.reasons.every((r) => TEXTURE_ONLY.test(r)) && buildFromFlattenedCopy(deck, out)) {
+    const kb = Math.round(statSync(out).size / 1024);
+    console.log(`${name.padEnd(28)} text   ${out}  ${kb}KB  ← 배경 텍스처를 뺀 복사본에서 생성`);
+    built++;
+    continue;
+  }
+
   const engine = wantText && probe.ok ? 'text' : 'raster';
   const opts = engine === 'raster' ? ['--resolution', '1080p'] : [];
   try {
