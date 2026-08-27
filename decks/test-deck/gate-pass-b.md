@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/test-deck/.slides-grab/gate-preview/slide-01.png, decks/test-deck/.slides-grab/gate-preview/slide-02.png, decks/test-deck/.slides-grab/gate-preview/slide-03.png, decks/test-deck/.slides-grab/gate-preview/slide-04.png, decks/test-deck/.slides-grab/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: a3c602ee927888ba31710f8e299558a3531216b23655e754985e402f3cc05f3a, slide-02.html: 4878a8753715a5a05826fe5b87f849dcc9778789c7d26627f8f773f953bcc429, slide-03.html: 149c3a48c8edd2ea4379e97f38c43a44032dd7fdeec285fcdc508c877d848d16, slide-04.html: 00d53a399a13bbc02d57125c20784259ab88c0d6ec5dfe2c02dcb6a6002f897f, slide-05.html: f2b7d84774526a815ca2f398ba3c23ade80b287c1d44cc788ce95371a1ba2554
+Evidence: decks/test-deck/gate-preview/slide-01.png, decks/test-deck/gate-preview/slide-02.png, decks/test-deck/gate-preview/slide-03.png, decks/test-deck/gate-preview/slide-04.png, decks/test-deck/gate-preview/slide-05.png
+Slide fingerprints: slide-01.html: bb691e80d94bbdcbedadc29d38b376c1b71e1db8836066e7281a9a405547d6ae, slide-02.html: f3c2bcae956000f00f7b8fd39f83b71d2375938eec53cfb94ad6971e1a0605c9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: daefa99c426e6d787dc94f94cc668d30098c5fc781a586941d721b3a99b0f0c8, slide-05.html: 57e299c9ed86e8113d1e4f15af9736d9425a9f1bb2eb5087f2593ab25e5e87ce
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -21,3 +21,4 @@ Method: every one of the five rendered PNGs above was opened and inspected as an
 | slide-01 | Roughly the right half of the cover is empty field | Note | Intentional poster negative space; the title block already dominates | tracked |
 | slide-03 | Node bodies (2–3 lines) leave visible slack above the bottom "사람의 역할" row inside the taller boxes | Minor | Accepted — the pinned bottom row aligns across all three nodes and keeps the row baseline consistent; padding the copy would mean filler | tracked |
 | slide-05 | Discussion list occupies the right column only; the left column below "함께 정하고 싶은 세 가지" is open | Note | Intentional, mirrors the cover's asymmetry | tracked |
+| all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |

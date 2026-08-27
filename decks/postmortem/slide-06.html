@@ -46,6 +46,11 @@
   h3 { min-height:20.8pt; }
   .close-rule { flex:none; height:2pt; background:#A8231B; margin-top:12pt; }
   .close { font-family:'Playfair Display', serif; font-weight:400; font-size:17pt; line-height:1.4; color:#1C1B17; margin-top:10pt; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/secrets/gate-preview/slide-01.png, decks/secrets/gate-preview/slide-02.png, decks/secrets/gate-preview/slide-03.png, decks/secrets/gate-preview/slide-04.png, decks/secrets/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 2793474ad5c6ad5db6b0a1eef2e20a17cb4afd1ad136ea937f70bd3ce09c37f9, slide-02.html: 37725a3b6cd0c9c9b61f93c799c083291ad17175c8ca5f652845d147433fc4fe, slide-03.html: 98ef97c31b64005c6509dc2b7b557326e4574460886a297441e19b0ef4902e91, slide-04.html: 0ebb64ff056196a37a51041ffb80e2eec819521c22a192b9de3442ba811f461f, slide-05.html: 1b3161a574e3a3f05b005bc160ab00dfa61a52c7c595adda6443d94628c386c3
+Slide fingerprints: slide-01.html: 5b96b76d6fd588707d64d9f4144cd959de3e0eac9185b23252ce2733544645af, slide-02.html: fd7fcdcce012fe56eb125eee505924b6a64b86abcda21b7d93f26d64aae818e3, slide-03.html: 9a17a8b59875940c63b5b0619e0f33a4a3ecb339878b8606426b7e068b9a1712, slide-04.html: 78018b18911535d53ae7722de21a25d5453b4940cc20c3d99fe2277f3c9c6eab, slide-05.html: 6355b1da4fec82cf1dbbdcf314eec406cfaad51b81e5769f9a768d321daf7207
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -61,3 +61,4 @@ paragraph. String widths were measured the same way before any slide HTML was wr
 | slide-02, slide-04 | **Render-only.** With one-line and two-line labels side by side, the three column bodies would have started at different heights | Minor | Every column label reserves two lines (`min-height: 36.4pt`). Verified in the render: all three bodies start on the same baseline | fixed |
 | slide-01 | Cover headline lines sit further apart than a poster headline normally would — Anton needs 1.5 leading to clear `text-clipped` | Note | Accepted; two alternatives tried and rejected | debt §2 |
 | slide-02, slide-04 | Shorter column bodies leave a tail of empty field | Note | Mitigated, not filled with invented copy | debt §3 |
+| all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |

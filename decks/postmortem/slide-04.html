@@ -49,6 +49,11 @@
   ul { list-style:none; margin-top:8pt; }
   li { border-top:0.5pt solid #1C1B17; padding:4pt 0; }
   li p { font-size:14pt; line-height:1.45; color:#2E2C26; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

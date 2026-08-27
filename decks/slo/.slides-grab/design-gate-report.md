@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-26T15:46:06.918Z
+Generated: 2026-08-27T14:50:30.939Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 9184016566c1e02972b59d9269d2eb9803f69b66b7ac08476f944a23d39041a4, slide-02.html: d1a3ec0368c1d115ddd28e4b8f3abfc7e74204063851f7b9ad2749f33cedfa79, slide-03.html: bc953a7004221ad3ef0d84c8f549f2b8cf556790605663adebcaa557cb316fd8, slide-04.html: 9cfe7c45e887ddc331bb828c3abc7522ff09fb1f4dd039e91f694a63abe488cc, slide-05.html: 3d4e33b41f2ace11078a6179762ad68d7faec94a412f5fb44c9c07509a35de63, slide-06.html: 46aaf2b5e44a9ec80b86279b378fe85aa5accc3b4254679ae9d13ddef1ad04e9
+Slide fingerprints: slide-01.html: 9588414f0b2bc1ef8e9148473c1fab6686a36ddfa729a3d8819f406eddaf2337, slide-02.html: f4fc9fe488702be6339d183ff1e4cfabc10f6ccf56e28adaef1604e4748e3830, slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e, slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5, slide-05.html: a670e9bf2ad3047f35d224037a354dd764631a030ea20c19f85aeeefd0c3b5b6, slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -33,6 +33,7 @@ Method: the six slide sources were read line by line against the `show-design pp
 | slide-05 | No card carries the spec's 3px emphasis border, so this sheet has no marked element | Minor | Accepted — the three failure modes are equal and marking one would assert a ranking the deck cannot support. Uniform treatment is the honest reading. Carried to design-debt.md | tracked |
 | slide-01 | The cover's 36pt display sits below the header rule rather than replacing the header, so the cover is not a masthead | Note | Intentional — keeping the cover on the same furniture is what makes the rule land at one y across all six sheets. Recorded in slide-outline.md decision 9 | tracked |
 | slide-04 | Header-row mono labels render at `#666666` on the `#F2F2F2` fill (about 5.3:1) rather than at full ink | Note | Accepted — above the 4.5:1 body threshold, and it keeps the 3pt bar as the only emphasis signal on the row. Carried to design-debt.md | tracked |
+| all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -41,7 +42,7 @@ Method: the six slide sources were read line by line against the `show-design pp
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 9184016566c1e02972b59d9269d2eb9803f69b66b7ac08476f944a23d39041a4, slide-02.html: d1a3ec0368c1d115ddd28e4b8f3abfc7e74204063851f7b9ad2749f33cedfa79, slide-03.html: bc953a7004221ad3ef0d84c8f549f2b8cf556790605663adebcaa557cb316fd8, slide-04.html: 9cfe7c45e887ddc331bb828c3abc7522ff09fb1f4dd039e91f694a63abe488cc, slide-05.html: 3d4e33b41f2ace11078a6179762ad68d7faec94a412f5fb44c9c07509a35de63, slide-06.html: 46aaf2b5e44a9ec80b86279b378fe85aa5accc3b4254679ae9d13ddef1ad04e9
+Slide fingerprints: slide-01.html: 9588414f0b2bc1ef8e9148473c1fab6686a36ddfa729a3d8819f406eddaf2337, slide-02.html: f4fc9fe488702be6339d183ff1e4cfabc10f6ccf56e28adaef1604e4748e3830, slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e, slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5, slide-05.html: a670e9bf2ad3047f35d224037a354dd764631a030ea20c19f85aeeefd0c3b5b6, slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -64,15 +65,16 @@ Method: all six PNGs from this render were opened individually as full-size imag
 | slide-04, slide-05 | "A maintenance window we declared" had 1.5pt of clearance in its cell and "An exception every time" had 0.9pt in its card — both technically one line, both visually touching the cell wall | Minor | Fixed: cell copy → "A declared maintenance window" (24.7pt clearance); card gap 16 → 12pt, card padding 14 → 12pt, header → "An exception each time" (11.5pt clearance) | resolved |
 | slide-01 | The rule above the presenter placeholder stops 24pt short of the vertical column divider | Note | Accepted — it is the left column's own rule and the 24pt is the grid gutter, so it is consistent rather than short. Carried to design-debt.md | tracked |
 | slide-03 | The two column bodies run to four lines each and leave about 24pt of unused height above the closing band | Note | Accepted — the columns carry a top hairline and the band carries its own, so the gap reads as the block's internal padding, not as a hole. Filling it would have meant inventing a third claim. Carried to design-debt.md | tracked |
+| all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: 9184016566c1e02972b59d9269d2eb9803f69b66b7ac08476f944a23d39041a4
-- slide-02.html: d1a3ec0368c1d115ddd28e4b8f3abfc7e74204063851f7b9ad2749f33cedfa79
-- slide-03.html: bc953a7004221ad3ef0d84c8f549f2b8cf556790605663adebcaa557cb316fd8
-- slide-04.html: 9cfe7c45e887ddc331bb828c3abc7522ff09fb1f4dd039e91f694a63abe488cc
-- slide-05.html: 3d4e33b41f2ace11078a6179762ad68d7faec94a412f5fb44c9c07509a35de63
-- slide-06.html: 46aaf2b5e44a9ec80b86279b378fe85aa5accc3b4254679ae9d13ddef1ad04e9
+- slide-01.html: 9588414f0b2bc1ef8e9148473c1fab6686a36ddfa729a3d8819f406eddaf2337
+- slide-02.html: f4fc9fe488702be6339d183ff1e4cfabc10f6ccf56e28adaef1604e4748e3830
+- slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e
+- slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5
+- slide-05.html: a670e9bf2ad3047f35d224037a354dd764631a030ea20c19f85aeeefd0c3b5b6
+- slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750

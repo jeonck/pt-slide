@@ -55,6 +55,11 @@
   .cell { display:flex; align-items:center; padding:0 12pt; min-width:0; }
   .c1 { width:17%; }
   .c2, .c3 { width:41.5%; border-left:1px solid #000000; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

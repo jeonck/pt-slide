@@ -55,6 +55,11 @@
   .cols { flex:1; min-height:0; display:flex; gap:24pt; margin-top:20pt; margin-bottom:18pt; }
   .col { flex:1 1 0; min-width:0; border-top:1px solid #000000; padding-top:10pt; }
   .col .lbl { margin-bottom:8pt; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

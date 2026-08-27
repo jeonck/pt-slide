@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/postmortem/gate-preview/slide-01.png, decks/postmortem/gate-preview/slide-02.png, decks/postmortem/gate-preview/slide-03.png, decks/postmortem/gate-preview/slide-04.png, decks/postmortem/gate-preview/slide-05.png, decks/postmortem/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 0ba175928c49217d01c4fa6cd93b35bdf0a17a99f28f209585be64bb52260748, slide-02.html: 7f2410d3258148927c89feabb5058d56a3f1b167d93f0120f9db2ad43a2e90d9, slide-03.html: c804f7e68d5f9700b08c83b07cdd22128981f321f67c5b275c82391100b0243f, slide-04.html: 46a63b9a505cdc1f841eda9e2ef153bdb8cc0686371768c935db65c1dbcd0c8e, slide-05.html: ca1d26be40cf1a2832919bcda5c7772d9d58768498c5d9da5236c5e042a32955, slide-06.html: c679f4b5d56a2715991e1051c39b0a784315b680d78df7a76470841dd1b4887f
+Slide fingerprints: slide-01.html: 1778bbf5ae5f58f44b236463590762a74692b516c6df20f8cf85ca3540d05704, slide-02.html: 3ada86ed69100ce36c7badfc7f7a2c507fd3e7db8d3bde44c81d32bbd2903019, slide-03.html: a227a24b7b1945eb522a49fbaa1f8222f477bbcbf38cf1479ec6b70dce8f8357, slide-04.html: bc267124918985e34133e31278799a5d39a3827e2dae75b5ef8a4e5d49f2bb9a, slide-05.html: 0b3e190c271d1d1a6d6d22e8afbb310f89e26c8c55e0a7cd351315a8c10017f4, slide-06.html: 8123c6beb83dcbbd1c5dd6f73ff90eb84681db92644a8cf6b35165370854e3f3
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -63,3 +63,4 @@ under the footer furniture, rather than trusting the eye at 1080p.
 | slide-01, 04 | The cover's standfirst column and slide-04's argument column both stopped a line short of their neighbours | Minor | Fixed: one sentence added to each ("What follows is what they cost, and who has to pay" / "Change the estimate, not the tone"), both of which the outline already implied | resolved |
 | slide-02, 03 | The two-line `min-height` on subheads leaves visible air under the one-line ones | Note | Accepted — it is what keeps the three columns' first prose lines on one baseline. Carried to design-debt.md | tracked |
 | slide-01 | The masthead leaves ~170pt of clear paper to its right | Note | Accepted — a nameplate is set from the left margin. Carried to design-debt.md | tracked |
+| all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
