@@ -44,19 +44,21 @@ def _font(name, size):
     return _CACHE[key]
 
 
+def _line_height(tf, size):
+    """줄간격은 추측하지 않고 문단에서 읽는다. 값이 없을 때만 1.35 로 본다."""
+    for p_ in tf.paragraphs:
+        if p_.line_spacing:
+            return p_.line_spacing / 12700 if p_.line_spacing > 100 else p_.line_spacing * size
+    return size * 1.35
+
+
 def _needed_height(tf, width_pt, size):
     """상자 폭에서 실제로 몇 줄이 되는지 세어 필요한 높이를 낸다."""
     names = [r.font.name for p in tf.paragraphs for r in p.runs if r.font.name]
     fnt = _font(names[0] if names else '', size)
     if not fnt:
         return None
-    # 줄간격은 추측하지 않고 문단에서 읽는다. 값이 없을 때만 1.35 로 본다.
-    spacing = None
-    for p_ in tf.paragraphs:
-        if p_.line_spacing:
-            spacing = p_.line_spacing / 12700 if p_.line_spacing > 100 else p_.line_spacing * size
-            break
-    line_h = spacing or size * 1.35
+    line_h = _line_height(tf, size)
     lines = 0
     for para in tf.text.split('\n'):
         words = para.split(' ')
@@ -94,8 +96,20 @@ def _collapse_whitespace(tf):
     return n
 
 
+def _stays_on_slide(shape, tf, size, slide_w):
+    """줄바꿈을 끄면 긴 줄이 슬라이드 밖으로 나갈 수 있다. 나갈 것 같으면 끄지 않는다."""
+    names = [r.font.name for p in tf.paragraphs for r in p.runs if r.font.name]
+    fnt = _font(names[0] if names else '', size)
+    if not fnt:
+        return False
+    widest = max((fnt.getlength(line) for line in re.split(r'[\n\v]', tf.text)), default=0)
+    # 렌더러가 우리보다 넓게 잴 수 있으므로 12% 여유를 두고 판단한다.
+    return shape.left / 12700 + widest * 1.12 <= slide_w
+
+
 def fix(path):
     prs = Presentation(path)
+    slide_w = prs.slide_width / 12700
     nowrap = shrink = spaces = 0
     for slide in prs.slides:
         for shape in slide.shapes:
@@ -109,9 +123,13 @@ def fix(path):
             sizes = [r.font.size.pt for p in tf.paragraphs for r in p.runs if r.font.size]
             if not sizes:
                 continue
-            single_line = '\n' not in text and '\v' not in text and \
-                          shape.height / 12700 <= max(sizes) * 1.6
-            if single_line:
+            # 상자 높이가 담는 줄 수와 본문의 명시적 줄 수가 같으면, 그 줄바꿈은 작성자가
+            # 정한 것이고 렌더러가 더 넣을 자리가 없다. 폭 계산이 브라우저보다 조금만 넓어도
+            # 줄이 하나 늘어 상자를 넘치므로, 그런 상자는 자동 줄바꿈을 끈다.
+            explicit = len(re.split(r'[\n\v]', text))
+            line_h = _line_height(tf, max(sizes))
+            fits = max(1, round(shape.height / 12700 / line_h))
+            if explicit >= fits and _stays_on_slide(shape, tf, max(sizes), slide_w):
                 tf.word_wrap = False
                 nowrap += 1
             else:
