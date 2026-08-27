@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T16:15:38.619Z
+Generated: 2026-08-27T16:37:28.485Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9, slide-02.html: 408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20, slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081, slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5, slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d, slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf
+Slide fingerprints: slide-01.html: 1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf, slide-02.html: 419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222, slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081, slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5, slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d, slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -36,6 +36,7 @@ Method: the six slide sources were read line by line against the `show-design pp
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 | slide-01/02/05 | 리스트 구분선과 카드 하단선을 `li`·`p`에서 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border를 거부한다 | Note | `.ln`/`.cap` 래퍼 신설, 시각 결과 동일 | fixed |
 | all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -44,7 +45,7 @@ Method: the six slide sources were read line by line against the `show-design pp
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9, slide-02.html: 408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20, slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081, slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5, slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d, slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf
+Slide fingerprints: slide-01.html: 1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf, slide-02.html: 419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222, slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081, slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5, slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d, slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -70,14 +71,15 @@ Method: all six PNGs from this render were opened individually as full-size imag
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 | slide-01/02/05 | 리스트 구분선과 카드 하단선을 `li`·`p`에서 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border를 거부한다 | Note | `.ln`/`.cap` 래퍼 신설, 시각 결과 동일 | fixed |
 | all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: 4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9
-- slide-02.html: 408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20
+- slide-01.html: 1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf
+- slide-02.html: 419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222
 - slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081
 - slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5
 - slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d

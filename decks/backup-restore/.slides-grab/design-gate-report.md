@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T16:13:36.110Z
+Generated: 2026-08-27T16:36:54.098Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/backup-restore/gate-preview/slide-01.png, decks/backup-restore/gate-preview/slide-02.png, decks/backup-restore/gate-preview/slide-03.png, decks/backup-restore/gate-preview/slide-04.png, decks/backup-restore/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 70d34f13367d146479831384502a10defa38da8835effa5b3175446f767c62ca, slide-02.html: 5b24d4ceb2d22f40920eeb6805d455571bb55e980b9de0632bf595f5c6a53e7e, slide-03.html: fbc0bc60e5449f4ab4ffcf190d3b1cca233c9d271261d56376792e1f1c1efdf7, slide-04.html: af28097042a6bd1547a08f52a270e2fc0de12fe834f929281c637bf5bc75a49e, slide-05.html: 322f41f14b7769047fd002f50b4bd6fd5b28f6b3998f3b818922132d47dd090c
+Slide fingerprints: slide-01.html: 70d34f13367d146479831384502a10defa38da8835effa5b3175446f767c62ca, slide-02.html: 5c76e35899f8ae7f70496dc819299b0037d61be3feadebe896a8fdc04f111ada, slide-03.html: fbc0bc60e5449f4ab4ffcf190d3b1cca233c9d271261d56376792e1f1c1efdf7, slide-04.html: 6888e128fefc019026eb0908fa4d019f9541f43cfaaa1d342542475e1492739a, slide-05.html: cde486ccb82b0f35fd690abf688b6b265d4e48328ef58735845c82ec138f2911
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -73,6 +73,7 @@ Blocking findings: None
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 | slide-02/04 | 테두리를 가진 `<li>`·`<p>`의 장식을 안쪽 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border/background를 거부한다 | Note | 바깥(flex·크기)/안쪽(장식) 속성을 나눠 옮김. 렌더 픽셀 차이 0 | fixed |
 | all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -81,7 +82,7 @@ Blocking findings: None
 VERDICT: PASS
 Confidence: High
 Evidence: decks/backup-restore/gate-preview/slide-01.png, decks/backup-restore/gate-preview/slide-02.png, decks/backup-restore/gate-preview/slide-03.png, decks/backup-restore/gate-preview/slide-04.png, decks/backup-restore/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 70d34f13367d146479831384502a10defa38da8835effa5b3175446f767c62ca, slide-02.html: 5b24d4ceb2d22f40920eeb6805d455571bb55e980b9de0632bf595f5c6a53e7e, slide-03.html: fbc0bc60e5449f4ab4ffcf190d3b1cca233c9d271261d56376792e1f1c1efdf7, slide-04.html: af28097042a6bd1547a08f52a270e2fc0de12fe834f929281c637bf5bc75a49e, slide-05.html: 322f41f14b7769047fd002f50b4bd6fd5b28f6b3998f3b818922132d47dd090c
+Slide fingerprints: slide-01.html: 70d34f13367d146479831384502a10defa38da8835effa5b3175446f767c62ca, slide-02.html: 5c76e35899f8ae7f70496dc819299b0037d61be3feadebe896a8fdc04f111ada, slide-03.html: fbc0bc60e5449f4ab4ffcf190d3b1cca233c9d271261d56376792e1f1c1efdf7, slide-04.html: 6888e128fefc019026eb0908fa4d019f9541f43cfaaa1d342542475e1492739a, slide-05.html: cde486ccb82b0f35fd690abf688b6b265d4e48328ef58735845c82ec138f2911
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -159,6 +160,7 @@ this is what confirms the "one line" and "two lines" claims below rather than ey
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 | slide-02/04 | 테두리를 가진 `<li>`·`<p>`의 장식을 안쪽 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border/background를 거부한다 | Note | 바깥(flex·크기)/안쪽(장식) 속성을 나눠 옮김. 렌더 픽셀 차이 0 | fixed |
 | all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
@@ -166,7 +168,7 @@ Status: not-applicable
 ## Slide Fingerprints
 
 - slide-01.html: 70d34f13367d146479831384502a10defa38da8835effa5b3175446f767c62ca
-- slide-02.html: 5b24d4ceb2d22f40920eeb6805d455571bb55e980b9de0632bf595f5c6a53e7e
+- slide-02.html: 5c76e35899f8ae7f70496dc819299b0037d61be3feadebe896a8fdc04f111ada
 - slide-03.html: fbc0bc60e5449f4ab4ffcf190d3b1cca233c9d271261d56376792e1f1c1efdf7
-- slide-04.html: af28097042a6bd1547a08f52a270e2fc0de12fe834f929281c637bf5bc75a49e
-- slide-05.html: 322f41f14b7769047fd002f50b4bd6fd5b28f6b3998f3b818922132d47dd090c
+- slide-04.html: 6888e128fefc019026eb0908fa4d019f9541f43cfaaa1d342542475e1492739a
+- slide-05.html: cde486ccb82b0f35fd690abf688b6b265d4e48328ef58735845c82ec138f2911

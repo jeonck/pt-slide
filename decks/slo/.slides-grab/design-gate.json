@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "verdict": "proceed",
-  "generatedAt": "2026-08-27T16:15:38.619Z",
+  "generatedAt": "2026-08-27T16:37:28.485Z",
   "slideMode": "presentation",
   "resolution": "2160p",
   "previewDir": ".slides-grab/gate-preview",
@@ -41,11 +41,11 @@
     "slideFingerprints": [
       {
         "file": "slide-01.html",
-        "sha256": "4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9"
+        "sha256": "1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf"
       },
       {
         "file": "slide-02.html",
-        "sha256": "408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20"
+        "sha256": "419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222"
       },
       {
         "file": "slide-03.html",
@@ -100,11 +100,11 @@
     "slideFingerprints": [
       {
         "file": "slide-01.html",
-        "sha256": "4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9"
+        "sha256": "1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf"
       },
       {
         "file": "slide-02.html",
-        "sha256": "408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20"
+        "sha256": "419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222"
       },
       {
         "file": "slide-03.html",
@@ -162,11 +162,11 @@
       "slideFingerprints": [
         {
           "file": "slide-01.html",
-          "sha256": "4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9"
+          "sha256": "1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf"
         },
         {
           "file": "slide-02.html",
-          "sha256": "408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20"
+          "sha256": "419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222"
         },
         {
           "file": "slide-03.html",
@@ -221,11 +221,11 @@
       "slideFingerprints": [
         {
           "file": "slide-01.html",
-          "sha256": "4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9"
+          "sha256": "1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf"
         },
         {
           "file": "slide-02.html",
-          "sha256": "408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20"
+          "sha256": "419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222"
         },
         {
           "file": "slide-03.html",
@@ -249,11 +249,11 @@
   "slideFingerprints": [
     {
       "file": "slide-01.html",
-      "sha256": "4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9"
+      "sha256": "1a82a1b53d699883658bb09ccd008af0df7b25556bf5693488718c0810801caf"
     },
     {
       "file": "slide-02.html",
-      "sha256": "408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20"
+      "sha256": "419826b847a1ad551cdc33c87d0da0beee295153f80a36b2e254f81a6c9ba222"
     },
     {
       "file": "slide-03.html",
@@ -297,11 +297,11 @@
   "passReportFingerprints": [
     {
       "file": "gate-pass-a.md",
-      "sha256": "a264cab3926e570a8dfed66ea0526e5330b02908fb3a16f67411b76bcbe8b8f9"
+      "sha256": "a62a3f1ce101dd740bfd45ca255fd3a82cbfd48f8259891201f78dea7186f90b"
     },
     {
       "file": "gate-pass-b.md",
-      "sha256": "d938c88357adb83b38bc9be3508280029a741484a7f70364a9b4092d526dd42c"
+      "sha256": "a9e10da13eacfef6109b975f0b88e590388a342b29699810acd241dac7107084"
     }
   ],
   "previewFingerprints": [

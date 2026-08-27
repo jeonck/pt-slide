@@ -29,7 +29,7 @@
   h1 { font-size:23pt; font-weight:600; letter-spacing:-0.01em; line-height:1.3; white-space:nowrap; }
   .hrule { height:1px; background:#000000; margin-top:10pt; }
   main { flex:1; min-height:0; display:flex; flex-direction:column; }
-  p, li { font-size:14pt; font-weight:400; line-height:1.45; }
+  p, .sg-li { font-size:14pt; font-weight:400; line-height:1.45; }
   .lbl { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:500;
          letter-spacing:0.04em; line-height:1.4; color:#666666; }
   /* Emphasis element. Every sibling reserves the 3pt bar; only the colour changes,
@@ -54,8 +54,8 @@
   .covR { flex:none; width:216pt; border-left:1px solid #000000; padding-left:20pt;
           display:flex; flex-direction:column; }
   .idx { flex:1; min-height:0; list-style:none; display:flex; flex-direction:column; margin-top:12pt; }
-  .idx li > .ln { flex:1; display:flex; align-items:center; border-top:1px solid #000000; }
-  .idx li { flex:1 1 0; min-height:0; display:flex; align-items:center;
+  .idx .sg-li > .ln { flex:1; display:flex; align-items:center; border-top:1px solid #000000; }
+  .idx .sg-li { flex:1 1 0; min-height:0; display:flex; align-items:center;
             
             font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:400;
             letter-spacing:0.04em; line-height:1.4; color:#000000; white-space:nowrap; }
@@ -87,13 +87,13 @@
     </div>
     <div class="covR">
       <p class="lbl">IN THIS DECK</p>
-      <ul class="idx">
-        <li><div class="ln"><p>02 / THE SWITCH</p></div></li>
-        <li><div class="ln"><p>03 / THE BUDGET</p></div></li>
-        <li><div class="ln"><p>04 / THE EXCLUSIONS</p></div></li>
-        <li><div class="ln"><p>05 / THE FAILURE MODES</p></div></li>
-        <li><div class="ln"><p>06 / THE DECISIONS</p></div></li>
-      </ul>
+      <div class="sg-ul idx">
+        <div class="sg-li"><div class="ln"><p>02 / THE SWITCH</p></div></div>
+        <div class="sg-li"><div class="ln"><p>03 / THE BUDGET</p></div></div>
+        <div class="sg-li"><div class="ln"><p>04 / THE EXCLUSIONS</p></div></div>
+        <div class="sg-li"><div class="ln"><p>05 / THE FAILURE MODES</p></div></div>
+        <div class="sg-li"><div class="ln"><p>06 / THE DECISIONS</p></div></div>
+      </div>
     </div>
   </div>
 </main>

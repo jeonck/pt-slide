@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T15:24:42.851Z
+Generated: 2026-08-27T16:37:37.662Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/test-deck/gate-preview/slide-01.png, decks/test-deck/gate-preview/slide-02.png, decks/test-deck/gate-preview/slide-03.png, decks/test-deck/gate-preview/slide-04.png, decks/test-deck/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 21b55b5f82af1bec1fb314a3f1a0f01155e6550672c922a86d9fc93b010d3fbb, slide-02.html: fc23a52d6103f8c4619e9488e7755302901dfb91dc37a1ca65ac25a77f9a38b9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: 8138e35ee6bad73120bfd3807771b96875b812f27387353bb42ed0552da4b003, slide-05.html: 0942ec253c89fb42ce5cc9550092551f847098009e0e8033c8e84ce334d69653
+Slide fingerprints: slide-01.html: 21b55b5f82af1bec1fb314a3f1a0f01155e6550672c922a86d9fc93b010d3fbb, slide-02.html: fc23a52d6103f8c4619e9488e7755302901dfb91dc37a1ca65ac25a77f9a38b9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: 67577db9c40ab52cd218258753775f3c9ec6da50062d00ed3216c6ded47f5b7d, slide-05.html: 520c67fccef01b26ac9b5e0df76cbc35976b0cecabd7cce1b37ede9d4c07338b
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -32,6 +32,7 @@ Inputs reviewed: all five `slide-*.html` sources, the five rendered PNGs listed 
 | slide-02, slide-03, slide-04 | Accent-3 green `#1F9D57` unused (no positive-direction indicator exists in this deck's content) | Note | None — using it decoratively would violate the style's Avoid list | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 | slide-01/04/05 | 배경을 가진 `p.chip`·`p.lab`은 장식을 바깥 `<div>`로, 밑줄을 가진 `li`는 안쪽 `.row` 래퍼로 옮겼다. text 엔진은 텍스트 요소의 장식을 거부한다 | Note | 렌더 픽셀 차이 0(세 장 모두) | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -40,7 +41,7 @@ Inputs reviewed: all five `slide-*.html` sources, the five rendered PNGs listed 
 VERDICT: PASS
 Confidence: High
 Evidence: decks/test-deck/gate-preview/slide-01.png, decks/test-deck/gate-preview/slide-02.png, decks/test-deck/gate-preview/slide-03.png, decks/test-deck/gate-preview/slide-04.png, decks/test-deck/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 21b55b5f82af1bec1fb314a3f1a0f01155e6550672c922a86d9fc93b010d3fbb, slide-02.html: fc23a52d6103f8c4619e9488e7755302901dfb91dc37a1ca65ac25a77f9a38b9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: 8138e35ee6bad73120bfd3807771b96875b812f27387353bb42ed0552da4b003, slide-05.html: 0942ec253c89fb42ce5cc9550092551f847098009e0e8033c8e84ce334d69653
+Slide fingerprints: slide-01.html: 21b55b5f82af1bec1fb314a3f1a0f01155e6550672c922a86d9fc93b010d3fbb, slide-02.html: fc23a52d6103f8c4619e9488e7755302901dfb91dc37a1ca65ac25a77f9a38b9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: 67577db9c40ab52cd218258753775f3c9ec6da50062d00ed3216c6ded47f5b7d, slide-05.html: 520c67fccef01b26ac9b5e0df76cbc35976b0cecabd7cce1b37ede9d4c07338b
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -60,6 +61,7 @@ Method: every one of the five rendered PNGs above was opened and inspected as an
 | slide-05 | Discussion list occupies the right column only; the left column below "함께 정하고 싶은 세 가지" is open | Note | Intentional, mirrors the cover's asymmetry | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 | slide-01/04/05 | 배경을 가진 `p.chip`·`p.lab`은 장식을 바깥 `<div>`로, 밑줄을 가진 `li`는 안쪽 `.row` 래퍼로 옮겼다. text 엔진은 텍스트 요소의 장식을 거부한다 | Note | 렌더 픽셀 차이 0(세 장 모두) | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
@@ -69,5 +71,5 @@ Status: not-applicable
 - slide-01.html: 21b55b5f82af1bec1fb314a3f1a0f01155e6550672c922a86d9fc93b010d3fbb
 - slide-02.html: fc23a52d6103f8c4619e9488e7755302901dfb91dc37a1ca65ac25a77f9a38b9
 - slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4
-- slide-04.html: 8138e35ee6bad73120bfd3807771b96875b812f27387353bb42ed0552da4b003
-- slide-05.html: 0942ec253c89fb42ce5cc9550092551f847098009e0e8033c8e84ce334d69653
+- slide-04.html: 67577db9c40ab52cd218258753775f3c9ec6da50062d00ed3216c6ded47f5b7d
+- slide-05.html: 520c67fccef01b26ac9b5e0df76cbc35976b0cecabd7cce1b37ede9d4c07338b

@@ -28,11 +28,11 @@
   .card-head { background: #0B2C5C; padding: 8pt 14pt; display: flex; align-items: baseline; justify-content: space-between; }
   .card-head h3 { font-size: 15pt; font-weight: 700; color: #FFFFFF; letter-spacing: -0.01em; }
   .card-head p { font-size: 10pt; font-weight: 400; color: #8FA6C4; }
-  .card ul { list-style: none; flex: 1; padding: 16pt 16pt 18pt 16pt; display: flex; flex-direction: column; justify-content: space-evenly; }
-  .card li { display: flex; gap: 10pt; align-items: flex-start; }
+  .card .sg-ul { list-style: none; flex: 1; padding: 16pt 16pt 18pt 16pt; display: flex; flex-direction: column; justify-content: space-evenly; }
+  .card .sg-li { display: flex; gap: 10pt; align-items: flex-start; }
   
   .mk { width: 6pt; height: 6pt; flex: none; background: #1B66C9; margin-top: 7pt; }
-  .card li p { font-size: 15pt; font-weight: 400; line-height: 1.55; color: #1A1A1A; }
+  .card .sg-li p { font-size: 15pt; font-weight: 400; line-height: 1.55; color: #1A1A1A; }
   .summary { background: #E8F1FB; border-top: 3pt solid #0B2C5C; border-bottom: 3pt solid #0B2C5C; padding: 13pt 16pt; display: flex; gap: 14pt; align-items: center; }
   .summary .lab { flex: none; background: #0B2C5C; padding: 4pt 10pt; font-size: 11pt; font-weight: 700; color: #FFFFFF; letter-spacing: 0.04em; }
   .summary .txt { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
@@ -61,11 +61,11 @@
           <h3>먼저 할 일</h3>
           <p>우선순위</p>
         </div>
-        <ul>
-          <li><div class="mk"></div><p>반복도와 규칙성이 높은 업무부터 목록화한다</p></li>
-          <li><div class="mk"></div><p>사람이 최종 확인할 지점을 업무마다 정한다</p></li>
-          <li><div class="mk"></div><p>잘못 실행됐을 때 되돌릴 절차를 함께 만든다</p></li>
-        </ul>
+        <div class="sg-ul">
+          <div class="sg-li"><div class="mk"></div><p>반복도와 규칙성이 높은 업무부터 목록화한다</p></div>
+          <div class="sg-li"><div class="mk"></div><p>사람이 최종 확인할 지점을 업무마다 정한다</p></div>
+          <div class="sg-li"><div class="mk"></div><p>잘못 실행됐을 때 되돌릴 절차를 함께 만든다</p></div>
+        </div>
       </div>
 
       <div class="card risk">
@@ -73,11 +73,11 @@
           <h3>미루면 위험한 것</h3>
           <p>위험</p>
         </div>
-        <ul>
-          <li><div class="mk"></div><p>검수 지점 없이 전체 업무에 한꺼번에 적용</p></li>
-          <li><div class="mk"></div><p>실행 근거와 기록을 남기지 않는 자동화</p></li>
-          <li><div class="mk"></div><p>직무 재설계 없이 도구만 먼저 도입</p></li>
-        </ul>
+        <div class="sg-ul">
+          <div class="sg-li"><div class="mk"></div><p>검수 지점 없이 전체 업무에 한꺼번에 적용</p></div>
+          <div class="sg-li"><div class="mk"></div><p>실행 근거와 기록을 남기지 않는 자동화</p></div>
+          <div class="sg-li"><div class="mk"></div><p>직무 재설계 없이 도구만 먼저 도입</p></div>
+        </div>
       </div>
     </div>
 

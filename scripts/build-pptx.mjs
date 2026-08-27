@@ -128,11 +128,26 @@ function buildFromFlattenedCopy(deck, out) {
       '--pass-b-report', join(work, 'gate-pass-b.md')], { stdio: 'pipe' });
     run(['--slides-dir', work, '--output', join(work, 'out.pptx'), '--engine', 'text']);
     copyFileSync(join(work, 'out.pptx'), out);
+    nowrapSingleLine(out);
     return true;
   } catch {
     return false;
   } finally {
     rmSync(tmp, { recursive: true, force: true });
+  }
+}
+
+/**
+ * A title that never wraps in the browser can still wrap in PowerPoint: the exported
+ * box is exactly as wide as the browser measured the text, and PowerPoint's own
+ * measurement differs by a hair. In a box only one line tall, the second line is then
+ * cut off. Turning wrapping off for those boxes reproduces the HTML exactly.
+ */
+function nowrapSingleLine(pptx) {
+  try {
+    execFileSync('python3', ['scripts/pptx-fit-text.py', pptx], { stdio: 'pipe' });
+  } catch (err) {
+    console.error(`  줄바꿈 끄기 실패: ${String(err).slice(0, 90)}`);
   }
 }
 
@@ -167,6 +182,7 @@ for (const deck of decks) {
   const opts = engine === 'raster' ? ['--resolution', '1080p'] : [];
   try {
     run(['--slides-dir', deck, '--output', out, '--engine', engine, ...opts]);
+    if (engine === 'text') nowrapSingleLine(out);
     const kb = Math.round(statSync(out).size / 1024);
     const note = wantText && !probe.ok ? '  ← text 엔진 거부, raster로 대체' : '';
     console.log(`${name.padEnd(28)} ${engine.padEnd(6)} ${out}  ${kb}KB${note}`);

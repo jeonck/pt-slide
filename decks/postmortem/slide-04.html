@@ -46,9 +46,9 @@
   .c2a { grid-template-columns:minmax(0,0.8fr) 0.5pt minmax(0,1.2fr); }
   /* Every row carries the same rule and the same padding, including the first: an emphasis
      applied to one row only would shift that row off the column. */
-  ul { list-style:none; margin-top:8pt; }
-  li { border-top:0.5pt solid #1C1B17; padding:4pt 0; }
-  li p { font-size:14pt; line-height:1.45; color:#2E2C26; }
+  .sg-ul { list-style:none; margin-top:8pt; }
+  .sg-li { border-top:0.5pt solid #1C1B17; padding:4pt 0; }
+  .sg-li p { font-size:14pt; line-height:1.45; color:#2E2C26; }
 
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
@@ -76,16 +76,16 @@
     <div class="vrule"></div>
     <div class="col">
       <p class="kick">Four conditions, none of them tone</p>
-      <ul>
-        <li><p><strong class="lead">It is not evidence.</strong> Nothing said here reaches a
-        performance file or a promotion packet.</p></li>
-        <li><p><strong class="lead">Not knowing is sayable.</strong> &ldquo;I did not know that
-        flag existed&rdquo; has to cost nothing to say.</p></li>
-        <li><p><strong class="lead">Timeline before conclusion.</strong> Order the facts first,
-        or the room reverse-engineers a culprit.</p></li>
-        <li><p><strong class="lead">The closest person reads it.</strong> Whoever was at the
-        keyboard writes it, or signs it before filing.</p></li>
-      </ul>
+      <div class="sg-ul">
+        <div class="sg-li"><p><strong class="lead">It is not evidence.</strong> Nothing said here reaches a
+        performance file or a promotion packet.</p></div>
+        <div class="sg-li"><p><strong class="lead">Not knowing is sayable.</strong> &ldquo;I did not know that
+        flag existed&rdquo; has to cost nothing to say.</p></div>
+        <div class="sg-li"><p><strong class="lead">Timeline before conclusion.</strong> Order the facts first,
+        or the room reverse-engineers a culprit.</p></div>
+        <div class="sg-li"><p><strong class="lead">The closest person reads it.</strong> Whoever was at the
+        keyboard writes it, or signs it before filing.</p></div>
+      </div>
     </div>
   </div>
 </main>

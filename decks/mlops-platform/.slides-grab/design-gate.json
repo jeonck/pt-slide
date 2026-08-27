@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "verdict": "proceed",
-  "generatedAt": "2026-08-27T16:14:39.294Z",
+  "generatedAt": "2026-08-27T16:37:08.332Z",
   "slideMode": "presentation",
   "resolution": "2160p",
   "previewDir": ".slides-grab/gate-preview",
@@ -66,7 +66,7 @@
       },
       {
         "file": "slide-07.html",
-        "sha256": "6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241"
+        "sha256": "ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068"
       }
     ]
   },
@@ -130,7 +130,7 @@
       },
       {
         "file": "slide-07.html",
-        "sha256": "6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241"
+        "sha256": "ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068"
       }
     ]
   },
@@ -197,7 +197,7 @@
         },
         {
           "file": "slide-07.html",
-          "sha256": "6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241"
+          "sha256": "ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068"
         }
       ]
     },
@@ -261,7 +261,7 @@
         },
         {
           "file": "slide-07.html",
-          "sha256": "6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241"
+          "sha256": "ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068"
         }
       ]
     }
@@ -293,7 +293,7 @@
     },
     {
       "file": "slide-07.html",
-      "sha256": "6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241"
+      "sha256": "ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068"
     }
   ],
   "localAssetFingerprints": [
@@ -309,11 +309,11 @@
   "passReportFingerprints": [
     {
       "file": "gate-pass-a.md",
-      "sha256": "88dcf23ec368ef4271673447cac6cb937a3d04f20b087a6739aa17a4ef0a3803"
+      "sha256": "e3954a09bae2a2afbc20d0f7babd97721b60669ff8e48d76cc909ea85561734c"
     },
     {
       "file": "gate-pass-b.md",
-      "sha256": "1edc6b60a3e93e412a693a309db4975b1d971db08b6de7486a6c17c801d695d7"
+      "sha256": "cd3cf7512059717ba473043fe5676b08183be02f1749222c2b58eaf0745381cc"
     }
   ],
   "previewFingerprints": [

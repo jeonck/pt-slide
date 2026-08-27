@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T16:14:39.294Z
+Generated: 2026-08-27T16:37:08.332Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/mlops-platform/gate-preview/slide-01.png, decks/mlops-platform/gate-preview/slide-02.png, decks/mlops-platform/gate-preview/slide-03.png, decks/mlops-platform/gate-preview/slide-04.png, decks/mlops-platform/gate-preview/slide-05.png, decks/mlops-platform/gate-preview/slide-06.png, decks/mlops-platform/gate-preview/slide-07.png
-Slide fingerprints: slide-01.html: 69b92ab4e2e9eb7ab4a04b3c9672efc1ed44cd3def92aab79cf9c1db32047be9, slide-02.html: 92b494cd1d48bdf7aff3a28c13659ca244d27f91347b19286d2b90c1df36a18a, slide-03.html: a6e09e2b9cea4746b74e83c9423f29db48c65e085e6c1080010c2b261619b713, slide-04.html: b495e9fa175e1a4aa14b078a6da951b685f028913a104b82fc65944faa907186, slide-05.html: cf23d716ff5c29de78935bb2d7ad394117f347e874a0be2d001161d9b3f00192, slide-06.html: 5fb9d2cacd598db9ff4ed95d5127847d47e29bce0f2f0d05eed0b1adcf26bcb7, slide-07.html: 6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241
+Slide fingerprints: slide-01.html: 69b92ab4e2e9eb7ab4a04b3c9672efc1ed44cd3def92aab79cf9c1db32047be9, slide-02.html: 92b494cd1d48bdf7aff3a28c13659ca244d27f91347b19286d2b90c1df36a18a, slide-03.html: a6e09e2b9cea4746b74e83c9423f29db48c65e085e6c1080010c2b261619b713, slide-04.html: b495e9fa175e1a4aa14b078a6da951b685f028913a104b82fc65944faa907186, slide-05.html: cf23d716ff5c29de78935bb2d7ad394117f347e874a0be2d001161d9b3f00192, slide-06.html: 5fb9d2cacd598db9ff4ed95d5127847d47e29bce0f2f0d05eed0b1adcf26bcb7, slide-07.html: ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -33,6 +33,7 @@ Inputs reviewed: all seven `slide-*.html` sources, the seven rendered PNGs above
 | slide-01, slide-07 | Presenter reads `PRESENTER · TEAM` | Note | Intentional placeholder | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 | all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -41,7 +42,7 @@ Inputs reviewed: all seven `slide-*.html` sources, the seven rendered PNGs above
 VERDICT: PASS
 Confidence: High
 Evidence: decks/mlops-platform/gate-preview/slide-01.png, decks/mlops-platform/gate-preview/slide-02.png, decks/mlops-platform/gate-preview/slide-03.png, decks/mlops-platform/gate-preview/slide-04.png, decks/mlops-platform/gate-preview/slide-05.png, decks/mlops-platform/gate-preview/slide-06.png, decks/mlops-platform/gate-preview/slide-07.png
-Slide fingerprints: slide-01.html: 69b92ab4e2e9eb7ab4a04b3c9672efc1ed44cd3def92aab79cf9c1db32047be9, slide-02.html: 92b494cd1d48bdf7aff3a28c13659ca244d27f91347b19286d2b90c1df36a18a, slide-03.html: a6e09e2b9cea4746b74e83c9423f29db48c65e085e6c1080010c2b261619b713, slide-04.html: b495e9fa175e1a4aa14b078a6da951b685f028913a104b82fc65944faa907186, slide-05.html: cf23d716ff5c29de78935bb2d7ad394117f347e874a0be2d001161d9b3f00192, slide-06.html: 5fb9d2cacd598db9ff4ed95d5127847d47e29bce0f2f0d05eed0b1adcf26bcb7, slide-07.html: 6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241
+Slide fingerprints: slide-01.html: 69b92ab4e2e9eb7ab4a04b3c9672efc1ed44cd3def92aab79cf9c1db32047be9, slide-02.html: 92b494cd1d48bdf7aff3a28c13659ca244d27f91347b19286d2b90c1df36a18a, slide-03.html: a6e09e2b9cea4746b74e83c9423f29db48c65e085e6c1080010c2b261619b713, slide-04.html: b495e9fa175e1a4aa14b078a6da951b685f028913a104b82fc65944faa907186, slide-05.html: cf23d716ff5c29de78935bb2d7ad394117f347e874a0be2d001161d9b3f00192, slide-06.html: 5fb9d2cacd598db9ff4ed95d5127847d47e29bce0f2f0d05eed0b1adcf26bcb7, slide-07.html: ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -61,6 +62,7 @@ Method: all seven rendered PNGs were opened as images. Slides 01 and 04 were ins
 | slide-05 | Two cells in the "build only if" column wrap to two lines while the rest are one | Note | Accepted — the rows are equal-height, so the ragged column does not disturb the grid | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 | all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
+| all | `<li>` 안에 블록 요소가 든 리스트를 `<div>`로 바꿨다. 엔진이 리스트 전체로 한 번, 안쪽 `<p>`로 또 한 번 텍스트 상자를 만들어 파워포인트에서 글자가 겹쳐 보였다 | Major | 실제 PPTX를 렌더해 발견. 태그 선택자는 클래스로 이전, 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
@@ -73,4 +75,4 @@ Status: not-applicable
 - slide-04.html: b495e9fa175e1a4aa14b078a6da951b685f028913a104b82fc65944faa907186
 - slide-05.html: cf23d716ff5c29de78935bb2d7ad394117f347e874a0be2d001161d9b3f00192
 - slide-06.html: 5fb9d2cacd598db9ff4ed95d5127847d47e29bce0f2f0d05eed0b1adcf26bcb7
-- slide-07.html: 6fa05318e73efbca35fc1d2c103cc3bd43ef35edb58094099e02b9017be5f241
+- slide-07.html: ec84857c3f29694b5f7f22c7e49910453916a6c3356d20f390ad66e773e83068

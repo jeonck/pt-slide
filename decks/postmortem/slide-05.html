@@ -43,9 +43,9 @@
   .body { font-size:15pt; line-height:1.45; color:#2E2C26; }
   .lead { font-weight:700; color:#1C1B17; }
   .c2b { grid-template-columns:minmax(0,1fr) 0.5pt minmax(0,1.4fr); }
-  ul { list-style:none; margin-top:8pt; }
-  li { border-top:0.5pt solid #1C1B17; padding:12pt 0; }
-  li p { font-size:15pt; line-height:1.45; color:#2E2C26; }
+  .sg-ul { list-style:none; margin-top:8pt; }
+  .sg-li { border-top:0.5pt solid #1C1B17; padding:12pt 0; }
+  .sg-li p { font-size:15pt; line-height:1.45; color:#2E2C26; }
 
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
@@ -73,14 +73,14 @@
     <div class="vrule"></div>
     <div class="col">
       <p class="kick">Read your last review for these</p>
-      <ul>
-        <li><p><strong class="lead">The cause field says &ldquo;human error.&rdquo;</strong>
-        The search stopped at the first person it found.</p></li>
-        <li><p><strong class="lead">Action items are owned by a team.</strong> Nobody is late,
-        because nobody was ever due.</p></li>
-        <li><p><strong class="lead">The same failure is filed twice.</strong> Two titles, one
-        condition nobody fixed.</p></li>
-      </ul>
+      <div class="sg-ul">
+        <div class="sg-li"><p><strong class="lead">The cause field says &ldquo;human error.&rdquo;</strong>
+        The search stopped at the first person it found.</p></div>
+        <div class="sg-li"><p><strong class="lead">Action items are owned by a team.</strong> Nobody is late,
+        because nobody was ever due.</p></div>
+        <div class="sg-li"><p><strong class="lead">The same failure is filed twice.</strong> Two titles, one
+        condition nobody fixed.</p></div>
+      </div>
     </div>
   </div>
 </main>

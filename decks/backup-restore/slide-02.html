@@ -39,25 +39,25 @@
     <h2 style="font-size:26pt; line-height:1.35; margin-top:8pt;">What a backup fails at, silently</h2>
     <div class="rule" style="width:34pt; margin:12pt auto 0;"></div>
   </div>
-  <ul style="list-style:none; flex:1; min-height:0; margin-top:20pt; display:grid;
+  <div class="sg-ul" style="list-style:none; flex:1; min-height:0; margin-top:20pt; display:grid;
              grid-template-columns:1fr 1fr; grid-template-rows:minmax(0,1fr) minmax(0,1fr);">
-    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid #A8893E; flex:1; min-width:0;">
+    <div class="sg-li" style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid #A8893E; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">Media nobody has read back</h3>
       <p class="lede" style="margin-top:8pt;">The job succeeded. The bytes never did.</p>
-    </div></li>
-    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid #A8893E; flex:1; min-width:0;">
+    </div></div>
+    <div class="sg-li" style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid #A8893E; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">A schema left out of the dump</h3>
       <p class="lede" style="margin-top:8pt;">Rows come back. The database does not.</p>
-    </div></li>
-    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid transparent; flex:1; min-width:0;">
+    </div></div>
+    <div class="sg-li" style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid transparent; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">A dependency that is down too</h3>
       <p class="lede" style="margin-top:8pt;">The restore needs what the outage took.</p>
-    </div></li>
-    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid transparent; flex:1; min-width:0;">
+    </div></div>
+    <div class="sg-li" style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid transparent; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">Credentials nobody on shift has</h3>
       <p class="lede" style="margin-top:8pt;">The path exists. Nobody can walk it.</p>
-    </div></li>
-  </ul>
+    </div></div>
+  </div>
   <p class="note" style="text-align:center; margin-top:18pt;">None of these announce themselves. All of them wait.</p>
 </main>
 <div class="sg-footer"><p>No RPO or RTO figures are asserted in this deck &mdash; those numbers are yours to set and to measure.</p></div>

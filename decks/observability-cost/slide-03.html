@@ -65,7 +65,7 @@
     list-style:none; flex:1; min-height:0;
     display:flex; flex-direction:column; justify-content:space-between;
   }
-  .factors li {
+  .factors .sg-li {
     display:grid; grid-template-columns:14pt 1fr;
     font-size:14pt; font-weight:400; line-height:1.5;
   }
@@ -88,22 +88,22 @@
   <div class="panels">
     <section class="panel">
       <p class="micro">What multiplies</p>
-      <ul class="factors">
-        <li><p style="display:inline;"></p><p style="display:inline;">Requests per second</p></li>
-        <li><p class="op" style="display:inline;">×</p><p style="display:inline;">Log lines emitted per request</p></li>
-        <li><p class="op" style="display:inline;">×</p><p style="display:inline;">Replicas emitting the same line</p></li>
-        <li><p class="op" style="display:inline;">×</p><p style="display:inline;">Days retained, indexed, replicated</p></li>
-      </ul>
+      <div class="sg-ul factors">
+        <div class="sg-li"><p style="display:inline;"></p><p style="display:inline;">Requests per second</p></div>
+        <div class="sg-li"><p class="op" style="display:inline;">×</p><p style="display:inline;">Log lines emitted per request</p></div>
+        <div class="sg-li"><p class="op" style="display:inline;">×</p><p style="display:inline;">Replicas emitting the same line</p></div>
+        <div class="sg-li"><p class="op" style="display:inline;">×</p><p style="display:inline;">Days retained, indexed, replicated</p></div>
+      </div>
     </section>
 
     <section class="panel">
       <p class="micro">What does not</p>
-      <ul class="factors">
-        <li><p style="display:inline;"></p><p style="display:inline;">Incidents, one at a time</p></li>
-        <li><p style="display:inline;"></p><p style="display:inline;">Engineers who open logs at all</p></li>
-        <li><p style="display:inline;"></p><p style="display:inline;">The window they read: minutes</p></li>
-        <li><p style="display:inline;"></p><p style="display:inline;">The three queries they know</p></li>
-      </ul>
+      <div class="sg-ul factors">
+        <div class="sg-li"><p style="display:inline;"></p><p style="display:inline;">Incidents, one at a time</p></div>
+        <div class="sg-li"><p style="display:inline;"></p><p style="display:inline;">Engineers who open logs at all</p></div>
+        <div class="sg-li"><p style="display:inline;"></p><p style="display:inline;">The window they read: minutes</p></div>
+        <div class="sg-li"><p style="display:inline;"></p><p style="display:inline;">The three queries they know</p></div>
+      </div>
     </section>
   </div>
 
