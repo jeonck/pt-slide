@@ -50,6 +50,10 @@
   .close h2 { font-size:26pt; font-weight:700; letter-spacing:-0.01em; line-height:1.3; margin-bottom:12pt; white-space:nowrap; }
   .close .row { display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
   .close .row p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:400; letter-spacing:0.05em; line-height:1.4; white-space:nowrap; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/ci-pipeline/gate-preview/slide-01.png, decks/ci-pipeline/gate-preview/slide-02.png, decks/ci-pipeline/gate-preview/slide-03.png, decks/ci-pipeline/gate-preview/slide-04.png, decks/ci-pipeline/gate-preview/slide-05.png, decks/ci-pipeline/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 9bd35fbd28f33620a2ecf6b2036e06ffe3596fa706e711e953dc061643279920, slide-02.html: 3939a43de7ddf0718ed46851a2309273c670dbfc93f138abd8412fa6db35b8c1, slide-03.html: f4766cb519d99ec4109c58e81678bd19a97775c23424354c05fc8fdf56f85f62, slide-04.html: fe961f51d07b667f02d9b977b8346784b7acef326ebf3ce34c031509acd7e456, slide-05.html: e2217577a629d3678b216fc8092f7e1691a0fd43bd70eedce2ac0edf8d695580, slide-06.html: 3f4acc431ddd23306b4d2d8800f0b1942795696f228f081bf6d1950d91629dc5
+Slide fingerprints: slide-01.html: 912c583e7441f526da8738a19ddc49ca6a5dd03e4f3c0620fa68065156c916ba, slide-02.html: 7d513de083b25536852895819882daf41b980067ac2a47ad9692ae651a197e9b, slide-03.html: 8789332e7d2c6b3f6da6b3343e0f192c5cc83ec1e97fe57461997fe9ef3c052a, slide-04.html: f32e219b14651db93a3957c573c464d6610f8fd3258146cdccf4357e70b9f2ed, slide-05.html: 78254bfae330dd7fe70ab4c83937745e8d523d389b45520b783ca74bbef13fca, slide-06.html: f3f9b305867e1d83a0d11c78ebbe1049d73794998d253698cfa3fe04ca926b86
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -67,3 +67,4 @@ measured, not estimated.
 | slide-05 | Pills stretched to ~193pt around ~115pt of content, leaving a dead band under every gloss. Centring the content made it worse — node 02's gloss runs a line longer, so centring lifted its badge above its neighbours' | Major | Pills hug their content, content stays top-aligned (all four badges now share one top edge at 146.1pt), closing strip takes `margin-top:auto` so its bottom lands on 351.0pt like every other sheet | fixed |
 | slide-06 | ~100pt void between the panel thesis and the presenter block | Minor | One supporting line added — closed with content, not padding | fixed |
 | all | No content overflows `main` under the fixed bottom-right caption on any sheet (measured: worst-case overflow 0.00pt) | Note | None | tracked |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |

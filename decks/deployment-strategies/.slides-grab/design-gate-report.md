@@ -1,9 +1,9 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-26T14:28:05.341Z
+Generated: 2026-08-27T15:08:32.139Z
 Slide mode: presentation
-Resolution: 1080p
+Resolution: 2160p
 
 ## Pass A: System Contract / Constraint Integrity
 
@@ -12,7 +12,7 @@ Resolution: 1080p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/deployment-strategies/gate-preview/slide-01.png, decks/deployment-strategies/gate-preview/slide-02.png, decks/deployment-strategies/gate-preview/slide-03.png, decks/deployment-strategies/gate-preview/slide-04.png, decks/deployment-strategies/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: d7388373969a8941c03f5aa8aa5b94da77b6cd2aaa8f32d1de824ce72af183fb, slide-02.html: ad13ac3e4d7e852d42c3cdb96a90c368fb925f9dacda72b1b368deb98bde66d8, slide-03.html: a69e4bf0a841af473211381811ea69e41aac4029ec2f1a63ec8c4db8eec57523, slide-04.html: 9378150b26e300a85919456d5e4ea838589def0aeb68d83c18c5a9a2d29f318f, slide-05.html: ea2e995d7735a77d22b3796e2a71e10f25278c2dc0b356b8e2625cdccb707886
+Slide fingerprints: slide-01.html: d7388373969a8941c03f5aa8aa5b94da77b6cd2aaa8f32d1de824ce72af183fb, slide-02.html: ad13ac3e4d7e852d42c3cdb96a90c368fb925f9dacda72b1b368deb98bde66d8, slide-03.html: c62cb45c614fc98b0c15f1606d88c9772687e5a1351a910a02ac2d03855629a9, slide-04.html: 7e9ce02e829046936e8ce66f423af462673b8c4b3d1048a8a4d0f3458ea40366, slide-05.html: ea2e995d7735a77d22b3796e2a71e10f25278c2dc0b356b8e2625cdccb707886
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -32,6 +32,7 @@ Method: the five slide sources were read against the `slides-grab show-design pp
 | slide-03 | The spec's `matrix_2x2` calls the top-right quadrant the "recommended" one; here amber marks the most *demanding* quadrant | Note | Intentional, and the sheet's caption says so in as many words: "Amber marks the most demanding cell here, not the best strategy" | tracked |
 | whole deck | The spec's chart tokens (bar geometry, value labels, delta colours, gridline rules) are entirely unused | Note | Correct outcome — no sourceable data exists. Moved to `design-debt.md` | tracked |
 | whole deck | The spec's 200pt section number is never used | Note | Nothing on a 405pt-tall canvas can carry a 200pt numeral; the largest display type is the 40pt cover title. Recorded in `slide-outline.md` deviation 4 | tracked |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -40,7 +41,7 @@ Method: the five slide sources were read against the `slides-grab show-design pp
 VERDICT: PASS
 Confidence: High
 Evidence: decks/deployment-strategies/gate-preview/slide-01.png, decks/deployment-strategies/gate-preview/slide-02.png, decks/deployment-strategies/gate-preview/slide-03.png, decks/deployment-strategies/gate-preview/slide-04.png, decks/deployment-strategies/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: d7388373969a8941c03f5aa8aa5b94da77b6cd2aaa8f32d1de824ce72af183fb, slide-02.html: ad13ac3e4d7e852d42c3cdb96a90c368fb925f9dacda72b1b368deb98bde66d8, slide-03.html: a69e4bf0a841af473211381811ea69e41aac4029ec2f1a63ec8c4db8eec57523, slide-04.html: 9378150b26e300a85919456d5e4ea838589def0aeb68d83c18c5a9a2d29f318f, slide-05.html: ea2e995d7735a77d22b3796e2a71e10f25278c2dc0b356b8e2625cdccb707886
+Slide fingerprints: slide-01.html: d7388373969a8941c03f5aa8aa5b94da77b6cd2aaa8f32d1de824ce72af183fb, slide-02.html: ad13ac3e4d7e852d42c3cdb96a90c368fb925f9dacda72b1b368deb98bde66d8, slide-03.html: c62cb45c614fc98b0c15f1606d88c9772687e5a1351a910a02ac2d03855629a9, slide-04.html: 7e9ce02e829046936e8ce66f423af462673b8c4b3d1048a8a4d0f3458ea40366, slide-05.html: ea2e995d7735a77d22b3796e2a71e10f25278c2dc0b356b8e2625cdccb707886
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -61,6 +62,7 @@ Method: **all five PNGs were opened individually at full 1920×1080 size**, not 
 | slide-01, slide-05 | Both presenter lines were `#6B6F76` on charcoal — 2.77:1, effectively unreadable at presenting distance | Major | Fixed before the first render, caught by computing the ratio rather than by eye; both are white now | tracked |
 | slide-04 | Airier than 02 and 03 — a wide white prose column runs between the tag blocks and the chips | Note | Accepted; the sheet still carries six colour blocks, the most in the deck, and narrowing the column would push every band to four lines and break the vertical budget. Moved to `design-debt.md` | tracked |
 | slide-02, slide-03 | The two left rails align their labels differently (left on 02, right on 03) | Note | Accepted — different roles: a table row header versus an axis label outside the matrix. Moved to `design-debt.md` | tracked |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
@@ -69,6 +71,6 @@ Status: not-applicable
 
 - slide-01.html: d7388373969a8941c03f5aa8aa5b94da77b6cd2aaa8f32d1de824ce72af183fb
 - slide-02.html: ad13ac3e4d7e852d42c3cdb96a90c368fb925f9dacda72b1b368deb98bde66d8
-- slide-03.html: a69e4bf0a841af473211381811ea69e41aac4029ec2f1a63ec8c4db8eec57523
-- slide-04.html: 9378150b26e300a85919456d5e4ea838589def0aeb68d83c18c5a9a2d29f318f
+- slide-03.html: c62cb45c614fc98b0c15f1606d88c9772687e5a1351a910a02ac2d03855629a9
+- slide-04.html: 7e9ce02e829046936e8ce66f423af462673b8c4b3d1048a8a4d0f3458ea40366
 - slide-05.html: ea2e995d7735a77d22b3796e2a71e10f25278c2dc0b356b8e2625cdccb707886

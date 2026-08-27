@@ -51,6 +51,10 @@
   .close { flex:none; margin-top:auto; display:flex; gap:14pt; padding:12pt 16pt; }
   .close .tbar { flex:none; width:3pt; background:#5A55E0; border-radius:1.5pt; }
   .close p { font-size:13pt; line-height:1.45; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/mlops-platform/.slides-grab/gate-preview/slide-01.png, decks/mlops-platform/.slides-grab/gate-preview/slide-02.png, decks/mlops-platform/.slides-grab/gate-preview/slide-03.png, decks/mlops-platform/.slides-grab/gate-preview/slide-04.png, decks/mlops-platform/.slides-grab/gate-preview/slide-05.png, decks/mlops-platform/.slides-grab/gate-preview/slide-06.png, decks/mlops-platform/.slides-grab/gate-preview/slide-07.png
-Slide fingerprints: slide-01.html: 8fe56a4ec1f17f59ff8f4ffd8be467503bd51fef04a5e5af8bca7a3434ebfe5f, slide-02.html: 9eb61b36907534320e04d71026fc1942059fb6c787b4dda729ffeccc2181a886, slide-03.html: 21aeb4ad8c1ac7386f446ddd00f5e0c9878d8d18d3f6aeb1100bcb0e9c682572, slide-04.html: c96b18f144c31a149363f795a5fec4d89d5210ecb975c8e0f4cfefb382ba9567, slide-05.html: 0cf60965de3a0e2599f81f1c916bf0d7223f680ef3984f33d3c03bba1939d355, slide-06.html: 6bd80c3a77b1c17788ebf1fd6d866b633441132c3a6f6a7d8eb4dbceb86683e9, slide-07.html: 016c1442da4f09f899a4cb28892df73903d14bcfe73cfc34a6962e406e6bac02
+Evidence: decks/mlops-platform/gate-preview/slide-01.png, decks/mlops-platform/gate-preview/slide-02.png, decks/mlops-platform/gate-preview/slide-03.png, decks/mlops-platform/gate-preview/slide-04.png, decks/mlops-platform/gate-preview/slide-05.png, decks/mlops-platform/gate-preview/slide-06.png, decks/mlops-platform/gate-preview/slide-07.png
+Slide fingerprints: slide-01.html: f42ba689ae9a32b9d0c8166b1027c33fb40e2af397b211ec65782c4a271891cd, slide-02.html: 2aee9e408497151431e27decf668716a40f260516126ef440abe841412570623, slide-03.html: 76319d19e8931f449f8f9d020b136483c770091cd5f8c3be327015690f663cea, slide-04.html: b44994f0d822834c5b7188daa11ab4d401600e40f25b09e39defe2e256043e90, slide-05.html: e2db0be7798b9aa97f941f249695e9ba95026040e85c1b66d5f925248b50558a, slide-06.html: 9d24203cd86ebefa8db04ee76de380cd748243a59259f2b1ab7abf7b8581b5e0, slide-07.html: d369fe328024bb4cab4cd46a9da3314a8253c811525b499de4d2c7e2c427b13d
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -21,3 +21,4 @@ Method: all seven rendered PNGs were opened as images. Slides 01 and 04 were ins
 | slide-01 | The cover's middle band is largely empty | Note | Intentional: the style is a consulting exhibit, and its cover is a title page rather than a poster | tracked |
 | slide-03 | Six capability cells sit on the sparse side after their definitions were cut to two lines | Minor | Accepted — the alternative was a third line per cell, which overran the grid track and pushed the row past the frame | tracked |
 | slide-05 | Two cells in the "build only if" column wrap to two lines while the rest are one | Note | Accepted — the rows are equal-height, so the ragged column does not disturb the grid | tracked |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |

@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/backup-restore/.slides-grab/gate-preview/slide-01.png, decks/backup-restore/.slides-grab/gate-preview/slide-02.png, decks/backup-restore/.slides-grab/gate-preview/slide-03.png, decks/backup-restore/.slides-grab/gate-preview/slide-04.png, decks/backup-restore/.slides-grab/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: eb856228adc80e06e586e21fa931c61ad699da6689574eff3918ccbc98f37d25, slide-02.html: d6236cec051ba37679a02959f1be3a7fafbcf8ae5e8c88e6481385038bc8b906, slide-03.html: 3971d70cc79c3b3942bebe9ab07e7268cfc1f8ddc55f9c705b43d42b4767e2b0, slide-04.html: 4c202413769f881638203a10fca17aa4636513469fa1b8ce60baa2da9124b804, slide-05.html: 5a0387bc6f481a14e5702be833e745fd72a113b461c3a03dd62147f10d115806
+Evidence: decks/backup-restore/gate-preview/slide-01.png, decks/backup-restore/gate-preview/slide-02.png, decks/backup-restore/gate-preview/slide-03.png, decks/backup-restore/gate-preview/slide-04.png, decks/backup-restore/gate-preview/slide-05.png
+Slide fingerprints: slide-01.html: ec9fdfc6dbb8fbac1ac4a6dd0249c07fb6fdf92b5762a82750613d82f3719096, slide-02.html: 617337594c71faf67f612d7aaa4f3145fb7dafffbc0809325db7f9efbf89041b, slide-03.html: 0b47a84aca429fe1a6fa9cb5c4020bcd7ebacfcf0acff60befad05c4cf77a419, slide-04.html: e31dd68baddab29f6f75c9843752782dc2f08fdc1c11b6ff73a14e7519bcf222, slide-05.html: f860483e9331c2ebef9ef9510509316561f5786c1a4bb7fff2e43c73d11bbb14
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -61,3 +61,4 @@ Blocking findings: None
 | slide-05 | Gold lozenge separator extends the spec's `gold ◆` out of its comparison-diagram context | Note | None — reusing the 34pt hairline made header and item rules indistinguishable | tracked in design-debt.md |
 | all | Source caption carries a statement of fact, not a citation | Note | None — the deck asserts no figures; an invented source would be worse | tracked in slide-outline.md |
 | all | `#6B5D46` is not a spec token | Note | Documented harmonic extension with measured contrast | tracked in design-debt.md |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |

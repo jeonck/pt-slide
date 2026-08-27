@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/feature-store/.slides-grab/gate-preview/slide-01.png, decks/feature-store/.slides-grab/gate-preview/slide-02.png, decks/feature-store/.slides-grab/gate-preview/slide-03.png, decks/feature-store/.slides-grab/gate-preview/slide-04.png, decks/feature-store/.slides-grab/gate-preview/slide-05.png, decks/feature-store/.slides-grab/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: f94db05cf46fd8a96ec42b502b78b4b95b98f948e45c453585fed7e076c3820c, slide-02.html: d71762e5c0b8a69a2785783ef1d27aa1f226f874b5ee80b06f8c5df85aa419eb, slide-03.html: a1663b1bcc783a10f8b17ba79c33e08972854632a97c7f46633e3358a1ea9fe6, slide-04.html: 5d7b15ecc1683b5b2a63a9b204603dd937336ddd2ed6e9e6ec902e49df59417e, slide-05.html: cba30d151b1958d3cece892e8a727af4020e24136640b985c609cb6c36a5fbdb, slide-06.html: bab73c081326b41671cbc909d31fdd06863961bd7b15d784fc4df537b315a620
+Evidence: decks/feature-store/gate-preview/slide-01.png, decks/feature-store/gate-preview/slide-02.png, decks/feature-store/gate-preview/slide-03.png, decks/feature-store/gate-preview/slide-04.png, decks/feature-store/gate-preview/slide-05.png, decks/feature-store/gate-preview/slide-06.png
+Slide fingerprints: slide-01.html: bdb8107cfed568e45d0f33dc28d9d02ab015218f9acb9e2a18ec82933990d64a, slide-02.html: 409cb3871137e0af89f6244a2a8db880eb33470608c2ada113457b6923f53615, slide-03.html: 99a96ec381305da0d0909481cfb65a63f680f54a4d448f87107b5b9bac96cf6e, slide-04.html: 64e63a8ffc425bb3248c7fc6b5c0fa9e7d9ef4fd640224d4bf29ae0bad94d370, slide-05.html: f88ed82e1ebb3b619462af17160161c5de7ad30c655eb9aead1dda87be2ccb2d, slide-06.html: 64a75a6666107e02898f2e8bff68c688757782aa80862aae9a3583e4de40ee52
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -21,3 +21,4 @@ Method: all six rendered PNGs were opened as images. Slides 02 and 04 — the tw
 | slide-02 | The chevron connectors read small between the wide chain boxes | Minor | Accepted — the spec specifies a 1pt filled chevron rather than a heavy arrow, and direction is still unambiguous | tracked |
 | slide-01 | The cover's middle band is largely open | Note | Intentional; this style's cover is a title page on a white canvas, not a poster | tracked |
 | slide-04 | The 2×2 carries no plotted items, which is unusual for a matrix | Note | Deliberate: plotting anything would invent positions. The quadrants are the argument | tracked |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |

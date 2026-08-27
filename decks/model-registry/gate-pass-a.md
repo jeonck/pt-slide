@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/model-registry/.slides-grab/gate-preview/slide-01.png, decks/model-registry/.slides-grab/gate-preview/slide-02.png, decks/model-registry/.slides-grab/gate-preview/slide-03.png, decks/model-registry/.slides-grab/gate-preview/slide-04.png, decks/model-registry/.slides-grab/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 8f5a3cbb4df0d65eb780dbaecbb6447e0af1a3a65331c239411039154a898639, slide-02.html: fb4d918bc627228586d8b27fef7eb71cf55b7d40c357bef1d1fd998e43c595ca, slide-03.html: 739ab483c7e4b35acd13b622abea00a0ef6fb0b73dbaac582070abd77ec834e1, slide-04.html: 2ccf8d31a26157443eb58020083f2f19f67500c98a4d47d4e2291c65b3734c07, slide-05.html: 4701de80a657ef625a56e2b22010c258c4d18c61b9a54c02022f81bd81e77ed4
+Evidence: decks/model-registry/gate-preview/slide-01.png, decks/model-registry/gate-preview/slide-02.png, decks/model-registry/gate-preview/slide-03.png, decks/model-registry/gate-preview/slide-04.png, decks/model-registry/gate-preview/slide-05.png
+Slide fingerprints: slide-01.html: e97cef945c3b055d8930bd1a2b581ef269f212e48d5ffc2cc187371bb9adffaf, slide-02.html: b13f4051a8c50b4398570c8e6cbd0479c9a836f3895e440d86de2555cbe16916, slide-03.html: 5cff7e6afa504765363fff8464b42c1c8502febee097b51af2f66e1bc5d081b6, slide-04.html: fa7ca2407271418e6e91e57036e6b2910de49606e4cf455d1f082986d982fdf5, slide-05.html: c5d32da2ce74eb03008700f527f791a1ce1e4369a85f67d27a8857c6bc8d0ea4
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -21,3 +21,4 @@ Inputs reviewed: all five `slide-*.html` sources, the five rendered PNGs above, 
 | deck-wide | Type sizes are not the spec's absolute points (16pt body, 13pt index, 10pt caption on a 13.33in canvas) | Note | Scaled values land at 12pt / 9.75pt / 7.5pt, under the 14pt body and 10pt floors; body is 14pt, index 11pt, captions 10pt | tracked |
 | deck-wide | The footnote carries sheet identity rather than a citation | Note | No chart and no data in the deck; the slot is kept because dropping it would break the signature | tracked |
 | slide-01, slide-05 | Presenter reads `PRESENTER · TEAM` | Note | Intentional placeholder | tracked |
+| all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |

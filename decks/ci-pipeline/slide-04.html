@@ -43,6 +43,10 @@
   .policy h3 { font-size:13pt; font-weight:600; letter-spacing:-0.01em; line-height:1.35; }
   .policy .gloss { margin-top:6pt; }
   .ptext { min-width:0; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
