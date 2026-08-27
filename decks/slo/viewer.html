@@ -321,10 +321,16 @@
   .covR { flex:none; width:216pt; border-left:1px solid #000000; padding-left:20pt;
           display:flex; flex-direction:column; }
   .idx { flex:1; min-height:0; list-style:none; display:flex; flex-direction:column; margin-top:12pt; }
+  .idx li > .ln { flex:1; display:flex; align-items:center; border-top:1px solid #000000; }
   .idx li { flex:1 1 0; min-height:0; display:flex; align-items:center;
-            border-top:1px solid #000000;
+            
             font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:400;
             letter-spacing:0.04em; line-height:1.4; color:#000000; white-space:nowrap; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -349,11 +355,11 @@
     <div class=&quot;covR&quot;>
       <p class=&quot;lbl&quot;>IN THIS DECK</p>
       <ul class=&quot;idx&quot;>
-        <li>02 / THE SWITCH</li>
-        <li>03 / THE BUDGET</li>
-        <li>04 / THE EXCLUSIONS</li>
-        <li>05 / THE FAILURE MODES</li>
-        <li>06 / THE DECISIONS</li>
+        <li><div class=&quot;ln&quot;><p>02 / THE SWITCH</p></div></li>
+        <li><div class=&quot;ln&quot;><p>03 / THE BUDGET</p></div></li>
+        <li><div class=&quot;ln&quot;><p>04 / THE EXCLUSIONS</p></div></li>
+        <li><div class=&quot;ln&quot;><p>05 / THE FAILURE MODES</p></div></li>
+        <li><div class=&quot;ln&quot;><p>06 / THE DECISIONS</p></div></li>
       </ul>
     </div>
   </div>
@@ -565,8 +571,13 @@
   .panel.mark > .lbl { color:#000000; }
   .panel ul { flex:1; min-height:0; list-style:none; display:flex; flex-direction:column;
               padding:0 14pt 10pt 14pt; }
-  .panel li { flex:1 1 0; min-height:0; display:flex; align-items:center;
-              border-top:1px solid #000000; }
+  .panel li > .ln { flex:1; display:flex; align-items:center; border-top:1px solid #000000; }
+  .panel li { flex:1 1 0; min-height:0; display:flex; align-items:center; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -584,18 +595,18 @@
       <div class=&quot;bar&quot;></div>
       <p class=&quot;lbl&quot;>READ AS A METRIC</p>
       <ul>
-        <li>It describes how the service behaved.</li>
-        <li>It gets reported, compared, discussed.</li>
-        <li>Nothing about next week has to change.</li>
+        <li><div class=&quot;ln&quot;><p>It describes how the service behaved.</p></div></li>
+        <li><div class=&quot;ln&quot;><p>It gets reported, compared, discussed.</p></div></li>
+        <li><div class=&quot;ln&quot;><p>Nothing about next week has to change.</p></div></li>
       </ul>
     </section>
     <section class=&quot;panel mark&quot;>
       <div class=&quot;bar&quot;></div>
       <p class=&quot;lbl&quot;>USED AS A SWITCH</p>
       <ul>
-        <li>It has two positions and only two.</li>
-        <li>Crossing it changes what ships next.</li>
-        <li>No meeting is needed for it to fire.</li>
+        <li><div class=&quot;ln&quot;><p>It has two positions and only two.</p></div></li>
+        <li><div class=&quot;ln&quot;><p>Crossing it changes what ships next.</p></div></li>
+        <li><div class=&quot;ln&quot;><p>No meeting is needed for it to fire.</p></div></li>
       </ul>
     </section>
   </div>
@@ -815,6 +826,11 @@
   .cols { flex:1; min-height:0; display:flex; gap:24pt; margin-top:20pt; margin-bottom:18pt; }
   .col { flex:1 1 0; min-width:0; border-top:1px solid #000000; padding-top:10pt; }
   .col .lbl { margin-bottom:8pt; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -1087,6 +1103,11 @@
   .cell { display:flex; align-items:center; padding:0 12pt; min-width:0; }
   .c1 { width:17%; }
   .c2, .c3 { width:41.5%; border-left:1px solid #000000; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -1340,7 +1361,12 @@
                letter-spacing:0.04em; line-height:1.4; color:#666666; }
   .card h2 { font-size:15pt; font-weight:600; letter-spacing:-0.01em; line-height:1.35;
              margin-top:8pt; white-space:nowrap; }
-  .card > p:last-child { margin-top:auto; border-top:1px solid #000000; padding-top:10pt; }
+  .card > .cap { margin-top:auto; border-top:1px solid #000000; padding-top:10pt; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -1358,17 +1384,17 @@
     <section class=&quot;card&quot;>
       <p class=&quot;num&quot;>01</p>
       <h2>A target nobody chose</h2>
-      <p>It came off a vendor page. Nobody in the room would defend it, so nobody enforces it either.</p>
+      <div class=&quot;cap&quot;><p>It came off a vendor page. Nobody in the room would defend it, so nobody enforces it either.</p></div>
     </section>
     <section class=&quot;card&quot;>
       <p class=&quot;num&quot;>02</p>
       <h2>A budget with no teeth</h2>
-      <p>The chart turns red, the sprint carries on, and the budget quietly becomes a colour.</p>
+      <div class=&quot;cap&quot;><p>The chart turns red, the sprint carries on, and the budget quietly becomes a colour.</p></div>
     </section>
     <section class=&quot;card&quot;>
       <p class=&quot;num&quot;>03</p>
       <h2>An exception each time</h2>
-      <p>Every breach arrives with a good reason. A switch that bends has only one position.</p>
+      <div class=&quot;cap&quot;><p>Every breach arrives with a good reason. A switch that bends has only one position.</p></div>
     </section>
   </div>
   <div class=&quot;band&quot;>
@@ -1588,6 +1614,11 @@
   .drow .txt p { margin-top:5pt; color:#000000; }
   .close { flex:none; border-top:3px solid #000000; padding-top:12pt; }
   .close p { font-size:16pt; font-weight:600; letter-spacing:-0.01em; line-height:1.4; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

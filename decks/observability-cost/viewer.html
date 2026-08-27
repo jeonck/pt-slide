@@ -572,13 +572,13 @@
   .compare .rail { padding-right:16pt; }
 
   /* every signal header reserves the 3pt mark; only its colour changes */
+  .signal-box { border-top:3pt solid transparent; padding-top:4pt; padding-bottom:10pt; }
+  .signal-box.col-mark { border-top-color:#B5503A; }
   .signal {
     font-family:'Source Serif 4',Lora,Georgia,serif;
     font-weight:600; font-size:20pt; letter-spacing:-0.005em; line-height:1.35;
-    border-top:3pt solid transparent;
-    padding-top:4pt; padding-bottom:10pt;
   }
-  .signal.col-mark { border-top-color:#B5503A; color:#B5503A; }
+  .col-mark > .signal { color:#B5503A; }
   .compare .rowlab { padding-top:12pt; }
   .compare .cell { padding-top:11pt; }
   .cell p { font-size:14pt; font-weight:400; line-height:1.5; text-wrap:balance; }
@@ -596,21 +596,21 @@
 
   <div class=&quot;compare&quot;>
     <div class=&quot;rail&quot;></div>
-    <h3 class=&quot;col signal&quot;>Metrics</h3>
-    <h3 class=&quot;col col-mark signal&quot;>Logs</h3>
-    <h3 class=&quot;col signal&quot;>Traces</h3>
+    <div class=&quot;col signal-box&quot;><h3 class=&quot;signal&quot;>Metrics</h3></div>
+    <div class=&quot;col signal-box col-mark&quot;><h3 class=&quot;signal&quot;>Logs</h3></div>
+    <div class=&quot;col signal-box&quot;><h3 class=&quot;signal&quot;>Traces</h3></div>
 
-    <p class=&quot;rail rowlab micro&quot;>Answers</p>
+    <div class=&quot;rail rowlab&quot;><p class=&quot;micro&quot;>Answers</p></div>
     <div class=&quot;col cell&quot;><p>Is it happening, and how much</p></div>
     <div class=&quot;col cell&quot;><p>What the code actually did</p></div>
     <div class=&quot;col cell&quot;><p>Where the time went, hop by hop</p></div>
 
-    <p class=&quot;rail rowlab micro&quot;>Blind to</p>
+    <div class=&quot;rail rowlab&quot;><p class=&quot;micro&quot;>Blind to</p></div>
     <div class=&quot;col cell&quot;><p>Which request. Which user.</p></div>
     <div class=&quot;col cell&quot;><p>Where the time went</p></div>
     <div class=&quot;col cell&quot;><p>What the code was thinking</p></div>
 
-    <p class=&quot;rail rowlab micro&quot;>Grows with</p>
+    <div class=&quot;rail rowlab&quot;><p class=&quot;micro&quot;>Grows with</p></div>
     <div class=&quot;col cell&quot;><p>Label cardinality, not traffic</p></div>
     <div class=&quot;col cell&quot;><p>Traffic, replicas and days kept</p></div>
     <div class=&quot;col cell&quot;><p>Sampled share, span width</p></div>
@@ -1132,17 +1132,17 @@
   <h2>Sampling and retention are bets, not savings</h2>
 
   <div class=&quot;ledger&quot;>
-    <p class=&quot;c1 head micro&quot;>The trade</p>
-    <p class=&quot;c2 head micro&quot;>What it keeps</p>
-    <p class=&quot;c3 head micro&quot;>What it spends</p>
+    <div class=&quot;c1 head&quot;><p class=&quot;micro&quot;>The trade</p></div>
+    <div class=&quot;c2 head&quot;><p class=&quot;micro&quot;>What it keeps</p></div>
+    <div class=&quot;c3 head&quot;><p class=&quot;micro&quot;>What it spends</p></div>
 
-    <h3 class=&quot;c1 r term&quot;>Sampling</h3>
+    <div class=&quot;c1 r&quot;><h3 class=&quot;term&quot;>Sampling</h3></div>
     <div class=&quot;c2 r&quot;><p class=&quot;val&quot;>The shape of normal traffic</p></div>
     <div class=&quot;c3 r&quot;><p class=&quot;val&quot;>The one request that mattered</p></div>
 
     <div class=&quot;rule-row&quot;></div>
 
-    <h3 class=&quot;c1 r term&quot;>Retention</h3>
+    <div class=&quot;c1 r&quot;><h3 class=&quot;term&quot;>Retention</h3></div>
     <div class=&quot;c2 r&quot;><p class=&quot;val&quot;>What is happening right now</p></div>
     <div class=&quot;c3 r&quot;><p class=&quot;val&quot;>Whether it happened before</p></div>
   </div>

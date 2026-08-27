@@ -273,7 +273,7 @@ function body(style, p, faces, tAxis, lAxis, ch, index, total) {
   const samplePanel = sampleOn(p.onSurface);
   const bestForPanel = secondaryOn(p.onSurfaceMuted);
   const bestFor = secondaryOn(p.muted);
-  const kicker = `<p style="font-family:'JetBrainsMono', ${KO}; font-size:10pt; font-weight:700; letter-spacing:0.1em; color:${p.onAccent}; background:${p.accent}; padding:4pt 9pt; display:inline-block;">${esc(eyebrow)}</p>`;
+  const kicker = `<div style="background:${p.accent}; padding:4pt 9pt; display:inline-block;"><p style="font-family:'JetBrainsMono', ${KO}; font-size:10pt; font-weight:700; letter-spacing:0.1em; color:${p.onAccent};">${esc(eyebrow)}</p></div>`;
   const panel = `background:${p.surface}; border:${ch.border}; border-radius:${ch.radius}; box-shadow:${ch.shadow};`;
 
   switch (lAxis) {
@@ -291,14 +291,15 @@ function body(style, p, faces, tAxis, lAxis, ch, index, total) {
       <div style="width:236pt; flex:none;">${swatchRow(p, { compact: true })}</div>
     </div>
   </div>
-  <div style="height:34pt; flex:none; background:${p.accent}; padding:0 40pt; display:flex; align-items:center; justify-content:space-between;">
-    <p style="font-family:'JetBrainsMono', ${KO}; font-size:10pt; font-weight:700; color:${p.onAccent};">${esc(style.id)}</p>
-    <p style="font-size:10pt; font-weight:600; color:${p.onAccent};">${esc(tAxis)} · ${esc(lAxis)}</p>
-  </div>`;
+  <div style="flex:none; padding:0 40pt 42pt 40pt; display:flex; align-items:center; justify-content:space-between;">
+    <p style="font-family:'JetBrainsMono', ${KO}; font-size:10pt; font-weight:700; color:${p.accent};">${esc(style.id)}</p>
+    <p style="font-size:10pt; font-weight:600; color:${p.muted};">${esc(tAxis)} · ${esc(lAxis)}</p>
+  </div>
+  <div style="height:10pt; flex:none; background:${p.accent};"></div>`;
 
     case 'centered':
       return `
-  <div style="flex:1; padding:32pt 62pt; display:flex; flex-direction:column; align-items:center; justify-content:space-between; text-align:center;">
+  <div style="flex:1; padding:32pt 62pt 42pt 62pt; display:flex; flex-direction:column; align-items:center; justify-content:space-between; text-align:center;">
     <div>${kicker}</div>
     <div style="max-width:560pt;">
       ${title}
@@ -315,7 +316,7 @@ function body(style, p, faces, tAxis, lAxis, ch, index, total) {
     case 'asymmetric':
       return `
   <div style="flex:1; display:flex;">
-    <div style="width:57%; padding:32pt 26pt 26pt 40pt; display:flex; flex-direction:column; justify-content:space-between;">
+    <div style="width:57%; padding:32pt 26pt 42pt 40pt; display:flex; flex-direction:column; justify-content:space-between;">
       <div>${kicker}</div>
       <div>
         ${title}
@@ -324,7 +325,7 @@ function body(style, p, faces, tAxis, lAxis, ch, index, total) {
       </div>
       ${metaRow(style, p, tAxis, lAxis)}
     </div>
-    <div style="width:43%; padding:32pt 40pt 26pt 0; display:flex; flex-direction:column; gap:14pt;">
+    <div style="width:43%; padding:32pt 40pt 42pt 0; display:flex; flex-direction:column; gap:14pt;">
       <div style="${panel} padding:16pt; flex:1; display:flex; flex-direction:column; justify-content:center;">
         ${samplePanel}
         <div style="margin-top:12pt;">${bestForPanel}</div>
@@ -335,7 +336,7 @@ function body(style, p, faces, tAxis, lAxis, ch, index, total) {
 
     case 'block-grid':
       return `
-  <div style="flex:1; padding:30pt 40pt 26pt 40pt; display:flex; flex-direction:column; gap:16pt;">
+  <div style="flex:1; padding:30pt 40pt 42pt 40pt; display:flex; flex-direction:column; gap:16pt;">
     <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:20pt;">
       <div style="min-width:0;">
         ${title}
@@ -356,11 +357,11 @@ function body(style, p, faces, tAxis, lAxis, ch, index, total) {
     default: // strict-grid
       return `
   <div style="flex:1; display:flex;">
-    <div style="width:104pt; flex:none; border-right:1px solid ${p.border}; padding:30pt 0 26pt 40pt; display:flex; flex-direction:column; justify-content:space-between;">
+    <div style="width:104pt; flex:none; border-right:1px solid ${p.border}; padding:30pt 0 42pt 40pt; display:flex; flex-direction:column; justify-content:space-between;">
       <p style="font-family:'JetBrainsMono', ${KO}; font-size:28pt; font-weight:700; color:${p.accent}; line-height:1.34;">${String(index).padStart(2, '0')}</p>
       <p style="font-family:'JetBrainsMono', ${KO}; font-size:10pt; font-weight:700; letter-spacing:0.08em; color:${p.muted};">${esc(classLabel(style).toUpperCase())}</p>
     </div>
-    <div style="flex:1; min-width:0; padding:30pt 40pt 26pt 26pt; display:flex; flex-direction:column; justify-content:space-between;">
+    <div style="flex:1; min-width:0; padding:30pt 40pt 42pt 26pt; display:flex; flex-direction:column; justify-content:space-between;">
       <div>
         ${title}
         <div style="margin-top:12pt;">${mood}</div>

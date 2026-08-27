@@ -292,6 +292,10 @@
   .note { font-style:italic; font-size:14pt; line-height:1.55; color:#3A2E1F; }
   footer { margin-top:14pt; text-align:right; }
   footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -482,6 +486,11 @@
   .note { font-style:italic; font-size:14pt; line-height:1.55; color:#3A2E1F; }
   footer { margin-top:14pt; text-align:right; }
   footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
+  div > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
@@ -493,22 +502,22 @@
   </header>
   <ul style=&quot;list-style:none; flex:1; min-height:0; margin-top:20pt; display:grid;
              grid-template-columns:1fr 1fr; grid-template-rows:minmax(0,1fr) minmax(0,1fr);&quot;>
-    <li style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid #A8893E;&quot;>
+    <li style=&quot;; display:flex;&quot;><div style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid #A8893E; flex:1; min-width:0;&quot;>
       <h3 style=&quot;font-size:16pt; line-height:1.35;&quot;>Media nobody has read back</h3>
       <p class=&quot;lede&quot; style=&quot;margin-top:8pt;&quot;>The job succeeded. The bytes never did.</p>
-    </li>
-    <li style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid #A8893E;&quot;>
+    </div></li>
+    <li style=&quot;; display:flex;&quot;><div style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid #A8893E; flex:1; min-width:0;&quot;>
       <h3 style=&quot;font-size:16pt; line-height:1.35;&quot;>A schema left out of the dump</h3>
       <p class=&quot;lede&quot; style=&quot;margin-top:8pt;&quot;>Rows come back. The database does not.</p>
-    </li>
-    <li style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid transparent;&quot;>
+    </div></li>
+    <li style=&quot;; display:flex;&quot;><div style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid transparent; flex:1; min-width:0;&quot;>
       <h3 style=&quot;font-size:16pt; line-height:1.35;&quot;>A dependency that is down too</h3>
       <p class=&quot;lede&quot; style=&quot;margin-top:8pt;&quot;>The restore needs what the outage took.</p>
-    </li>
-    <li style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid transparent;&quot;>
+    </div></li>
+    <li style=&quot;; display:flex;&quot;><div style=&quot;display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid transparent; flex:1; min-width:0;&quot;>
       <h3 style=&quot;font-size:16pt; line-height:1.35;&quot;>Credentials nobody on shift has</h3>
       <p class=&quot;lede&quot; style=&quot;margin-top:8pt;&quot;>The path exists. Nobody can walk it.</p>
-    </li>
+    </div></li>
   </ul>
   <p class=&quot;note&quot; style=&quot;text-align:center; margin-top:18pt;&quot;>None of these announce themselves. All of them wait.</p>
 </main>
@@ -691,6 +700,10 @@
   .note { font-style:italic; font-size:14pt; line-height:1.55; color:#3A2E1F; }
   footer { margin-top:14pt; text-align:right; }
   footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -898,6 +911,11 @@
   .note { font-style:italic; font-size:14pt; line-height:1.55; color:#3A2E1F; }
   footer { margin-top:14pt; text-align:right; }
   footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
+  div > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
@@ -909,35 +927,35 @@
   </header>
   <ol style=&quot;list-style:none; flex:1; min-height:0; display:flex; align-items:center;
              justify-content:center; margin-top:20pt;&quot;>
-    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; background:transparent; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;&quot;>
-      <p style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; width:22pt; height:22pt; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center;&quot;>I</p>
+    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; display:flex;&quot;><div style=&quot;background:transparent; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; flex:1; min-width:0;&quot;>
+      <div style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center; width:22pt; height:22pt; display:flex&quot;><p style=&quot;font:inherit; color:inherit; letter-spacing:inherit;&quot;>I</p></div>
       <p style=&quot;font-weight:600; font-size:14pt; letter-spacing:0.10em; line-height:1.4; margin-top:10pt;&quot;>DECLARE</p>
       <p style=&quot;font-size:12pt; line-height:1.5; color:#6B5D46; margin-top:8pt;&quot;>The restore you claim you can do.</p>
-    </li>
+    </div></li>
     <li aria-hidden=&quot;true&quot; style=&quot;width:20pt; flex:0 0 20pt; display:flex; align-items:center; justify-content:center;&quot;>
       <svg width=&quot;20pt&quot; height=&quot;8pt&quot; viewBox=&quot;0 0 20 8&quot; fill=&quot;none&quot;><path d=&quot;M0 4 H16&quot; stroke=&quot;#A8893E&quot; stroke-width=&quot;0.75&quot;/><path d=&quot;M13 1.6 L16 4 L13 6.4&quot; stroke=&quot;#A8893E&quot; stroke-width=&quot;0.75&quot; fill=&quot;none&quot;/></svg>
     </li>
-    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; background:transparent; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;&quot;>
-      <p style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; width:22pt; height:22pt; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center;&quot;>II</p>
+    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; display:flex;&quot;><div style=&quot;background:transparent; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; flex:1; min-width:0;&quot;>
+      <div style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center; width:22pt; height:22pt; display:flex&quot;><p style=&quot;font:inherit; color:inherit; letter-spacing:inherit;&quot;>II</p></div>
       <p style=&quot;font-weight:600; font-size:14pt; letter-spacing:0.10em; line-height:1.4; margin-top:10pt;&quot;>RUN</p>
       <p style=&quot;font-size:12pt; line-height:1.5; color:#6B5D46; margin-top:8pt;&quot;>Timed, by the shift that would really do it.</p>
-    </li>
+    </div></li>
     <li aria-hidden=&quot;true&quot; style=&quot;width:20pt; flex:0 0 20pt; display:flex; align-items:center; justify-content:center;&quot;>
       <svg width=&quot;20pt&quot; height=&quot;8pt&quot; viewBox=&quot;0 0 20 8&quot; fill=&quot;none&quot;><path d=&quot;M0 4 H16&quot; stroke=&quot;#A8893E&quot; stroke-width=&quot;0.75&quot;/><path d=&quot;M13 1.6 L16 4 L13 6.4&quot; stroke=&quot;#A8893E&quot; stroke-width=&quot;0.75&quot; fill=&quot;none&quot;/></svg>
     </li>
-    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; background:transparent; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;&quot;>
-      <p style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; width:22pt; height:22pt; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center;&quot;>III</p>
+    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; display:flex;&quot;><div style=&quot;background:transparent; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; flex:1; min-width:0;&quot;>
+      <div style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center; width:22pt; height:22pt; display:flex&quot;><p style=&quot;font:inherit; color:inherit; letter-spacing:inherit;&quot;>III</p></div>
       <p style=&quot;font-weight:600; font-size:14pt; letter-spacing:0.10em; line-height:1.4; margin-top:10pt;&quot;>RECORD</p>
       <p style=&quot;font-size:12pt; line-height:1.5; color:#6B5D46; margin-top:8pt;&quot;>What the runbook said, and what happened.</p>
-    </li>
+    </div></li>
     <li aria-hidden=&quot;true&quot; style=&quot;width:20pt; flex:0 0 20pt; display:flex; align-items:center; justify-content:center;&quot;>
       <svg width=&quot;20pt&quot; height=&quot;8pt&quot; viewBox=&quot;0 0 20 8&quot; fill=&quot;none&quot;><path d=&quot;M0 4 H16&quot; stroke=&quot;#A8893E&quot; stroke-width=&quot;0.75&quot;/><path d=&quot;M13 1.6 L16 4 L13 6.4&quot; stroke=&quot;#A8893E&quot; stroke-width=&quot;0.75&quot; fill=&quot;none&quot;/></svg>
     </li>
-    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; background:#F4EFE3; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;&quot;>
-      <p style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; width:22pt; height:22pt; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center;&quot;>IV</p>
+    <li style=&quot;flex:1 1 0; min-width:0; height:130pt; display:flex;&quot;><div style=&quot;background:#F4EFE3; border:1px solid #A8893E; padding:12pt 11pt; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; flex:1; min-width:0;&quot;>
+      <div style=&quot;font-family:'PlayfairDisplay', Georgia, serif; font-size:12pt; line-height:1.4; border:1px solid #A8893E; border-radius:50%; display:flex; align-items:center; justify-content:center; width:22pt; height:22pt; display:flex&quot;><p style=&quot;font:inherit; color:inherit; letter-spacing:inherit;&quot;>IV</p></div>
       <p style=&quot;font-weight:600; font-size:14pt; letter-spacing:0.10em; line-height:1.4; margin-top:10pt;&quot;>CORRECT</p>
       <p style=&quot;font-size:12pt; line-height:1.5; color:#6B5D46; margin-top:8pt;&quot;>Edit the runbook before the drill is closed.</p>
-    </li>
+    </div></li>
   </ol>
   <p class=&quot;note&quot; style=&quot;text-align:center; margin-top:18pt;&quot;>A drill that ends in a pass has thrown away its only output.</p>
 </main>
@@ -1120,6 +1138,10 @@
   .note { font-style:italic; font-size:14pt; line-height:1.55; color:#3A2E1F; }
   footer { margin-top:14pt; text-align:right; }
   footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>

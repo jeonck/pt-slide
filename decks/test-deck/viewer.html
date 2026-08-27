@@ -290,12 +290,18 @@
   .foot { border-top: 1px solid #3A5B87; padding-top: 12pt; display: flex; gap: 46pt; }
   .foot-label { font-size: 10pt; font-weight: 400; color: #8FA6C4; margin-bottom: 4pt; }
   .foot-value { font-size: 12pt; font-weight: 600; color: #E8F1FB; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
+  .chip > p, .lab > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
 
   <div>
-    <p class=&quot;chip&quot;>AI 전환 브리핑</p>
+    <div class=&quot;chip&quot;><p>AI 전환 브리핑</p></div>
   </div>
 
   <div style=&quot;display: flex; gap: 20pt; padding-right: 92pt;&quot;>
@@ -507,9 +513,14 @@
   .col p.body { font-size: 15pt; font-weight: 400; line-height: 1.62; color: #5C6470; }
   .shift { margin-top: auto; padding-top: 11pt; border-top: 1px solid #C5D2E3; }
   .shift p { font-size: 12pt; font-weight: 600; line-height: 1.4; color: #0B2C5C; }
-  .shift p span.k { display: block; font-weight: 400; color: #5C6470; margin-bottom: 3pt; }
+  .shift p.k { font-weight: 400; color: #5C6470; margin-bottom: 3pt; }
   .callout { background: #E8F1FB; border-left: 4px solid #1B66C9; padding: 14pt 18pt; }
   .callout p { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -528,19 +539,19 @@
         <div class=&quot;sq&quot;><p>01</p></div>
         <h3>도구에서 동료로</h3>
         <p class=&quot;body&quot;>결과물을 제안하는 단계를 넘어, 정해진 절차를 스스로 수행하는 단계로 이동한다.</p>
-        <div class=&quot;shift&quot;><p><span class=&quot;k&quot;>이동 방향</span>초안 보조 → 절차 실행</p></div>
+        <div class=&quot;shift&quot;><p class=&quot;k&quot;>이동 방향</p><p>초안 보조 → 절차 실행</p></div>
       </div>
       <div class=&quot;col&quot;>
         <div class=&quot;sq&quot;><p>02</p></div>
         <h3>문서에서 프로세스로</h3>
         <p class=&quot;body&quot;>자동화 대상이 문서 한 건에서 조회·승인·보고로 이어지는 흐름 전체로 넓어진다.</p>
-        <div class=&quot;shift&quot;><p><span class=&quot;k&quot;>이동 방향</span>문서 한 건 → 업무 흐름</p></div>
+        <div class=&quot;shift&quot;><p class=&quot;k&quot;>이동 방향</p><p>문서 한 건 → 업무 흐름</p></div>
       </div>
       <div class=&quot;col&quot;>
         <div class=&quot;sq&quot;><p>03</p></div>
         <h3>IT에서 현업으로</h3>
         <p class=&quot;body&quot;>자동화를 만드는 주체가 개발 조직에서 업무를 가장 잘 아는 담당자로 옮겨간다.</p>
-        <div class=&quot;shift&quot;><p><span class=&quot;k&quot;>이동 방향</span>개발 요청 → 현업 구성</p></div>
+        <div class=&quot;shift&quot;><p class=&quot;k&quot;>이동 방향</p><p>개발 요청 → 현업 구성</p></div>
       </div>
     </div>
 
@@ -737,6 +748,11 @@
   .arrow { flex: none; width: 30pt; display: flex; align-items: center; justify-content: center; }
   .callout { background: #E8F1FB; border-left: 4px solid #1B66C9; padding: 14pt 18pt; }
   .callout p { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
 </style>
 </head>
 <body>
@@ -981,6 +997,12 @@
   .summary { background: #E8F1FB; border-top: 3pt solid #0B2C5C; border-bottom: 3pt solid #0B2C5C; padding: 13pt 16pt; display: flex; gap: 14pt; align-items: center; }
   .summary .lab { flex: none; background: #0B2C5C; padding: 4pt 10pt; font-size: 11pt; font-weight: 700; color: #FFFFFF; letter-spacing: 0.04em; }
   .summary .txt { font-size: 15pt; font-weight: 600; line-height: 1.45; color: #0B2C5C; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
+  .chip > p, .lab > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
@@ -1021,7 +1043,7 @@
     </div>
 
     <div class=&quot;summary&quot;>
-      <p class=&quot;lab&quot;>요약</p>
+      <div class=&quot;lab&quot;><p>요약</p></div>
       <p class=&quot;txt&quot;>성패는 모델 성능이 아니라, 사람이 어디서 개입할지를 정하는 설계에서 갈린다.</p>
     </div>
   </main>
@@ -1202,20 +1224,27 @@
   .lead h1 { font-size: 54pt; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: #FFFFFF; }
   .lead p { font-size: 15pt; font-weight: 400; line-height: 1.5; color: #C5D2E3; margin-top: 14pt; }
   ul.qs { list-style: none; flex: 1; min-width: 0; }
-  ul.qs li { display: flex; gap: 12pt; align-items: flex-start; padding-bottom: 12pt; border-bottom: 1px solid #3A5B87; }
-  ul.qs li + li { padding-top: 12pt; }
+  ul.qs li { display: flex; }
+  ul.qs li > .row { flex: 1; min-width: 0; display: flex; gap: 12pt; align-items: flex-start; padding-bottom: 12pt; border-bottom: 1px solid #3A5B87; }
+  ul.qs li + li > .row { padding-top: 12pt; }
   .sq { width: 22pt; height: 22pt; flex: none; background: #1B66C9; display: flex; align-items: center; justify-content: center; }
   .sq p { font-size: 11pt; font-weight: 700; color: #FFFFFF; }
   ul.qs li p.q { font-size: 15pt; font-weight: 600; line-height: 1.4; color: #E8F1FB; padding-top: 2pt; }
   .foot { border-top: 1px solid #3A5B87; padding-top: 12pt; display: flex; justify-content: space-between; align-items: baseline; }
   .foot .thanks { font-size: 13pt; font-weight: 700; color: #FFFFFF; letter-spacing: -0.01em; }
   .foot .who { font-size: 11pt; font-weight: 400; color: #8FA6C4; }
+
+
+  /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
+     떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
+  body { padding-bottom: 30pt; }
+  .chip > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
 
   <div>
-    <p class=&quot;chip&quot;>논의</p>
+    <div class=&quot;chip&quot;><p>논의</p></div>
   </div>
 
   <div class=&quot;mid&quot;>
@@ -1225,9 +1254,9 @@
       <p>함께 정하고 싶은 세 가지</p>
     </div>
     <ul class=&quot;qs&quot;>
-      <li><div class=&quot;sq&quot;><p>01</p></div><p class=&quot;q&quot;>우리 조직에서 가장 먼저 맡길 업무는 무엇인가</p></li>
-      <li><div class=&quot;sq&quot;><p>02</p></div><p class=&quot;q&quot;>사람이 반드시 확인해야 하는 지점은 어디인가</p></li>
-      <li><div class=&quot;sq&quot;><p>03</p></div><p class=&quot;q&quot;>성과는 무엇으로 측정할 것인가</p></li>
+      <li><div class=&quot;row&quot;><div class=&quot;sq&quot;><p>01</p></div><p class=&quot;q&quot;>우리 조직에서 가장 먼저 맡길 업무는 무엇인가</p></div></li>
+      <li><div class=&quot;row&quot;><div class=&quot;sq&quot;><p>02</p></div><p class=&quot;q&quot;>사람이 반드시 확인해야 하는 지점은 어디인가</p></div></li>
+      <li><div class=&quot;row&quot;><div class=&quot;sq&quot;><p>03</p></div><p class=&quot;q&quot;>성과는 무엇으로 측정할 것인가</p></div></li>
     </ul>
   </div>
 
