@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/test-deck/gate-preview/slide-01.png, decks/test-deck/gate-preview/slide-02.png, decks/test-deck/gate-preview/slide-03.png, decks/test-deck/gate-preview/slide-04.png, decks/test-deck/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: bb691e80d94bbdcbedadc29d38b376c1b71e1db8836066e7281a9a405547d6ae, slide-02.html: f3c2bcae956000f00f7b8fd39f83b71d2375938eec53cfb94ad6971e1a0605c9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: daefa99c426e6d787dc94f94cc668d30098c5fc781a586941d721b3a99b0f0c8, slide-05.html: 57e299c9ed86e8113d1e4f15af9736d9425a9f1bb2eb5087f2593ab25e5e87ce
+Slide fingerprints: slide-01.html: 21b55b5f82af1bec1fb314a3f1a0f01155e6550672c922a86d9fc93b010d3fbb, slide-02.html: fc23a52d6103f8c4619e9488e7755302901dfb91dc37a1ca65ac25a77f9a38b9, slide-03.html: e68d33a1e045922aab90838b0b65411837a746c686605b541aa8225d9e18f9c4, slide-04.html: 8138e35ee6bad73120bfd3807771b96875b812f27387353bb42ed0552da4b003, slide-05.html: 0942ec253c89fb42ce5cc9550092551f847098009e0e8033c8e84ce334d69653
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -22,3 +22,4 @@ Inputs reviewed: all five `slide-*.html` sources, the five rendered PNGs listed 
 | slide-01, slide-05 | Presenter/affiliation reads "발표자 · 소속" — an intentional placeholder the user must fill before presenting | Note | Hand off to user; do not invent a name | tracked |
 | slide-02, slide-03, slide-04 | Accent-3 green `#1F9D57` unused (no positive-direction indicator exists in this deck's content) | Note | None — using it decoratively would violate the style's Avoid list | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
+| slide-01/04/05 | 배경을 가진 `p.chip`·`p.lab`은 장식을 바깥 `<div>`로, 밑줄을 가진 `li`는 안쪽 `.row` 래퍼로 옮겼다. text 엔진은 텍스트 요소의 장식을 거부한다 | Note | 렌더 픽셀 차이 0(세 장 모두) | fixed |

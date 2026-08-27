@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 9588414f0b2bc1ef8e9148473c1fab6686a36ddfa729a3d8819f406eddaf2337, slide-02.html: f4fc9fe488702be6339d183ff1e4cfabc10f6ccf56e28adaef1604e4748e3830, slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e, slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5, slide-05.html: a670e9bf2ad3047f35d224037a354dd764631a030ea20c19f85aeeefd0c3b5b6, slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
+Slide fingerprints: slide-01.html: 26d933bcc16801db5b2f40a9b5aac7f59a6a162aca84351e3da2774d455eae81, slide-02.html: 07ddb617a9d7d54f24e4c7950d400da13260496c2a4d6c02b90c960acb2f6a11, slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e, slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5, slide-05.html: 10f4b701cbc112bf1f1784504b894a1d4cbb479ec28f113be07dcef41939d982, slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -27,3 +27,4 @@ Method: all six PNGs from this render were opened individually as full-size imag
 | slide-01 | The rule above the presenter placeholder stops 24pt short of the vertical column divider | Note | Accepted — it is the left column's own rule and the 24pt is the grid gutter, so it is consistent rather than short. Carried to design-debt.md | tracked |
 | slide-03 | The two column bodies run to four lines each and leave about 24pt of unused height above the closing band | Note | Accepted — the columns carry a top hairline and the band carries its own, so the gap reads as the block's internal padding, not as a hole. Filling it would have meant inventing a third claim. Carried to design-debt.md | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
+| slide-01/02/05 | 리스트 구분선과 카드 하단선을 `li`·`p`에서 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border를 거부한다 | Note | `.ln`/`.cap` 래퍼 신설, 시각 결과 동일 | fixed |

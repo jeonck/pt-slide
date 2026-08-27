@@ -28,12 +28,13 @@
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
   body { padding-bottom: 30pt; }
+  .chip > p, .lab > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
 
   <div>
-    <p class="chip">AI 전환 브리핑</p>
+    <div class="chip"><p>AI 전환 브리핑</p></div>
   </div>
 
   <div style="display: flex; gap: 20pt; padding-right: 92pt;">

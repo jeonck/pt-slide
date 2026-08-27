@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/backup-restore/gate-preview/slide-01.png, decks/backup-restore/gate-preview/slide-02.png, decks/backup-restore/gate-preview/slide-03.png, decks/backup-restore/gate-preview/slide-04.png, decks/backup-restore/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: ec9fdfc6dbb8fbac1ac4a6dd0249c07fb6fdf92b5762a82750613d82f3719096, slide-02.html: 617337594c71faf67f612d7aaa4f3145fb7dafffbc0809325db7f9efbf89041b, slide-03.html: 0b47a84aca429fe1a6fa9cb5c4020bcd7ebacfcf0acff60befad05c4cf77a419, slide-04.html: e31dd68baddab29f6f75c9843752782dc2f08fdc1c11b6ff73a14e7519bcf222, slide-05.html: f860483e9331c2ebef9ef9510509316561f5786c1a4bb7fff2e43c73d11bbb14
+Slide fingerprints: slide-01.html: ec9fdfc6dbb8fbac1ac4a6dd0249c07fb6fdf92b5762a82750613d82f3719096, slide-02.html: cfd22e9060903b30c58f8a54d1bf0a591fb16e6e0f4218f7f477571933226b74, slide-03.html: 0b47a84aca429fe1a6fa9cb5c4020bcd7ebacfcf0acff60befad05c4cf77a419, slide-04.html: d1b4a7262faed6072f5c58bf09413d4bff8bf7614695d8b5658255a582676e05, slide-05.html: f860483e9331c2ebef9ef9510509316561f5786c1a4bb7fff2e43c73d11bbb14
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -79,3 +79,4 @@ this is what confirms the "one line" and "two lines" claims below rather than ey
 | slide-03 | The divider hairline runs about 110pt past the left column's last line. | Note | None — the asymmetry is the argument, and padding it would mean inventing a claim. | tracked in design-debt.md |
 | slide-01 | Cover thesis balances to two lines of which the second is slightly the longer. | Note | None — `text-wrap: balance` chose it; both lines are full and neither orphans. | accepted |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| slide-02/04 | 테두리를 가진 `<li>`·`<p>`의 장식을 안쪽 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border/background를 거부한다 | Note | 바깥(flex·크기)/안쪽(장식) 속성을 나눠 옮김. 렌더 픽셀 차이 0 | fixed |

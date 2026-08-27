@@ -23,8 +23,9 @@
   .lead h1 { font-size: 54pt; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; color: #FFFFFF; }
   .lead p { font-size: 15pt; font-weight: 400; line-height: 1.5; color: #C5D2E3; margin-top: 14pt; }
   ul.qs { list-style: none; flex: 1; min-width: 0; }
-  ul.qs li { display: flex; gap: 12pt; align-items: flex-start; padding-bottom: 12pt; border-bottom: 1px solid #3A5B87; }
-  ul.qs li + li { padding-top: 12pt; }
+  ul.qs li { display: flex; }
+  ul.qs li > .row { flex: 1; min-width: 0; display: flex; gap: 12pt; align-items: flex-start; padding-bottom: 12pt; border-bottom: 1px solid #3A5B87; }
+  ul.qs li + li > .row { padding-top: 12pt; }
   .sq { width: 22pt; height: 22pt; flex: none; background: #1B66C9; display: flex; align-items: center; justify-content: center; }
   .sq p { font-size: 11pt; font-weight: 700; color: #FFFFFF; }
   ul.qs li p.q { font-size: 15pt; font-weight: 600; line-height: 1.4; color: #E8F1FB; padding-top: 2pt; }
@@ -36,12 +37,13 @@
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구한다. 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
   body { padding-bottom: 30pt; }
+  .chip > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
 
   <div>
-    <p class="chip">논의</p>
+    <div class="chip"><p>논의</p></div>
   </div>
 
   <div class="mid">
@@ -51,9 +53,9 @@
       <p>함께 정하고 싶은 세 가지</p>
     </div>
     <ul class="qs">
-      <li><div class="sq"><p>01</p></div><p class="q">우리 조직에서 가장 먼저 맡길 업무는 무엇인가</p></li>
-      <li><div class="sq"><p>02</p></div><p class="q">사람이 반드시 확인해야 하는 지점은 어디인가</p></li>
-      <li><div class="sq"><p>03</p></div><p class="q">성과는 무엇으로 측정할 것인가</p></li>
+      <li><div class="row"><div class="sq"><p>01</p></div><p class="q">우리 조직에서 가장 먼저 맡길 업무는 무엇인가</p></div></li>
+      <li><div class="row"><div class="sq"><p>02</p></div><p class="q">사람이 반드시 확인해야 하는 지점은 어디인가</p></div></li>
+      <li><div class="row"><div class="sq"><p>03</p></div><p class="q">성과는 무엇으로 측정할 것인가</p></div></li>
     </ul>
   </div>
 

@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/model-registry/gate-preview/slide-01.png, decks/model-registry/gate-preview/slide-02.png, decks/model-registry/gate-preview/slide-03.png, decks/model-registry/gate-preview/slide-04.png, decks/model-registry/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: e97cef945c3b055d8930bd1a2b581ef269f212e48d5ffc2cc187371bb9adffaf, slide-02.html: b13f4051a8c50b4398570c8e6cbd0479c9a836f3895e440d86de2555cbe16916, slide-03.html: 5cff7e6afa504765363fff8464b42c1c8502febee097b51af2f66e1bc5d081b6, slide-04.html: fa7ca2407271418e6e91e57036e6b2910de49606e4cf455d1f082986d982fdf5, slide-05.html: c5d32da2ce74eb03008700f527f791a1ce1e4369a85f67d27a8857c6bc8d0ea4
+Slide fingerprints: slide-01.html: e97cef945c3b055d8930bd1a2b581ef269f212e48d5ffc2cc187371bb9adffaf, slide-02.html: b13f4051a8c50b4398570c8e6cbd0479c9a836f3895e440d86de2555cbe16916, slide-03.html: 5cff7e6afa504765363fff8464b42c1c8502febee097b51af2f66e1bc5d081b6, slide-04.html: fa7ca2407271418e6e91e57036e6b2910de49606e4cf455d1f082986d982fdf5, slide-05.html: a6ee65d6971d0e49605bd4290847278ed4baa0e7f35462e9277adf4f6ada8d1d
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -22,3 +22,4 @@ Method: all five rendered PNGs were opened as images — the full set on a conta
 | slide-04 | The RULE column wraps to two lines on three of four rows | Minor | Accepted — this style is explicitly dense, and the rows are equal height so the wrap does not disturb the grid | tracked |
 | slide-01 | The cover's middle band is open compared with the content sheets | Note | Intentional; the ledger meta row anchors the foot and the sheet still reads as a catalogue card | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| slide-05 | 테두리·배경을 가진 `<ul>`/`<li>`를 `<div>`로 바꿨다. text 엔진은 텍스트 요소의 장식을 거부하고, 텍스트는 이미 `<p>` 안에 있다 | Note | 시맨틱 손실을 감수한 교환. 렌더 픽셀 차이 0 | fixed |

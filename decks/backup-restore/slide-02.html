@@ -29,6 +29,7 @@
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
   body { padding-bottom: 30pt; }
+  div > p { font:inherit; color:inherit; letter-spacing:inherit; }
 </style>
 </head>
 <body>
@@ -40,22 +41,22 @@
   </header>
   <ul style="list-style:none; flex:1; min-height:0; margin-top:20pt; display:grid;
              grid-template-columns:1fr 1fr; grid-template-rows:minmax(0,1fr) minmax(0,1fr);">
-    <li style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid #A8893E;">
+    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid #A8893E; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">Media nobody has read back</h3>
       <p class="lede" style="margin-top:8pt;">The job succeeded. The bytes never did.</p>
-    </li>
-    <li style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid #A8893E;">
+    </div></li>
+    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid #A8893E; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">A schema left out of the dump</h3>
       <p class="lede" style="margin-top:8pt;">Rows come back. The database does not.</p>
-    </li>
-    <li style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid transparent;">
+    </div></li>
+    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid #A8893E; border-bottom:1px solid transparent; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">A dependency that is down too</h3>
       <p class="lede" style="margin-top:8pt;">The restore needs what the outage took.</p>
-    </li>
-    <li style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid transparent;">
+    </div></li>
+    <li style="; display:flex;"><div style="display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; padding:15pt 18pt; border-right:1px solid transparent; border-bottom:1px solid transparent; flex:1; min-width:0;">
       <h3 style="font-size:16pt; line-height:1.35;">Credentials nobody on shift has</h3>
       <p class="lede" style="margin-top:8pt;">The path exists. Nobody can walk it.</p>
-    </li>
+    </div></li>
   </ul>
   <p class="note" style="text-align:center; margin-top:18pt;">None of these announce themselves. All of them wait.</p>
 </main>

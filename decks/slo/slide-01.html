@@ -54,8 +54,9 @@
   .covR { flex:none; width:216pt; border-left:1px solid #000000; padding-left:20pt;
           display:flex; flex-direction:column; }
   .idx { flex:1; min-height:0; list-style:none; display:flex; flex-direction:column; margin-top:12pt; }
+  .idx li > .ln { flex:1; display:flex; align-items:center; border-top:1px solid #000000; }
   .idx li { flex:1 1 0; min-height:0; display:flex; align-items:center;
-            border-top:1px solid #000000;
+            
             font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:400;
             letter-spacing:0.04em; line-height:1.4; color:#000000; white-space:nowrap; }
 
@@ -87,11 +88,11 @@
     <div class="covR">
       <p class="lbl">IN THIS DECK</p>
       <ul class="idx">
-        <li>02 / THE SWITCH</li>
-        <li>03 / THE BUDGET</li>
-        <li>04 / THE EXCLUSIONS</li>
-        <li>05 / THE FAILURE MODES</li>
-        <li>06 / THE DECISIONS</li>
+        <li><div class="ln"><p>02 / THE SWITCH</p></div></li>
+        <li><div class="ln"><p>03 / THE BUDGET</p></div></li>
+        <li><div class="ln"><p>04 / THE EXCLUSIONS</p></div></li>
+        <li><div class="ln"><p>05 / THE FAILURE MODES</p></div></li>
+        <li><div class="ln"><p>06 / THE DECISIONS</p></div></li>
       </ul>
     </div>
   </div>

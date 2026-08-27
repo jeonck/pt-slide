@@ -50,8 +50,8 @@
   .panel.mark > .lbl { color:#000000; }
   .panel ul { flex:1; min-height:0; list-style:none; display:flex; flex-direction:column;
               padding:0 14pt 10pt 14pt; }
-  .panel li { flex:1 1 0; min-height:0; display:flex; align-items:center;
-              border-top:1px solid #000000; }
+  .panel li > .ln { flex:1; display:flex; align-items:center; border-top:1px solid #000000; }
+  .panel li { flex:1 1 0; min-height:0; display:flex; align-items:center; }
 
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
@@ -74,18 +74,18 @@
       <div class="bar"></div>
       <p class="lbl">READ AS A METRIC</p>
       <ul>
-        <li>It describes how the service behaved.</li>
-        <li>It gets reported, compared, discussed.</li>
-        <li>Nothing about next week has to change.</li>
+        <li><div class="ln"><p>It describes how the service behaved.</p></div></li>
+        <li><div class="ln"><p>It gets reported, compared, discussed.</p></div></li>
+        <li><div class="ln"><p>Nothing about next week has to change.</p></div></li>
       </ul>
     </section>
     <section class="panel mark">
       <div class="bar"></div>
       <p class="lbl">USED AS A SWITCH</p>
       <ul>
-        <li>It has two positions and only two.</li>
-        <li>Crossing it changes what ships next.</li>
-        <li>No meeting is needed for it to fire.</li>
+        <li><div class="ln"><p>It has two positions and only two.</p></div></li>
+        <li><div class="ln"><p>Crossing it changes what ships next.</p></div></li>
+        <li><div class="ln"><p>No meeting is needed for it to fire.</p></div></li>
       </ul>
     </section>
   </div>

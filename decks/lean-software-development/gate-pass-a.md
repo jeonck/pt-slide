@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/lean-software-development/gate-preview/slide-01.png,decks/lean-software-development/gate-preview/slide-02.png decks/lean-software-development/gate-preview/slide-03.png,decks/lean-software-development/gate-preview/slide-04.png decks/lean-software-development/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: fe5c3b37638082836f357283f5657911f56f1e9197763b2fea43179f6a58fa57,slide-02.html: 65f80d2e92798ee2097133cb5ef13b4102e7eed730c512753de40c55089e0aab slide-03.html: ce7c1a207aaef36432361629f3c30a1b4f5de3bc8c9a6519a56db3e7a7a010b2,slide-04.html: 91af2ebb9f3aa1def772794174a4a994197ee2407fc14655a97d72dce05df489 slide-05.html: 436187dd426e15596e96d174f48ac36c578b12be62f249dd3e6e68f35b8459fb
+Evidence: decks/lean-software-development/gate-preview/slide-01.png, decks/lean-software-development/gate-preview/slide-02.png, decks/lean-software-development/gate-preview/slide-03.png, decks/lean-software-development/gate-preview/slide-04.png, decks/lean-software-development/gate-preview/slide-05.png
+Slide fingerprints: slide-01.html: 473a7b831df0d4572e34094f992b382fa7333c26f74ee1a58bc3707fe779dda5, slide-02.html: c4e135b92b764cadd0d1b8fbd260eebfeeafcf8e615252c65976ee77d88daef3, slide-03.html: 5e5b1e5021ceef2bf2c05656fe325a617aeb0e8bce0f0aa14449a74fe9b9ef3a, slide-04.html: 0b7f8584c2dc74d58cf32de607a8562950b0f112ee3048dd66dc00242479359e, slide-05.html: fbd5e95cba5ec7e000a7c40791c3ba23bd26b1ac8a0bfed3f374bd94cd44c2da
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -20,3 +20,4 @@ Blocking findings: None
 | slide-01 | 스펙의 그린 안개 래스터 에셋 없음. 스펙이 명시적으로 허용하는 flat-token fallback 사용 | Note | 없음 | tracked |
 | slide-04 | 행 배경 `#FAFAFA`를 7행 전부에 동일하게 준다. 한 행만 칠하면 그 행만 밀린다 | Note | 없음 | tracked |
 | slide-05 | 차트 토큰·데이터 카드 숫자 토큰·5개 사업부문 색 미사용 | Note | 대응하는 데이터가 없다 | tracked |
+| slide-01 | 표지의 맨 `<div>` 텍스트 4곳을 `<h1>`·`<p>`로 바꿨다. 맨 div에 든 글자는 파워포인트에서 아예 사라진다 | Note | 시맨틱 태그로 교체, `.big`에 margin-top:0을 더해 h1 상속분을 상쇄 | fixed |
