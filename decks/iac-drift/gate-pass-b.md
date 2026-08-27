@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/iac-drift/gate-preview/slide-01.png, decks/iac-drift/gate-preview/slide-02.png, decks/iac-drift/gate-preview/slide-03.png, decks/iac-drift/gate-preview/slide-04.png, decks/iac-drift/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 6b2c7601d14580c47efb61f81f7898e0ebec4b7517e05ab1486cfc3ff4519abf, slide-02.html: 253aa0ca4d691f10cd2c9d31e1e489a6afc4d3d185ca9ba0105ea47fe3518604, slide-03.html: 48639675edf816920da2c316b6d16884727fe52010d1a897b5a5c6d33eeba5e4, slide-04.html: a6263325c35936706cc851b5e2852b72ce795eff238f6389e1d6ca358694855f, slide-05.html: 99259cd8e64a75364ecaf5c49c22fd6fb4a19b4a87901dc83539775819b31d73
+Slide fingerprints: slide-01.html: 5ca5a8a26061566610df2731c027637af3a898da0f9c309a468aaf93f9d0c716, slide-02.html: 25bdbccf467999fe275a73f61a245c7aee6b1ad3422993c890eff92319b51eb2, slide-03.html: 9634695a8d7c4bb944e75713bd2376427e89909237d5fc64f607755c8d8a32fd, slide-04.html: bc446dc380e114649794a562da53ec1abb64b17fbe6c9bfbce241b7cdbb7e3be, slide-05.html: 10a10625968b4333de10e56e2aedaca115d43ec2fd440161fce426ea2991367e
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -25,3 +25,4 @@ Method: all five PNGs from this render were opened individually as full-size ima
 | slide-02 | Station 2 wrapped to three lines while the others took two, leaving a hollow band inside all four boxes and a second gap above the closing line | Minor | Fixed: copy shortened and `min-height:102pt` on the boxes so the diagram block fills its share | resolved |
 | slide-03 | The inverted callout's text is inset 20pt from the block edge, so it does not start on the same grid line as the columns above it | Note | Accepted — a colour block's internal padding is not grid drift; the block itself starts and ends on the grid. Carried to design-debt.md | tracked |
 | slide-04 | Ledger labels sit at 13pt, small for a style whose identity is giant type | Minor | Accepted — the sheet's giant type is its 34pt title; these are labels in a 200pt cell and the alternative was a two-line wrap that broke the row grid. Carried to design-debt.md | tracked |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

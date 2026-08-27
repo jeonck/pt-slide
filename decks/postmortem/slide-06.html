@@ -22,8 +22,8 @@
   /* Fixed furniture: masthead row + section rule at the top, hairline + folio at the foot.
      Both are siblings of main, and main{flex:1;min-height:0} pins them to the same y on
      every sheet. Budget: 15.4 + 8 above, 34.9 below, leaving main ~284.7pt. */
-  header, footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
-  footer { margin-top:7pt; }
+  .sg-header, .sg-footer { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:24pt; }
+  .sg-footer { margin-top:7pt; }
   .kick { font-family:'Inter', sans-serif; font-weight:500; font-size:11pt; letter-spacing:0.12em; line-height:1.4; text-transform:uppercase; color:#2E2C26; }
   .kick.red { color:#A8231B; }
   .kick.folio { flex:none; white-space:nowrap; }
@@ -54,10 +54,10 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <p class="kick">Blameless review · Platform engineering</p>
   <p class="kick folio">Sheet 06 / 06</p>
-</header>
+</div>
 <div class="rule-section"></div>
 <main>
   <h2>What we need to decide</h2>
@@ -88,9 +88,9 @@
   <p class="close">Blameless costs three concessions. We pay them, or we stop using the word.</p>
 </main>
 <div class="rule-hair rule-foot"></div>
-<footer>
+<div class="sg-footer">
   <p class="kick">Source &mdash; none. Every claim here is mechanical, not measured.</p>
   <p class="kick folio">Postmortem &middot; 06</p>
-</footer>
+</div>
 </body>
 </html>

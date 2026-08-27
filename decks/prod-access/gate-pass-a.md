@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/prod-access/gate-preview/slide-01.png, decks/prod-access/gate-preview/slide-02.png, decks/prod-access/gate-preview/slide-03.png, decks/prod-access/gate-preview/slide-04.png, decks/prod-access/gate-preview/slide-05.png, decks/prod-access/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 363d5370e91de8911ead33a86f6fcc39727e7963f356cff331cb688b3a9503a5, slide-02.html: 99ae9206d6b776ea0086c68ea60e3072a803a0b9125e5aa3673aca6145f7750f, slide-03.html: 427ea0a4d3be1da885385fc897482a408cf434dec2a95989d57b2c25196e89d1, slide-04.html: e9793df5263bc8546f0746ea792ae16c69e6931837c0f05d320736b66d2e57eb, slide-05.html: 347d8fd95993783d94f709e32c2af39851a71da733e0b603db046edb8a2ad188, slide-06.html: cf17959ba6302d640e295f593301c99237ecf21eecd43c47c84236c23316fa0a
+Slide fingerprints: slide-01.html: 548e554a0ad33f1235544fc976ef22775154e2873db269f934ec990cf111274e, slide-02.html: ee19e577cba88829fb40960db51e5f5d1eb51745d590688d234acb035a06986d, slide-03.html: f532644eec63e5a519e9bd0b7cdb8b5cd2bb782ce953660e2a9e0fefb0b47909, slide-04.html: 45a22a868067477c2d8a2b062c9e665a754940674fa13ad8bce15899af186514, slide-05.html: 8cacb56730df5196c4f03be94b20796c1103862b4b155b7be962a3aee2797873, slide-06.html: b7e3771b82cbe4147dcbfefc59f5f48437d7ed465aab986a27e8e6b8848ec66b
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -24,3 +24,4 @@ Method: the six slide sources were read line by line against the `show-design pp
 | all | Body leading is 1.45 where the spec specifies 1.4, and serif claims are 1.4 | Note | Intentional — the framework floors body leading at 1.4 and this deck already had two `text-clipped` errors at 1.3 on 46pt and 34pt display type. `line-height: 1` appears nowhere (grep-verified) | tracked |
 | slide-02 | The last ledger row's 1px navy rule is set to `transparent` rather than removed | Note | Deliberate — removing the border would change that row's box height and break the "emphasise one and only that one shifts" rule. Colouring it away keeps every row's box identical | tracked |
 | slide-04 | The 2×2 record grid is a different arrangement from the 03/05 triptych | Note | Same module (gold-hairline navy panel), different arrangement, because four fields do not fit a triptych. Not a third pattern | tracked |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

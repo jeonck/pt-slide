@@ -8,7 +8,7 @@
   @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-600.woff2') format('woff2'); font-weight:600; font-display:block; }
   @font-face { font-family:'Inter'; src:url('./assets/fonts/Inter-700.woff2') format('woff2'); font-weight:700; font-display:block; }
   * { margin:0; padding:0; box-sizing:border-box; }
-  /* Budget: 405 - 32 - 26 - header 63.8 - footer 28 = 255pt for main. */
+  /* Budget: 405 - 32 - 26 - .sg-header 63.8 - .sg-footer 28 = 255pt for main. */
   body {
     width:720pt; height:405pt; overflow:hidden;
     background:#FFFFFF; color:#0A2540;
@@ -16,7 +16,7 @@
     padding:32pt 40pt 26pt 40pt;
     display:flex; flex-direction:column;
   }
-  header { flex:none; margin-bottom:16pt; }
+  .sg-header { flex:none; margin-bottom:16pt; }
   .kicker { font-size:10pt; font-weight:600; letter-spacing:0.06em; line-height:1.4; color:#5C6B7E; }
   h1 { font-size:24pt; font-weight:600; letter-spacing:-0.015em; line-height:1.2; max-width:560pt; margin-top:5pt; }
   main { flex:1; min-height:0; display:flex; }
@@ -31,8 +31,8 @@
   .badge { flex:none; width:20pt; height:20pt; border-radius:10pt; background:#5A55E0;
            display:flex; align-items:center; justify-content:center; }
   .badge p { font-size:10pt; font-weight:600; line-height:1.4; color:#FFFFFF; }
-  footer { flex:none; margin-top:14pt; display:flex; justify-content:flex-end; }
-  footer p { font-size:10pt; font-weight:400; line-height:1.4; letter-spacing:0.04em; color:#5C6B7E; }
+  .sg-footer { flex:none; margin-top:14pt; display:flex; justify-content:flex-end; }
+  .sg-footer p { font-size:10pt; font-weight:400; line-height:1.4; letter-spacing:0.04em; color:#5C6B7E; }
   main { gap:20pt; }
   .col7 { flex:7; min-width:0; display:flex; flex-direction:column; gap:12pt; }
   .qrow { flex:1; min-height:0; display:flex; align-items:center; gap:12pt; padding:12pt 15pt; }
@@ -49,10 +49,10 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <p class="kicker">DECISIONS</p>
   <h1>What we need to decide</h1>
-</header>
+</div>
 <main>
   <div class="col7">
     <div class="qrow surface">
@@ -78,6 +78,6 @@
     </div>
   </div>
 </main>
-<footer><p>CI PIPELINE · SHEET 06 / 06 · NO CHART, NO EXTERNAL DATA</p></footer>
+<div class="sg-footer"><p>CI PIPELINE · SHEET 06 / 06 · NO CHART, NO EXTERNAL DATA</p></div>
 </body>
 </html>

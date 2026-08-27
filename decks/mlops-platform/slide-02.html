@@ -15,7 +15,7 @@
     display:flex; flex-direction:column;
   }
   /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
-  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .sg-header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
   .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
   h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
   .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
@@ -27,8 +27,8 @@
   .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
   .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
   /* Source caption: fixed bottom-right on every sheet, per the style signature. */
-  footer { flex:none; margin-top:12pt; text-align:right; }
-  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+  .sg-footer { flex:none; margin-top:12pt; text-align:right; }
+  .sg-footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
@@ -36,15 +36,15 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <p class="kicker">DIAGNOSIS</p>
   <h1>The problem is usually not MLOps — it is repeatability</h1>
-</header>
+</div>
 <div class="rule"></div>
 <main>
 <div style="flex:1; min-height:0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12pt 12pt;"><div class="cell"><p class="num" style="margin-bottom:9pt;">01</p><h2 style="margin-bottom:7pt;">Training lives in notebooks</h2><p class="muted">The run that produced the model in production cannot be reproduced.</p></div><div class="cell"><p class="num" style="margin-bottom:9pt;">02</p><h2 style="margin-bottom:7pt;">Deployment is a person</h2><p class="muted">One engineer ships every model, and the steps live in their head.</p></div><div class="cell"><p class="num" style="margin-bottom:9pt;">03</p><h2 style="margin-bottom:7pt;">Retraining is a memory</h2><p class="muted">Nobody can say when a model was last refreshed, or on what data.</p></div><div class="cell"><p class="num" style="margin-bottom:9pt;">04</p><h2 style="margin-bottom:7pt;">Nobody owns the boundary</h2><p class="muted">Data platform and ML team each assume the other handles features.</p></div></div>
   <p class="muted" style="margin-top:14pt;">None of these is fixed by a tool. They are fixed by making one path the only path.</p>
 </main>
-<footer><p>MLOPS PLATFORM ROADMAP · SHEET 02/07 · NO EXTERNAL DATA CITED</p></footer>
+<div class="sg-footer"><p>MLOPS PLATFORM ROADMAP · SHEET 02/07 · NO EXTERNAL DATA CITED</p></div>
 </body>
 </html>

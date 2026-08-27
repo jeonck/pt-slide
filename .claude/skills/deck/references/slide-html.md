@@ -352,6 +352,39 @@ DOM에서 레이아웃을 다시 짜는데, 이 환경에는 PPTX를 렌더해 �
    단색과 테두리로 대체한다.
 5. **인라인 요소에 margin 을 주지 않는다.** `display:block`을 준 `<span>`도 엔진에는 인라인이다.
    문단처럼 쓰고 있었다면 실제로 `<p>`로 분리한다.
+6. **`<header>`·`<footer>`를 쓰지 않는다. `<div>`로 쓴다.** 엔진은 이 두 요소의 **서브트리를 통째로
+   건너뛴다** — 안의 `<p>`까지 같이 사라진다. 경고도 나오지 않는다.
+7. **`<p>` 밖의 `<span>`·`<figcaption>` 글자도 사라진다.** `<p>` 안의 인라인 강조(`<strong>`,
+   `<span>`)는 괜찮다. 밖에 있는 것만 `<p>`로 바꾼다.
+
+**6과 7이 이 목록에서 제일 위험하다.** 나머지는 엔진이 거부하며 이유를 말해 주지만, 이 둘은
+**조용히 성공한다.** PPTX는 만들어지고, 열리고, 멀쩡해 보이는데 킥커와 푸터만 없다.
+
+### 글자가 빠지지 않았는지 확인하는 법
+
+엔진이 통과했다는 것은 글자가 다 들어갔다는 뜻이 아니다. HTML의 텍스트 노드와 PPTX의 텍스트를
+대조한다:
+
+```python
+from pptx import Presentation
+import re
+norm = lambda s: re.sub(r'\s+', '', s).casefold()   # casefold 필수 — CSS text-transform 이 대문자로 굽는다
+blob = norm(' '.join(sh.text_frame.text for sh in slide.shapes if sh.has_text_frame))
+missing = [t for t in html_text_nodes if norm(t) not in blob]
+```
+
+이 저장소에서 이 대조가 **8개 덱에서 174건**을 잡아냈다. 전부 `<header>`·`<footer>` 안의
+킥커와 소스 캡션이었고, 그때까지 아무도 몰랐다.
+
+**그리고 실제로 열어본다.** `soffice`로 PDF를 만들어 눈으로 본다:
+
+```bash
+python3 ~/.claude/skills/synced/pptx/scripts/office/soffice.py --headless --convert-to pdf deck.pptx
+```
+
+`libreoffice-impress`가 없으면 "source file could not be loaded"만 나온다 — 파일 문제가 아니다.
+그리고 LibreOffice에는 Pretendard가 없어 대체 서체로 그린다. **줄바꿈이 원본과 다른 것은 그 탓이지
+덱의 결함이 아니다.** 위치·색·크기 확인에는 쓸 수 있고, 줄바꿈 판정에는 쓰면 안 된다.
 
 ### 옮기는 방향이 요소마다 다르다
 

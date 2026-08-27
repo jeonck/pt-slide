@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/secrets/gate-preview/slide-01.png, decks/secrets/gate-preview/slide-02.png, decks/secrets/gate-preview/slide-03.png, decks/secrets/gate-preview/slide-04.png, decks/secrets/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 5b96b76d6fd588707d64d9f4144cd959de3e0eac9185b23252ce2733544645af, slide-02.html: fd7fcdcce012fe56eb125eee505924b6a64b86abcda21b7d93f26d64aae818e3, slide-03.html: 9a17a8b59875940c63b5b0619e0f33a4a3ecb339878b8606426b7e068b9a1712, slide-04.html: 78018b18911535d53ae7722de21a25d5453b4940cc20c3d99fe2277f3c9c6eab, slide-05.html: 6355b1da4fec82cf1dbbdcf314eec406cfaad51b81e5769f9a768d321daf7207
+Slide fingerprints: slide-01.html: 1fc728fa9444928895f1f7b6e76c3766e99d10359a87f7ba1f64f530f0aa3ffa, slide-02.html: bd55839b3ace68cf1bed684a256b5a90efeb8f8b01182c3c256ae660d0c8266a, slide-03.html: 4b92db34020e86081ad09002f2a6e3549d77d16b53ef7bf77420d7b63eb32b08, slide-04.html: 64f435e8d54bf522db7d5969d07ae22b45b4af8fdbee77dc1527cf9971fb95ba, slide-05.html: 14a8f6a19fca71a2c1e87c9ad2bc7d0edfd9810ceb99dd90230a35f379b3e63f
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -64,3 +64,4 @@ Style: `ppt-pattern-bold-poster-keynote` (bundled), spec read via
 | slide-02, slide-04 | Short column bodies leave a tail of empty field inside their outline | Note | Footline gap opened 12pt → 18pt; bodies written to fill ≥5 of 6 lines. Not closed with invented copy | debt §3 |
 | slide-04 | Label wraps at the hyphen in `LOAD-BEARING` | Note | Accepted — real hyphen, legitimate break | debt §4 |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

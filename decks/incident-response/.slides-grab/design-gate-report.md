@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T15:08:48.999Z
+Generated: 2026-08-27T16:14:18.738Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/incident-response/gate-preview/slide-01.png, decks/incident-response/gate-preview/slide-02.png, decks/incident-response/gate-preview/slide-03.png, decks/incident-response/gate-preview/slide-04.png, decks/incident-response/gate-preview/slide-05.png, decks/incident-response/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 6007ef679738807e1e405a3d4d72c1ddcf32f178a740333da7cd10f6169218f4, slide-02.html: c45b3c889db40d3f05e331d71f02eb9a8c38497b485379f3275f1816ca164ac2, slide-03.html: 04755970a0138872fba8444fd3863cec51d7504b08e3468585e8363b3eef5a62, slide-04.html: 88494bcb15beada56cd43852e4c88b9b620a8e5c6265b853e73823be89359ca7, slide-05.html: 28f4e7aa27c423f886d78522c2559cec884511aeeda6cc510d3c9830e68c0a06, slide-06.html: 4264f3c4717f5b218958784450d945775c7434b1a260c8ce18f3bf0b623ef9e5
+Slide fingerprints: slide-01.html: dc6912e8f7e4f0fa289939d04343be42426d77e387c167c226dca2dbe4b0284c, slide-02.html: d3c2279cad244bc11fe77cfd38fdf21989476a96ffde991db50224165935a895, slide-03.html: 17542e5bd6c1422abca89953c6ecb77619c6f31f3d2d34c34becbc12d2db5cf2, slide-04.html: e70433fb72902cc2f2db2b7baad60cf253df89ebd8182451c6ab0d17bc76aef9, slide-05.html: 3965401d24103f60fc7e6a7f0db818a5c2d0d85cb1ce12505aeefc52f98bd048, slide-06.html: 547dbdac989eaf80f7ea8e501a9f9b02ba8d9c3de7bfa8c61b904a10133a8b7c
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -68,6 +68,7 @@ renders — in particular that the grid tile, the glows and the muted rows appea
 | slide-05 | Column heads initially rendered at 14pt because `.head p` outranked `.cap`, flattening the hierarchy against the rows | Note | Fixed before this report — heads are now 13pt mono muted | tracked |
 | all | Type sizes are the framework's floors, not the spec's absolute points (its 17pt body and 11pt caption scale to ~12.75pt and ~8.25pt on a 10in canvas) | Note | Body 14pt, mono labels 13pt, captions 11pt, H1 26pt, cover display 38pt. Recorded as deviation 3 | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -76,7 +77,7 @@ renders — in particular that the grid tile, the glows and the muted rows appea
 VERDICT: PASS
 Confidence: High
 Evidence: decks/incident-response/gate-preview/slide-01.png, decks/incident-response/gate-preview/slide-02.png, decks/incident-response/gate-preview/slide-03.png, decks/incident-response/gate-preview/slide-04.png, decks/incident-response/gate-preview/slide-05.png, decks/incident-response/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 6007ef679738807e1e405a3d4d72c1ddcf32f178a740333da7cd10f6169218f4, slide-02.html: c45b3c889db40d3f05e331d71f02eb9a8c38497b485379f3275f1816ca164ac2, slide-03.html: 04755970a0138872fba8444fd3863cec51d7504b08e3468585e8363b3eef5a62, slide-04.html: 88494bcb15beada56cd43852e4c88b9b620a8e5c6265b853e73823be89359ca7, slide-05.html: 28f4e7aa27c423f886d78522c2559cec884511aeeda6cc510d3c9830e68c0a06, slide-06.html: 4264f3c4717f5b218958784450d945775c7434b1a260c8ce18f3bf0b623ef9e5
+Slide fingerprints: slide-01.html: dc6912e8f7e4f0fa289939d04343be42426d77e387c167c226dca2dbe4b0284c, slide-02.html: d3c2279cad244bc11fe77cfd38fdf21989476a96ffde991db50224165935a895, slide-03.html: 17542e5bd6c1422abca89953c6ecb77619c6f31f3d2d34c34becbc12d2db5cf2, slide-04.html: e70433fb72902cc2f2db2b7baad60cf253df89ebd8182451c6ab0d17bc76aef9, slide-05.html: 3965401d24103f60fc7e6a7f0db818a5c2d0d85cb1ce12505aeefc52f98bd048, slide-06.html: 547dbdac989eaf80f7ea8e501a9f9b02ba8d9c3de7bfa8c61b904a10133a8b7c
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -158,15 +159,16 @@ invisible to `validate`, and all four are fixed in the fingerprinted sources:
 | slide-03 | ~20pt of unused height at the foot of each role card | Note | Accepted — uniform across all three cards, so it reads as padding rather than as a hole. In `design-debt.md` | tracked |
 | slide-05 | `SEV-3` and `SEV-4` set in muted ink rather than full-strength text | Minor | Accepted — the ladder should visibly fall away as the obligation does; measured ~5.5:1 on the node fill, above the body threshold. In `design-debt.md` | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: 6007ef679738807e1e405a3d4d72c1ddcf32f178a740333da7cd10f6169218f4
-- slide-02.html: c45b3c889db40d3f05e331d71f02eb9a8c38497b485379f3275f1816ca164ac2
-- slide-03.html: 04755970a0138872fba8444fd3863cec51d7504b08e3468585e8363b3eef5a62
-- slide-04.html: 88494bcb15beada56cd43852e4c88b9b620a8e5c6265b853e73823be89359ca7
-- slide-05.html: 28f4e7aa27c423f886d78522c2559cec884511aeeda6cc510d3c9830e68c0a06
-- slide-06.html: 4264f3c4717f5b218958784450d945775c7434b1a260c8ce18f3bf0b623ef9e5
+- slide-01.html: dc6912e8f7e4f0fa289939d04343be42426d77e387c167c226dca2dbe4b0284c
+- slide-02.html: d3c2279cad244bc11fe77cfd38fdf21989476a96ffde991db50224165935a895
+- slide-03.html: 17542e5bd6c1422abca89953c6ecb77619c6f31f3d2d34c34becbc12d2db5cf2
+- slide-04.html: e70433fb72902cc2f2db2b7baad60cf253df89ebd8182451c6ab0d17bc76aef9
+- slide-05.html: 3965401d24103f60fc7e6a7f0db818a5c2d0d85cb1ce12505aeefc52f98bd048
+- slide-06.html: 547dbdac989eaf80f7ea8e501a9f9b02ba8d9c3de7bfa8c61b904a10133a8b7c

@@ -20,7 +20,7 @@
     padding:26pt 34pt 20pt 34pt;
     display:flex; flex-direction:column;
   }
-  header { flex:none; }
+  .sg-header { flex:none; }
   .kick { display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:7pt; }
   .kick p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
   .kick p.idx { font-weight:400; color:#8A8F9A; }
@@ -36,7 +36,7 @@
   /* Code-block node: the style's one container. Every repeated node declares the same
      border width so an emphasised sibling never shifts its own content. */
   .node { background:#16181D; border:1px solid #2A2D35; border-radius:4px; }
-  footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  .sg-footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
   /* Three code-block cards. Body copy budgeted at 5 lines of ~26 chars. */
   .cards { flex:1; min-height:0; display:grid; grid-template-columns:repeat(3,1fr); grid-template-rows:minmax(0,1fr); gap:16pt; }
   .cards .node { padding:14pt; display:flex; flex-direction:column; }
@@ -49,13 +49,13 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <div class="kick">
     <p>// 02 — WHAT GOES WRONG</p>
     <p class="idx">[ 02 / 06 ]</p>
   </div>
   <h1>Three failures, none of them technical</h1>
-</header>
+</div>
 <div class="rule"></div>
 <main>
   <div class="cards">
@@ -77,9 +77,9 @@
   </div>
   <p class="note">Not one of these is a diagnosis problem. Each is a decision nobody made.</p>
 </main>
-<footer>
+<div class="sg-footer">
   <p class="cap">INCIDENT RESPONSE · THE FIRST 30 MINUTES</p>
   <p class="cap">NO CHART · MECHANISM ONLY</p>
-</footer>
+</div>
 </body>
 </html>

@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/ci-pipeline/gate-preview/slide-01.png, decks/ci-pipeline/gate-preview/slide-02.png, decks/ci-pipeline/gate-preview/slide-03.png, decks/ci-pipeline/gate-preview/slide-04.png, decks/ci-pipeline/gate-preview/slide-05.png, decks/ci-pipeline/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 912c583e7441f526da8738a19ddc49ca6a5dd03e4f3c0620fa68065156c916ba, slide-02.html: 7d513de083b25536852895819882daf41b980067ac2a47ad9692ae651a197e9b, slide-03.html: 8789332e7d2c6b3f6da6b3343e0f192c5cc83ec1e97fe57461997fe9ef3c052a, slide-04.html: f32e219b14651db93a3957c573c464d6610f8fd3258146cdccf4357e70b9f2ed, slide-05.html: 78254bfae330dd7fe70ab4c83937745e8d523d389b45520b783ca74bbef13fca, slide-06.html: f3f9b305867e1d83a0d11c78ebbe1049d73794998d253698cfa3fe04ca926b86
+Slide fingerprints: slide-01.html: dfc092ce588eb59f7c4b375b9f35d259b1ea8fc8df977d764481342ce4ffdbed, slide-02.html: 9f39c4f0ed96720d94d2a37d1af3115d691dc1ba2f2cc72db0304723d2fa9bef, slide-03.html: 8a618c600e55a4944bf482a1b50519cb9450ed279fa9d1bab014d68d3d54793b, slide-04.html: bc8740c114e8665f4391b9bc65a2175b204b72307ed627f0976897c274c3d489, slide-05.html: 7efa70675f0ccbdf2de5b135e9bc4843ab171531ce7a5a9046b351bf2b42ce3a, slide-06.html: 6ac2ba16392fc353b1234ffb80fcaff69f5b3defdd8e2ad69d024c63eb6b6fe3
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -68,3 +68,4 @@ measured, not estimated.
 | slide-06 | ~100pt void between the panel thesis and the presenter block | Minor | One supporting line added — closed with content, not padding | fixed |
 | all | No content overflows `main` under the fixed bottom-right caption on any sheet (measured: worst-case overflow 0.00pt) | Note | None | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

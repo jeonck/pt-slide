@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T15:08:40.466Z
+Generated: 2026-08-27T16:14:02.329Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/feature-store/gate-preview/slide-01.png, decks/feature-store/gate-preview/slide-02.png, decks/feature-store/gate-preview/slide-03.png, decks/feature-store/gate-preview/slide-04.png, decks/feature-store/gate-preview/slide-05.png, decks/feature-store/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: bdb8107cfed568e45d0f33dc28d9d02ab015218f9acb9e2a18ec82933990d64a, slide-02.html: 409cb3871137e0af89f6244a2a8db880eb33470608c2ada113457b6923f53615, slide-03.html: 99a96ec381305da0d0909481cfb65a63f680f54a4d448f87107b5b9bac96cf6e, slide-04.html: 64e63a8ffc425bb3248c7fc6b5c0fa9e7d9ef4fd640224d4bf29ae0bad94d370, slide-05.html: f88ed82e1ebb3b619462af17160161c5de7ad30c655eb9aead1dda87be2ccb2d, slide-06.html: 64a75a6666107e02898f2e8bff68c688757782aa80862aae9a3583e4de40ee52
+Slide fingerprints: slide-01.html: a5b25f03d5ee7cb395c0c97c69d2b62d2395cf922a5cd0541ec936cec928ea40, slide-02.html: a121a7603dc1e4bbbbece52d8604ff0f0568af6aa70bfcdff53b1c33d30e4d53, slide-03.html: 6ad75c9bfc836dd017ace93ecb95e4bfde3435bc79e8d78a0c9eab09797b0c8a, slide-04.html: 7d1a138f0605c0acace558242be70514bd195d7fafffa661032f8b43a9f80128, slide-05.html: 35f57051b63a3cfeae66ead46b5b51a418bb8ef3fe063bc370187d8449fa43f2, slide-06.html: 444452d3a0526d4846870a6a6993dcb199994658155dd90a83bea0cc4e980702
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -32,6 +32,7 @@ Inputs reviewed: all six `slide-*.html` sources, the six rendered PNGs above, th
 | deck-wide | The footnote carries sheet identity rather than a citation | Note | No data in the deck; inventing a source would be worse than repurposing the slot | tracked |
 | slide-01, slide-06 | Presenter reads `PRESENTER · TEAM` | Note | Intentional placeholder | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -40,7 +41,7 @@ Inputs reviewed: all six `slide-*.html` sources, the six rendered PNGs above, th
 VERDICT: PASS
 Confidence: High
 Evidence: decks/feature-store/gate-preview/slide-01.png, decks/feature-store/gate-preview/slide-02.png, decks/feature-store/gate-preview/slide-03.png, decks/feature-store/gate-preview/slide-04.png, decks/feature-store/gate-preview/slide-05.png, decks/feature-store/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: bdb8107cfed568e45d0f33dc28d9d02ab015218f9acb9e2a18ec82933990d64a, slide-02.html: 409cb3871137e0af89f6244a2a8db880eb33470608c2ada113457b6923f53615, slide-03.html: 99a96ec381305da0d0909481cfb65a63f680f54a4d448f87107b5b9bac96cf6e, slide-04.html: 64e63a8ffc425bb3248c7fc6b5c0fa9e7d9ef4fd640224d4bf29ae0bad94d370, slide-05.html: f88ed82e1ebb3b619462af17160161c5de7ad30c655eb9aead1dda87be2ccb2d, slide-06.html: 64a75a6666107e02898f2e8bff68c688757782aa80862aae9a3583e4de40ee52
+Slide fingerprints: slide-01.html: a5b25f03d5ee7cb395c0c97c69d2b62d2395cf922a5cd0541ec936cec928ea40, slide-02.html: a121a7603dc1e4bbbbece52d8604ff0f0568af6aa70bfcdff53b1c33d30e4d53, slide-03.html: 6ad75c9bfc836dd017ace93ecb95e4bfde3435bc79e8d78a0c9eab09797b0c8a, slide-04.html: 7d1a138f0605c0acace558242be70514bd195d7fafffa661032f8b43a9f80128, slide-05.html: 35f57051b63a3cfeae66ead46b5b51a418bb8ef3fe063bc370187d8449fa43f2, slide-06.html: 444452d3a0526d4846870a6a6993dcb199994658155dd90a83bea0cc4e980702
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -59,15 +60,16 @@ Method: all six rendered PNGs were opened as images. Slides 02 and 04 — the tw
 | slide-01 | The cover's middle band is largely open | Note | Intentional; this style's cover is a title page on a white canvas, not a poster | tracked |
 | slide-04 | The 2×2 carries no plotted items, which is unusual for a matrix | Note | Deliberate: plotting anything would invent positions. The quadrants are the argument | tracked |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: bdb8107cfed568e45d0f33dc28d9d02ab015218f9acb9e2a18ec82933990d64a
-- slide-02.html: 409cb3871137e0af89f6244a2a8db880eb33470608c2ada113457b6923f53615
-- slide-03.html: 99a96ec381305da0d0909481cfb65a63f680f54a4d448f87107b5b9bac96cf6e
-- slide-04.html: 64e63a8ffc425bb3248c7fc6b5c0fa9e7d9ef4fd640224d4bf29ae0bad94d370
-- slide-05.html: f88ed82e1ebb3b619462af17160161c5de7ad30c655eb9aead1dda87be2ccb2d
-- slide-06.html: 64a75a6666107e02898f2e8bff68c688757782aa80862aae9a3583e4de40ee52
+- slide-01.html: a5b25f03d5ee7cb395c0c97c69d2b62d2395cf922a5cd0541ec936cec928ea40
+- slide-02.html: a121a7603dc1e4bbbbece52d8604ff0f0568af6aa70bfcdff53b1c33d30e4d53
+- slide-03.html: 6ad75c9bfc836dd017ace93ecb95e4bfde3435bc79e8d78a0c9eab09797b0c8a
+- slide-04.html: 7d1a138f0605c0acace558242be70514bd195d7fafffa661032f8b43a9f80128
+- slide-05.html: 35f57051b63a3cfeae66ead46b5b51a418bb8ef3fe063bc370187d8449fa43f2
+- slide-06.html: 444452d3a0526d4846870a6a6993dcb199994658155dd90a83bea0cc4e980702

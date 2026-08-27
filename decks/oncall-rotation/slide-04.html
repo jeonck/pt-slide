@@ -21,17 +21,17 @@
     display:flex; flex-direction:column;
   }
   /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
-  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
-  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .sg-header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  .sg-header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
   .kicker { color:#C2693F; }
   .counter { color:#8A8170; }
   main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
-  footer { flex:none; margin-top:14pt; }
+  .sg-footer { flex:none; margin-top:14pt; }
   .footrule { height:1pt; background:#D6CCB8; }
   /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
      slot carries that fact instead of a citation. Ink brown, not muted: muted measures
      3.25:1 on sand and this line has to be readable. */
-  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  .sg-footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
   h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
   h2 { flex:none; margin-bottom:10pt; }
   .lead { flex:none; font-size:16pt; font-weight:400; line-height:1.5; margin-bottom:14pt; }
@@ -55,7 +55,7 @@
 </style>
 </head>
 <body>
-<header><p class="kicker">The night-page ceiling</p><p class="counter">04 / 05</p></header>
+<div class="sg-header"><p class="kicker">The night-page ceiling</p><p class="counter">04 / 05</p></div>
 <main>
   <h2>What a page ceiling forces upstream</h2>
   <p class="lead">A ceiling does not reduce pages. It converts them into scheduled work.</p>
@@ -91,9 +91,9 @@
     <div class="crow"><p>A system that only survives because someone is awake finally gets its fix.</p></div>
   </div>
 </main>
-<footer>
+<div class="sg-footer">
   <div class="footrule"></div>
   <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
-</footer>
+</div>
 </body>
 </html>

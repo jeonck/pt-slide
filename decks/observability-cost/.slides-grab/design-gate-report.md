@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T15:30:03.312Z
+Generated: 2026-08-27T16:14:55.535Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/observability-cost/gate-preview/slide-01.png, decks/observability-cost/gate-preview/slide-02.png, decks/observability-cost/gate-preview/slide-03.png, decks/observability-cost/gate-preview/slide-04.png, decks/observability-cost/gate-preview/slide-05.png, decks/observability-cost/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3, slide-02.html: 971e3bb0b33ae2218bfdb82a526cac22c41a0798f4cfc2011f914e50d13bc50c, slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653, slide-04.html: a23b2501673e96a7435d953d51129958dd7fa3c538daa5e0a404d31bb9fe0093, slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63, slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
+Slide fingerprints: slide-01.html: e4574e1fb8f46de0d515d20359a482fbaae6a22f5088f3771f2629114b1d8bad, slide-02.html: 7b87610e0266362ae9a0a31e95d9aba5307fe5954bac9fde9da708f599464ba0, slide-03.html: 40f2aea5bdaeb9eb282db01d24d1304567202b4c93be97018fa3cc42ca2c5de3, slide-04.html: 435a4352137d2918d8624b3c79b061828dc6437042d2df9c623d473a96891cdb, slide-05.html: 0d2b6c811c4df75ac5bda3833cf3ddcd9ffca5ed6d9151e03faf2994ac3af410, slide-06.html: 6430ef160906588b2d2869a8932ce3ac03eaf35765a66b9c51d3e52b5f513546
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -91,6 +91,7 @@ and leading declaration, cross-checked against that contract, plus a read of eac
 | 03 | Three `×` operators are accent-coloured at 14pt, against this deck's own "no accent ink below 16pt" rule. | Note | Accepted — operators, not prose; 4.58:1 clears the 4.5:1 body bar regardless | recorded in design-debt.md N1 |
 | 05 | First axis column's inner measure is 196.6pt against 180.6pt for columns 2 and 3, because it carries no divider or left padding. | Note | Accepted — flush alignment to the 12-column grid judged more important than three identical measures | recorded in design-debt.md N2 |
 | slide-02/04 | 그리드 자식이던 텍스트 요소를 래퍼 `<div>`로 감싸고, 배치·테두리 클래스는 래퍼로 서체 클래스는 안쪽에 남겼다. `.signal`은 상자와 글자로 쪼갰다 | Note | text 엔진이 텍스트 요소의 border를 거부한다. 렌더 픽셀 차이 0 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -99,7 +100,7 @@ and leading declaration, cross-checked against that contract, plus a read of eac
 VERDICT: PASS
 Confidence: High
 Evidence: decks/observability-cost/gate-preview/slide-01.png, decks/observability-cost/gate-preview/slide-02.png, decks/observability-cost/gate-preview/slide-03.png, decks/observability-cost/gate-preview/slide-04.png, decks/observability-cost/gate-preview/slide-05.png, decks/observability-cost/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3, slide-02.html: 971e3bb0b33ae2218bfdb82a526cac22c41a0798f4cfc2011f914e50d13bc50c, slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653, slide-04.html: a23b2501673e96a7435d953d51129958dd7fa3c538daa5e0a404d31bb9fe0093, slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63, slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
+Slide fingerprints: slide-01.html: e4574e1fb8f46de0d515d20359a482fbaae6a22f5088f3771f2629114b1d8bad, slide-02.html: 7b87610e0266362ae9a0a31e95d9aba5307fe5954bac9fde9da708f599464ba0, slide-03.html: 40f2aea5bdaeb9eb282db01d24d1304567202b4c93be97018fa3cc42ca2c5de3, slide-04.html: 435a4352137d2918d8624b3c79b061828dc6437042d2df9c623d473a96891cdb, slide-05.html: 0d2b6c811c4df75ac5bda3833cf3ddcd9ffca5ed6d9151e03faf2994ac3af410, slide-06.html: 6430ef160906588b2d2869a8932ce3ac03eaf35765a66b9c51d3e52b5f513546
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -185,15 +186,16 @@ presentation resolution and every claim below names what was looked at.
 | all | Serif leading raised from the spec's 1.15 to 1.35 (the face clips below it), point sizes floored rather than scaled to 8.25/7.5pt, cover and closing display set above the scaled value. | Note | Deliberate deviations | recorded in design-debt.md §1–3 |
 | all | Style chart tokens `#C8BFAD` / `#9B917F` and the 40pt `kpi` token left unused — there is no chart and no figure in this deck. | Note | Intentional; stated to the audience in the fixed source caption on all six sheets | recorded in design-debt.md §4 |
 | slide-02/04 | 그리드 자식이던 텍스트 요소를 래퍼 `<div>`로 감싸고, 배치·테두리 클래스는 래퍼로 서체 클래스는 안쪽에 남겼다. `.signal`은 상자와 글자로 쪼갰다 | Note | text 엔진이 텍스트 요소의 border를 거부한다. 렌더 픽셀 차이 0 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: 363a9ad247ef3db855876c904bc940e9459349461b73901464dc69844383c4e3
-- slide-02.html: 971e3bb0b33ae2218bfdb82a526cac22c41a0798f4cfc2011f914e50d13bc50c
-- slide-03.html: 5582ded43c13c6cd44f316bf83889d165680837280ffc805a8f25658d683d653
-- slide-04.html: a23b2501673e96a7435d953d51129958dd7fa3c538daa5e0a404d31bb9fe0093
-- slide-05.html: 56e411dd5b0b4918c45fa00b2182d7bd41f7d0fb176b9600aec85a4bcc29aa63
-- slide-06.html: 2d8e4d93f2672b0ca13c66f09e701debc77f6a2282d263bf1bb190c8b21bee1f
+- slide-01.html: e4574e1fb8f46de0d515d20359a482fbaae6a22f5088f3771f2629114b1d8bad
+- slide-02.html: 7b87610e0266362ae9a0a31e95d9aba5307fe5954bac9fde9da708f599464ba0
+- slide-03.html: 40f2aea5bdaeb9eb282db01d24d1304567202b4c93be97018fa3cc42ca2c5de3
+- slide-04.html: 435a4352137d2918d8624b3c79b061828dc6437042d2df9c623d473a96891cdb
+- slide-05.html: 0d2b6c811c4df75ac5bda3833cf3ddcd9ffca5ed6d9151e03faf2994ac3af410
+- slide-06.html: 6430ef160906588b2d2869a8932ce3ac03eaf35765a66b9c51d3e52b5f513546

@@ -31,9 +31,9 @@
     background-repeat:no-repeat; background-position:right -170pt top -230pt;
     background-size:460pt 460pt;
   }
-    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+    /* Fixed furniture: .sg-header and .sg-footer are siblings of main{flex:1;min-height:0},
      so the source caption lands on the same y on every sheet. */
-  header { flex:none; }
+  .sg-header { flex:none; }
   .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
   .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
                  text-transform:uppercase; color:#6B7280; }
@@ -42,8 +42,8 @@
   h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
        line-height:1.25; color:#F4F4F5; }
   main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
-  footer { flex:none; margin-top:10pt; text-align:right; }
-  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  .sg-footer { flex:none; margin-top:10pt; text-align:right; }
+  .sg-footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
   /* Style's horizontal process diagram: unfilled hairline nodes, 1.25pt accent
      connectors, mono step numbers. 3 x 190pt + 2 x 35pt connectors = 640pt. */
   .flow { flex:1; min-height:0; display:flex; align-items:stretch; }
@@ -67,10 +67,10 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <div class="kickerrow"><p>The premise</p><p class="count">02 / 05</p></div>
   <h2>A green run is evidence about staging</h2>
-</header>
+</div>
 <main>
   <div class="flow">
     <div class="node">
@@ -105,8 +105,8 @@
     <p>A green staging run is a true statement about staging. It turns false the moment we read it as a statement about production.</p>
   </div>
 </main>
-<footer>
+<div class="sg-footer">
   <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
-</footer>
+</div>
 </body>
 </html>

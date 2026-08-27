@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/alert-design/gate-preview/slide-01.png, decks/alert-design/gate-preview/slide-02.png, decks/alert-design/gate-preview/slide-03.png, decks/alert-design/gate-preview/slide-04.png, decks/alert-design/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: b5202bbfbc9b35e73a5c5c461a2dfb7e134b63d52fec6fa0eb0c29c7e84a4393, slide-02.html: 6e7eaa7f5898199d39dbe4ff05b9b6a970e8b5ab220d44dab1d1a369e9edab9f, slide-03.html: f26e577d11927066eab30c873dbc4b6474c9f6e876b31a708d64b95dd1cf2423, slide-04.html: 4f7577daf5ac45da721df0844359a89a52c5056a1dec930a9e549509319031ec, slide-05.html: 1491819064e9e48977b9203e2ecf72f2270b82b821c5dd6b036fc6852abe2356
+Slide fingerprints: slide-01.html: cf1826362f615c0a3193b6e75e69acb4e06e9e3431c3bed1a194511c2cf95624, slide-02.html: b1b0ef05910d9f8c1446f79a0cc94b66b15c327dd5f4feec219ffc9a99b28f85, slide-03.html: dbfc49e741ae94c7781b4448f7900ba61963f8b7af7bd6ca5c08161233806a2e, slide-04.html: d9b9004edec059242c1d32c63d5b3de2c90259ac42daa93c6f143d668bb973c6, slide-05.html: 13254b2722a32d7c2d68bf9772405e88f537624060bdc77c414ab41e028a2b64
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -77,3 +77,4 @@ opened four times across four rounds of fixes; the descriptions below are of the
 | slide-05 | First render: "Q1"/"Q2"/"Q3" at 12pt nearly filled the 22pt chips | Minor | Single digits `1` `2` `3`, which is what the spec's number chip is for | fixed |
 | deck-wide | The deck contains no figure of any kind | Note | Deliberate; recorded in `slide-outline.md` and stated on every content sheet's footer | tracked |
 | all | 하단 여백을 26pt → 38pt로 올렸다. 파워포인트 text 엔진이 텍스트 상자를 아래 가장자리에서 0.5in(36pt) 이상 떼도록 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 렌더 재확인 결과 넘침·레이아웃 변화 없음 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

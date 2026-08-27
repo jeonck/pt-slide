@@ -21,17 +21,17 @@
     display:flex; flex-direction:column;
   }
   /* Fixed furniture. main{flex:1} keeps the bottom rule at the same y on all five sheets. */
-  header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
-  header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
+  .sg-header { flex:none; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  .sg-header p { font-size:12pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; text-transform:uppercase; }
   .kicker { color:#C2693F; }
   .counter { color:#8A8170; }
   main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
-  footer { flex:none; margin-top:14pt; }
+  .sg-footer { flex:none; margin-top:14pt; }
   .footrule { height:1pt; background:#D6CCB8; }
   /* The style's mandatory source-caption slot. This deck has no sourceable figures, so the
      slot carries that fact instead of a citation. Ink brown, not muted: muted measures
      3.25:1 on sand and this line has to be readable. */
-  footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
+  .sg-footer p { margin-top:7pt; font-size:11pt; font-weight:500; line-height:1.4; }
   h2 { font-size:30pt; font-weight:500; letter-spacing:-0.01em; line-height:1.2; }
   /* Cover: left text column 392pt + 24pt gap + 192pt anchor column = 608pt. */
   main { flex-direction:row; align-items:center; gap:24pt; }
@@ -47,11 +47,11 @@
      descender space between the ring and its caption. display:block removes it. */
   .anchor { flex:1; display:flex; flex-direction:column; align-items:center; }
   .anchor svg { display:block; }
-  .anchor figcaption { margin-top:10pt; font-size:11pt; font-weight:500; line-height:1.4; text-align:center; }
+  .anchor .figcap { margin-top:10pt; font-size:11pt; font-weight:500; line-height:1.4; text-align:center; }
 </style>
 </head>
 <body>
-<header><p class="kicker">On-call design</p><p class="counter">01 / 05</p></header>
+<div class="sg-header"><p class="kicker">On-call design</p><p class="counter">01 / 05</p></div>
 <main>
   <div class="lede">
     <h1>On-call rotations<br>people can survive</h1>
@@ -66,12 +66,12 @@
       <circle cx="21.98" cy="61.43" r="5" fill="#F2EBDF" stroke="#3D3528" stroke-width="1"></circle>
       <circle cx="106.57" cy="21.98" r="5" fill="#F2EBDF" stroke="#3D3528" stroke-width="1"></circle>
     </svg>
-    <figcaption>One shift. Two handovers.</figcaption>
+    <p class="figcap">One shift. Two handovers.</p>
   </figure>
 </main>
-<footer>
+<div class="sg-footer">
   <div class="footrule"></div>
   <p>No sourced figures: shift hours, page rates and roster sizes are unsourced.</p>
-</footer>
+</div>
 </body>
 </html>

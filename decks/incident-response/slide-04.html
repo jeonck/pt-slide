@@ -20,7 +20,7 @@
     padding:26pt 34pt 20pt 34pt;
     display:flex; flex-direction:column;
   }
-  header { flex:none; }
+  .sg-header { flex:none; }
   .kick { display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:7pt; }
   .kick p { font-family:'JetBrainsMono',Consolas,monospace; font-size:13pt; font-weight:500; letter-spacing:0.05em; line-height:1.4; color:#3DF5E0; white-space:nowrap; }
   .kick p.idx { font-weight:400; color:#8A8F9A; }
@@ -36,7 +36,7 @@
   /* Code-block node: the style's one container. Every repeated node declares the same
      border width so an emphasised sibling never shifts its own content. */
   .node { background:#16181D; border:1px solid #2A2D35; border-radius:4px; }
-  footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
+  .sg-footer { flex:none; margin-top:11pt; display:flex; justify-content:space-between; align-items:baseline; gap:20pt; }
   /* Vertical node/connector sequence — the spec's hierarchy form, chosen over the horizontal
      process flow because five 112pt columns cannot hold a clause at the 14pt body floor. */
   .capline { flex:none; display:flex; justify-content:space-between; gap:20pt; margin-bottom:10pt; }
@@ -54,13 +54,13 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <div class="kick">
     <p>// 04 — SEQUENCE</p>
     <p class="idx">[ 04 / 06 ]</p>
   </div>
   <h1>Five checkpoints, not a clock</h1>
-</header>
+</div>
 <div class="rule"></div>
 <main>
   <div class="capline">
@@ -94,9 +94,9 @@
     </div>
   </div>
 </main>
-<footer>
+<div class="sg-footer">
   <p class="cap">INCIDENT RESPONSE · THE FIRST 30 MINUTES</p>
   <p class="cap">DECLARE UNLOCKS THE OTHER FOUR</p>
-</footer>
+</div>
 </body>
 </html>

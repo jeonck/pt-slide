@@ -15,7 +15,7 @@
     display:flex; flex-direction:column;
   }
   /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
-  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .sg-header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
   .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
   h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
   .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
@@ -27,8 +27,8 @@
   .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
   .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
   /* Source caption: fixed bottom-right on every sheet, per the style signature. */
-  footer { flex:none; margin-top:12pt; text-align:right; }
-  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+  .sg-footer { flex:none; margin-top:12pt; text-align:right; }
+  .sg-footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
@@ -36,15 +36,15 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <p class="kicker">SEQUENCE</p>
   <h1>Three phases, each stopped by a criterion, not a date</h1>
-</header>
+</div>
 <div class="rule"></div>
 <main>
 <div style="flex:1; min-height:0; display:flex; align-items:stretch;"><div class="cell" style="flex:1 1 0; min-width:0;"><p class="num" style="margin-bottom:9pt;">PHASE 01</p><h2 style="margin-bottom:8pt;">REPEATABLE</h2><p class="muted" style="margin-bottom:12pt;">Every model is produced by a pipeline, not a laptop.</p><div style="margin-top:auto; padding-top:10pt; border-top:1px solid #D1D5DB;"><p style="font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;">EXIT</p><p style="font-size:14pt; line-height:1.35;">Any model in production can be rebuilt from its commit.</p></div></div><div style="flex:none; width:22pt; display:flex; align-items:center; justify-content:center;"><svg width='22pt' height='10pt' viewBox='0 0 22 10' style='display:block;' aria-hidden='true'><line x1='0' y1='5' x2='16' y2='5' stroke='#1A1A1A' stroke-width='0.75'></line><polygon points='16,2 22,5 16,8' fill='#1A1A1A'></polygon></svg></div><div class="cell active" style="flex:1 1 0; min-width:0;"><p class="num" style="margin-bottom:9pt;">PHASE 02</p><h2 style="margin-bottom:8pt;">OBSERVABLE</h2><p class="muted" style="margin-bottom:12pt;">Inputs, outputs and drift are visible without a request.</p><div style="margin-top:auto; padding-top:10pt; border-top:1px solid #D1D5DB;"><p style="font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;">EXIT</p><p style="font-size:14pt; line-height:1.35;">On-call can answer “is this model healthy” without the ML team.</p></div></div><div style="flex:none; width:22pt; display:flex; align-items:center; justify-content:center;"><svg width='22pt' height='10pt' viewBox='0 0 22 10' style='display:block;' aria-hidden='true'><line x1='0' y1='5' x2='16' y2='5' stroke='#1A1A1A' stroke-width='0.75'></line><polygon points='16,2 22,5 16,8' fill='#1A1A1A'></polygon></svg></div><div class="cell" style="flex:1 1 0; min-width:0;"><p class="num" style="margin-bottom:9pt;">PHASE 03</p><h2 style="margin-bottom:8pt;">SELF-SERVE</h2><p class="muted" style="margin-bottom:12pt;">A new team ships a model without the platform team in the loop.</p><div style="margin-top:auto; padding-top:10pt; border-top:1px solid #D1D5DB;"><p style="font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:5pt;">EXIT</p><p style="font-size:14pt; line-height:1.35;">A team onboards using the documentation alone.</p></div></div></div>
   <p class="muted" style="margin-top:12pt;">Phases are gates, not calendar quarters — no dates appear here because none can be sourced.</p>
 </main>
-<footer><p>MLOPS PLATFORM ROADMAP · SHEET 04/07 · NO EXTERNAL DATA CITED</p></footer>
+<div class="sg-footer"><p>MLOPS PLATFORM ROADMAP · SHEET 04/07 · NO EXTERNAL DATA CITED</p></div>
 </body>
 </html>

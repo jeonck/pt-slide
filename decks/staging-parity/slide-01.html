@@ -31,9 +31,9 @@
     background-repeat:no-repeat; background-position:right -170pt top -230pt;
     background-size:460pt 460pt;
   }
-    /* Fixed furniture: header and footer are siblings of main{flex:1;min-height:0},
+    /* Fixed furniture: .sg-header and .sg-footer are siblings of main{flex:1;min-height:0},
      so the source caption lands on the same y on every sheet. */
-  header { flex:none; }
+  .sg-header { flex:none; }
   .kickerrow { display:flex; align-items:baseline; justify-content:space-between; gap:16pt; }
   .kickerrow p { font-size:11pt; font-weight:500; line-height:1.4; letter-spacing:0.08em;
                  text-transform:uppercase; color:#6B7280; }
@@ -42,8 +42,8 @@
   h2 { margin-top:10pt; font-size:23pt; font-weight:600; letter-spacing:-0.015em;
        line-height:1.25; color:#F4F4F5; }
   main { flex:1; min-height:0; margin-top:18pt; display:flex; flex-direction:column; }
-  footer { flex:none; margin-top:10pt; text-align:right; }
-  footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
+  .sg-footer { flex:none; margin-top:10pt; text-align:right; }
+  .sg-footer p { font-size:10pt; font-weight:400; line-height:1.4; color:#6B7280; }
   /* Cover: the block is centred on the canvas, the lines inside it are not —
      the style's Avoid list forbids centring the body lines themselves. */
   main { justify-content:center; }
@@ -61,17 +61,17 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <div class="kickerrow"><p>Platform engineering · internal</p><p class="count">01 / 05</p></div>
-</header>
+</div>
 <main>
   <div class="accentrule"></div>
   <h1>Why staging lies</h1>
   <p class="lede">Every place staging differs from production is where the incidents come from. A green run is evidence about staging.</p>
   <p class="byline">Presenter · Team</p>
 </main>
-<footer>
+<div class="sg-footer">
   <p>No figures in this deck — the argument is mechanical, and no gap here can be sized from a source we can cite.</p>
-</footer>
+</div>
 </body>
 </html>

@@ -20,14 +20,14 @@
     display:flex; flex-direction:column;
   }
 
-  /* ---- fixed furniture: kicker + hairline header, hairline + source-caption footer ---- */
-  header { flex:none; }
+  /* ---- fixed furniture: kicker + hairline .sg-header, hairline + source-caption .sg-footer ---- */
+  .sg-header { flex:none; }
   .kicker {
     font-size:11pt; font-weight:500; letter-spacing:0.10em; text-transform:uppercase;
     line-height:1.4; color:#7A7164;
   }
   .hairline { height:0.75pt; background:#DAD3C4; }
-  header .hairline { margin-top:8pt; }
+  .sg-header .hairline { margin-top:8pt; }
 
   main { flex:1; min-height:0; margin-top:20pt; display:flex; flex-direction:column; }
 
@@ -37,7 +37,7 @@
     margin-bottom:14pt;
   }
 
-  footer { flex:none; margin-top:16pt; }
+  .sg-footer { flex:none; margin-top:16pt; }
   .foot-row {
     display:flex; justify-content:space-between; align-items:baseline;
     padding-top:8pt; gap:24pt;
@@ -71,10 +71,10 @@
 </head>
 <body>
 
-<header>
+<div class="sg-header">
   <p class="kicker">Platform engineering · Observability budget</p>
   <div class="hairline"></div>
-</header>
+</div>
 
 <main>
   <h2>Sampling and retention are bets, not savings</h2>
@@ -101,13 +101,13 @@
   </div>
 </main>
 
-<footer>
+<div class="sg-footer">
   <div class="hairline"></div>
   <div class="foot-row">
     <p class="foot-page">04 / 06</p>
     <p class="foot-source">Source: none — this deck cites no cost figures; the argument is structural.</p>
   </div>
-</footer>
+</div>
 
 </body>
 </html>

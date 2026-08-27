@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/postmortem/gate-preview/slide-01.png, decks/postmortem/gate-preview/slide-02.png, decks/postmortem/gate-preview/slide-03.png, decks/postmortem/gate-preview/slide-04.png, decks/postmortem/gate-preview/slide-05.png, decks/postmortem/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 1778bbf5ae5f58f44b236463590762a74692b516c6df20f8cf85ca3540d05704, slide-02.html: 3ada86ed69100ce36c7badfc7f7a2c507fd3e7db8d3bde44c81d32bbd2903019, slide-03.html: a227a24b7b1945eb522a49fbaa1f8222f477bbcbf38cf1479ec6b70dce8f8357, slide-04.html: bc267124918985e34133e31278799a5d39a3827e2dae75b5ef8a4e5d49f2bb9a, slide-05.html: 0b3e190c271d1d1a6d6d22e8afbb310f89e26c8c55e0a7cd351315a8c10017f4, slide-06.html: 8123c6beb83dcbbd1c5dd6f73ff90eb84681db92644a8cf6b35165370854e3f3
+Slide fingerprints: slide-01.html: ebd15887af1420a53c07911945887c56225b4076cfc4bb40e4fd2c6e8bb738a2, slide-02.html: dcb79120c3ed60b889a9d611a4797e5b9f1eed7326a8d917f97b70b216d12531, slide-03.html: 0421f1a9746ff9dd5346e117be6533b3a7a83a03239a78f32bdf903b2411160d, slide-04.html: e1f25da08d63ba7efd011057c53ac0cc92a09ce22812141adb31969bbd7d0bc0, slide-05.html: 20c2d57642f7f9a474b1fb040586da4a76e3129d8c3f1f5dbc9b78567642af75, slide-06.html: 1330949d8fc0c2261743c239fb9f846a9dea1cdb2f40bde85c3b903ba607eaa5
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -50,3 +50,4 @@ individually to confirm that what the CSS declares is what the sheet shows.
 | all | Spec texture (paper grain 5%) not applied | Note | Accepted — the gradient-free implementation read as compression noise at 1080p. Recorded in design-debt.md | tracked |
 | all | Spec's halftone photograph vocabulary unused | Note | Accepted — no photograph would be evidence for this argument; columns carry the sheets instead | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

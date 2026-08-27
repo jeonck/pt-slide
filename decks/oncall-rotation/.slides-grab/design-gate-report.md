@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-26T15:50:11.265Z
+Generated: 2026-08-27T16:22:59.011Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -11,8 +11,8 @@ Resolution: 2160p
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/oncall-rotation/gate-preview/slide-01.png, decks/oncall-rotation/gate-preview/slide-02.png, decks/oncall-rotation/gate-preview/slide-03.png, decks/oncall-rotation/gate-preview/slide-04.png, decks/oncall-rotation/gate-preview/slide-05.png, decks/oncall-rotation/contact-sheets/sheet-01.png
-Slide fingerprints: slide-01.html: 0e3572f9ac6b7a80bd0b88c00c84dc608862428d37e1b19cfa8366755b22f369, slide-02.html: 8db625564558ca08c85538b5c4067b89c8573ab25137e9a0b9b35b913cda104a, slide-03.html: c673926a268db7d7a29720748595541f6223b15ad04a9f6b056d4a033423dc9d, slide-04.html: fa475bd0c8bb656fc5d2e999f068096d02aac07ba1dcde5b5cfa352719c46408, slide-05.html: 155f3e9857db346a65071533dfbc349cb4d9de413e62ba8f3afb214f7f1a6c10
+Evidence: decks/oncall-rotation/gate-preview/slide-01.png, decks/oncall-rotation/gate-preview/slide-02.png, decks/oncall-rotation/gate-preview/slide-03.png, decks/oncall-rotation/gate-preview/slide-04.png, decks/oncall-rotation/gate-preview/slide-05.png
+Slide fingerprints: slide-01.html: 3b0e64f567b8c1fb2e6cc698ef5211439b25cf734db8a20537c34fc2960b9b83, slide-02.html: a4567b75a3366cc5c0499510e4a14c382b887cd911f024db82550a5a7ea15a10, slide-03.html: 2ab67912f6f4f7f88e9cb355b8af1a1908883cd560172d635ca741a8bc40131a, slide-04.html: 7f2a440efc936c70290a712512e38a8920317b350b3f769495113807acc58577, slide-05.html: e52393432c2314cdfe3e70cc9fb2421711a8807c0f6beee3d39bedc2d2962eb6
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -62,6 +62,7 @@ Blocking findings: None
 | slide-04 | Four modules on one sheet; the densest sheet against the style's ">50% empty" | Minor | Accepted — splitting needs a sixth sheet and the count is fixed at five | tracked in design-debt.md #5 |
 | slide-02, slide-04 | Step badges sit inside the node outline rather than overhanging its corner | Note | Deliberate; overhang costs clearance the height budget had spent | tracked in design-debt.md #3 |
 | all | Caption set in `#3D3528` where the spec's caption colour is `#8A8170` | Note | Legibility: muted measures 3.25:1 and the caption carries the no-data disclosure | tracked in design-debt.md #2 |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -69,8 +70,8 @@ Blocking findings: None
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/oncall-rotation/gate-preview/slide-01.png, decks/oncall-rotation/gate-preview/slide-02.png, decks/oncall-rotation/gate-preview/slide-03.png, decks/oncall-rotation/gate-preview/slide-04.png, decks/oncall-rotation/gate-preview/slide-05.png, decks/oncall-rotation/contact-sheets/sheet-01.png
-Slide fingerprints: slide-01.html: 0e3572f9ac6b7a80bd0b88c00c84dc608862428d37e1b19cfa8366755b22f369, slide-02.html: 8db625564558ca08c85538b5c4067b89c8573ab25137e9a0b9b35b913cda104a, slide-03.html: c673926a268db7d7a29720748595541f6223b15ad04a9f6b056d4a033423dc9d, slide-04.html: fa475bd0c8bb656fc5d2e999f068096d02aac07ba1dcde5b5cfa352719c46408, slide-05.html: 155f3e9857db346a65071533dfbc349cb4d9de413e62ba8f3afb214f7f1a6c10
+Evidence: decks/oncall-rotation/gate-preview/slide-01.png, decks/oncall-rotation/gate-preview/slide-02.png, decks/oncall-rotation/gate-preview/slide-03.png, decks/oncall-rotation/gate-preview/slide-04.png, decks/oncall-rotation/gate-preview/slide-05.png
+Slide fingerprints: slide-01.html: 3b0e64f567b8c1fb2e6cc698ef5211439b25cf734db8a20537c34fc2960b9b83, slide-02.html: a4567b75a3366cc5c0499510e4a14c382b887cd911f024db82550a5a7ea15a10, slide-03.html: 2ab67912f6f4f7f88e9cb355b8af1a1908883cd560172d635ca741a8bc40131a, slide-04.html: 7f2a440efc936c70290a712512e38a8920317b350b3f769495113807acc58577, slide-05.html: e52393432c2314cdfe3e70cc9fb2421711a8807c0f6beee3d39bedc2d2962eb6
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -130,14 +131,15 @@ edit; the fingerprints above are the files those PNGs were rendered from.
 | slide-04 | Densest sheet in the deck; four modules against the style's 2–4 and ">50% empty" | Minor | Accepted | tracked in design-debt.md #5 |
 | all | Terracotta 12pt labels measure ~3.3:1 on sand | Note | Kept per style spec | tracked in design-debt.md #1 |
 | slide-01 | 5 `sibling-overlap` warnings from the ring's own arc and markers | Note | None | tracked in design-debt.md #4 |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: 0e3572f9ac6b7a80bd0b88c00c84dc608862428d37e1b19cfa8366755b22f369
-- slide-02.html: 8db625564558ca08c85538b5c4067b89c8573ab25137e9a0b9b35b913cda104a
-- slide-03.html: c673926a268db7d7a29720748595541f6223b15ad04a9f6b056d4a033423dc9d
-- slide-04.html: fa475bd0c8bb656fc5d2e999f068096d02aac07ba1dcde5b5cfa352719c46408
-- slide-05.html: 155f3e9857db346a65071533dfbc349cb4d9de413e62ba8f3afb214f7f1a6c10
+- slide-01.html: 3b0e64f567b8c1fb2e6cc698ef5211439b25cf734db8a20537c34fc2960b9b83
+- slide-02.html: a4567b75a3366cc5c0499510e4a14c382b887cd911f024db82550a5a7ea15a10
+- slide-03.html: 2ab67912f6f4f7f88e9cb355b8af1a1908883cd560172d635ca741a8bc40131a
+- slide-04.html: 7f2a440efc936c70290a712512e38a8920317b350b3f769495113807acc58577
+- slide-05.html: e52393432c2314cdfe3e70cc9fb2421711a8807c0f6beee3d39bedc2d2962eb6

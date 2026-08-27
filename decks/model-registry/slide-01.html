@@ -17,7 +17,7 @@
     display:flex; flex-direction:column;
   }
   /* Title row + rule. One-line titles keep the rule at a constant y across sheets. */
-  header { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:12pt; }
+  .sg-header { flex:none; display:flex; align-items:baseline; justify-content:space-between; gap:20pt; margin-bottom:12pt; }
   h1 { font-size:20pt; font-weight:600; line-height:1.3; }
   .fig { font-family:'IBMPlexMono',monospace; font-size:11pt; font-weight:400; letter-spacing:0.04em; color:#7A7468; white-space:nowrap; }
   .rule { height:1px; background:#9A9180; flex:none; margin-bottom:14pt; }
@@ -28,7 +28,7 @@
   .idx { font-family:'IBMPlexMono',monospace; font-size:11pt; font-weight:500; letter-spacing:0.04em; color:#5A5448; line-height:1.4; }
   .mono { font-family:'IBMPlexMono',monospace; font-weight:400; line-height:1.4; }
   .sc { font-size:10pt; font-weight:600; letter-spacing:0.08em; line-height:1.4; }
-  /* Catalogue table: ink header, rule grid, no colour anywhere. */
+  /* Catalogue table: ink .sg-header, rule grid, no colour anywhere. */
   .tbl { flex:1; min-height:0; border:1px solid #C9C0AC; display:flex; flex-direction:column; background:#F6F2E8; }
   .thead { flex:none; display:flex; background:#33302A; color:#EFE9DD; }
   .thead div { padding:8pt 14pt; }
@@ -36,8 +36,8 @@
   .trow + .trow { border-top:1px solid #C9C0AC; }
   .trow div { padding:10pt 14pt; }
   .mark { border-left:9pt solid #33302A; }
-  footer { flex:none; margin-top:12pt; }
-  footer p { font-family:'IBMPlexMono',monospace; font-size:10pt; font-weight:400; color:#7A7468; letter-spacing:0.03em; line-height:1.4; }
+  .sg-footer { flex:none; margin-top:12pt; }
+  .sg-footer p { font-family:'IBMPlexMono',monospace; font-size:10pt; font-weight:400; color:#7A7468; letter-spacing:0.03em; line-height:1.4; }
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
@@ -45,10 +45,10 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <h1>Model Registry — operating guide</h1>
   <p class="fig">Fig. 01 / 05</p>
-</header>
+</div>
 <div class="rule"></div>
 <main>
   <div style="flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;">
@@ -63,6 +63,6 @@
       <p class="sc muted" style="margin-bottom:5pt;">APPLIES TO</p><p class="mono" style="font-size:13pt;">ALL REGISTERED MODELS</p></div>
   </div>
 </main>
-<footer><p>MODEL REGISTRY — OPERATING GUIDE · SHEET 01/05 · NO CHART, NO EXTERNAL DATA</p></footer>
+<div class="sg-footer"><p>MODEL REGISTRY — OPERATING GUIDE · SHEET 01/05 · NO CHART, NO EXTERNAL DATA</p></div>
 </body>
 </html>

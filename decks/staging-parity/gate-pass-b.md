@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/staging-parity/gate-preview/slide-01.png, decks/staging-parity/gate-preview/slide-02.png, decks/staging-parity/gate-preview/slide-03.png, decks/staging-parity/gate-preview/slide-04.png, decks/staging-parity/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 65eacfb0ecac11c8dbca45e6b822f4e015631775e1dda74af53456ed0b6c067c, slide-02.html: 9d681718c9d7a94c3b915331d65a60887d2f358f5f9ff124e9d320e88ea47fa6, slide-03.html: f87d7b06b1944e392a958dc472f5f1939311eb14bf63f0f921a7b9711f2ce377, slide-04.html: 8b6cb3210ff02aa556fc188d4e5219743e4e7d8986dd6116483fa6e09f20d6c2, slide-05.html: 78b1a04d760d5b5e4f477a1243e8bdc46ffe47c3499275de2be28f687737c970
+Slide fingerprints: slide-01.html: 1a669faaecdf1cdcf73eefc1622d2827d2cbddc94e1437af209c44a34de65351, slide-02.html: 30ad9b342126e3656fdcfbb510b3254c0b66a9f42287768fd242e8d8d35c19e9, slide-03.html: beb508e588c8c3cb12e95a7243c3f6d0aeba0440ba396a30cc23b8c522d49583, slide-04.html: 3dfc91bea4ea6bccdfe3cc3784570f7e73611048654540116d6e54e9c52db33b, slide-05.html: 7a0d5749abee3fcbf3241df09ec6ef6da7fb82bdb494c9bd93d90c20402f9a65
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -64,3 +64,4 @@ All three render-only defects below passed `validate` cleanly before they were f
 | all | A flat fill has a visible edge where a gradient would not; on the sparsest sheets (01, 05) the wash arc is discernible | Note | Accepted — the alternatives are a forbidden gradient or no style signature at all | design-debt.md §1 |
 | slide-03 | Cards carry roughly a line and a half of empty space below the body text | Note | Accepted — the style's declared mood is "airy", and the alternative is inventing copy to fill boxes | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

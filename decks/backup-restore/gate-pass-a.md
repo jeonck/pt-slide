@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/backup-restore/gate-preview/slide-01.png, decks/backup-restore/gate-preview/slide-02.png, decks/backup-restore/gate-preview/slide-03.png, decks/backup-restore/gate-preview/slide-04.png, decks/backup-restore/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: ec9fdfc6dbb8fbac1ac4a6dd0249c07fb6fdf92b5762a82750613d82f3719096, slide-02.html: cfd22e9060903b30c58f8a54d1bf0a591fb16e6e0f4218f7f477571933226b74, slide-03.html: 0b47a84aca429fe1a6fa9cb5c4020bcd7ebacfcf0acff60befad05c4cf77a419, slide-04.html: d1b4a7262faed6072f5c58bf09413d4bff8bf7614695d8b5658255a582676e05, slide-05.html: f860483e9331c2ebef9ef9510509316561f5786c1a4bb7fff2e43c73d11bbb14
+Slide fingerprints: slide-01.html: 70d34f13367d146479831384502a10defa38da8835effa5b3175446f767c62ca, slide-02.html: 5b24d4ceb2d22f40920eeb6805d455571bb55e980b9de0632bf595f5c6a53e7e, slide-03.html: fbc0bc60e5449f4ab4ffcf190d3b1cca233c9d271261d56376792e1f1c1efdf7, slide-04.html: af28097042a6bd1547a08f52a270e2fc0de12fe834f929281c637bf5bc75a49e, slide-05.html: 322f41f14b7769047fd002f50b4bd6fd5b28f6b3998f3b818922132d47dd090c
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -63,3 +63,4 @@ Blocking findings: None
 | all | `#6B5D46` is not a spec token | Note | Documented harmonic extension with measured contrast | tracked in design-debt.md |
 | all | `body`의 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 30pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in 안전 여백을 요구하고, 엔진이 재는 값은 DOM보다 약 8pt 크다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 | fixed |
 | slide-02/04 | 테두리를 가진 `<li>`·`<p>`의 장식을 안쪽 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border/background를 거부한다 | Note | 바깥(flex·크기)/안쪽(장식) 속성을 나눠 옮김. 렌더 픽셀 차이 0 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

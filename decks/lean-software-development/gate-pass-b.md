@@ -3,7 +3,7 @@
 VERDICT: PASS
 Confidence: High
 Evidence: decks/lean-software-development/gate-preview/slide-01.png, decks/lean-software-development/gate-preview/slide-02.png, decks/lean-software-development/gate-preview/slide-03.png, decks/lean-software-development/gate-preview/slide-04.png, decks/lean-software-development/gate-preview/slide-05.png
-Slide fingerprints: slide-01.html: 473a7b831df0d4572e34094f992b382fa7333c26f74ee1a58bc3707fe779dda5, slide-02.html: c4e135b92b764cadd0d1b8fbd260eebfeeafcf8e615252c65976ee77d88daef3, slide-03.html: 5e5b1e5021ceef2bf2c05656fe325a617aeb0e8bce0f0aa14449a74fe9b9ef3a, slide-04.html: 0b7f8584c2dc74d58cf32de607a8562950b0f112ee3048dd66dc00242479359e, slide-05.html: fbd5e95cba5ec7e000a7c40791c3ba23bd26b1ac8a0bfed3f374bd94cd44c2da
+Slide fingerprints: slide-01.html: d57c2929f030b06732dc4fcada60e0be38376f15e57787b6d1a4d96d06281e55, slide-02.html: 43e15c22d8f1ddc9780bcda14535507e082f1c9b4d631ec473f30b1847861eeb, slide-03.html: e0f72bb8dee03de37900300c0ccbc29f22697fc535cd9c653a2f74e014ad4f5b, slide-04.html: c14e853cbb51dbe133e70f1a24137785274c4ddfdf7c17b3622892a55d81c7e3, slide-05.html: dd9f356e9e472fe626b1ad7e8bf7342179e7d8ef9482ba34267a5588ec92dd91
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -29,3 +29,4 @@ Blocking findings: None
 | slide-03 | 3행뿐이라 `main`에 102pt의 여유가 남는다. 세로 중앙 정렬로 위아래에 나눠 두었다 | Note | 없음 — 원문이 3항목이고 채우려면 지어내야 한다 | tracked |
 | slide-01 | 링크로 주신 `fw-thinking.metacog.co.kr` 문서를 열어보지 못했다(프록시 차단). 출처 캡션은 "발표자 제공 개요"라고 밝힌다 | Note | 없음 | tracked |
 | slide-01 | 표지의 맨 `<div>` 텍스트 4곳을 `<h1>`·`<p>`로 바꿨다. 맨 div에 든 글자는 파워포인트에서 아예 사라진다 | Note | 시맨틱 태그로 교체, `.big`에 margin-top:0을 더해 h1 상속분을 상쇄 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |

@@ -14,7 +14,7 @@
     padding:30pt 38pt 38pt 38pt;
     display:flex; flex-direction:column;
   }
-  header { flex:none; }
+  .sg-header { flex:none; }
   .eyebrow { font-size:10pt; font-weight:700; letter-spacing:0.10em; line-height:1.4; color:#3D3D3D; margin-bottom:6pt; }
   h1 { font-size:24pt; font-weight:700; letter-spacing:-0.02em; line-height:1.2; white-space:nowrap; margin-bottom:8pt; }
   .subline { font-size:14pt; font-weight:400; line-height:1.4; color:#3D3D3D; white-space:nowrap; margin-bottom:12pt; }
@@ -40,17 +40,17 @@
   .col.mark .cell + .cell { border-top-color:#FFFFFF; }
   .cell p { font-size:14pt; font-weight:400; line-height:1.45; text-wrap:balance; }
   .col.mark .cell p { color:#FFFFFF; }
-  footer { flex:none; margin-top:10pt; }
+  .sg-footer { flex:none; margin-top:10pt; }
   .rule-f { height:2px; background:#0A0A0A; }
-  footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
+  .sg-footer p { font-size:10pt; font-weight:400; letter-spacing:0.06em; line-height:1.4; color:#767676; padding-top:4pt; }
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <p class="eyebrow">02 · DESTINATIONS</p>
   <h1>Three destinations, and only one wakes anyone</h1>
   <p class="subline">Every alert lands in one of three places. Most of the pain is landing wrong.</p>
-</header>
+</div>
 <div class="rule-h"></div>
 <main>
   <div class="gutter">
@@ -76,9 +76,9 @@
     <div class="cell"><p>A dashboard notifies nobody. At 3am it is a dark room.</p></div>
   </section>
 </main>
-<footer>
+<div class="sg-footer">
   <div class="rule-f"></div>
   <p>ALERT DESIGN · SHEET 02/05 · NO CHART, NO EXTERNAL DATA</p>
-</footer>
+</div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 # slides-grab Design Gate Report
 
 Verdict: proceed
-Generated: 2026-08-27T15:15:43.107Z
+Generated: 2026-08-27T16:15:38.619Z
 Slide mode: presentation
 Resolution: 2160p
 
@@ -12,7 +12,7 @@ Resolution: 2160p
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 26d933bcc16801db5b2f40a9b5aac7f59a6a162aca84351e3da2774d455eae81, slide-02.html: 07ddb617a9d7d54f24e4c7950d400da13260496c2a4d6c02b90c960acb2f6a11, slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e, slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5, slide-05.html: 10f4b701cbc112bf1f1784504b894a1d4cbb479ec28f113be07dcef41939d982, slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
+Slide fingerprints: slide-01.html: 4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9, slide-02.html: 408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20, slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081, slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5, slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d, slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -35,6 +35,7 @@ Method: the six slide sources were read line by line against the `show-design pp
 | slide-04 | Header-row mono labels render at `#666666` on the `#F2F2F2` fill (about 5.3:1) rather than at full ink | Note | Accepted — above the 4.5:1 body threshold, and it keeps the 3pt bar as the only emphasis signal on the row. Carried to design-debt.md | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 | slide-01/02/05 | 리스트 구분선과 카드 하단선을 `li`·`p`에서 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border를 거부한다 | Note | `.ln`/`.cap` 래퍼 신설, 시각 결과 동일 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 
 ## Pass B: Audience Impact / Expressive Readability
 
@@ -43,7 +44,7 @@ Method: the six slide sources were read line by line against the `show-design pp
 VERDICT: PASS
 Confidence: High
 Evidence: decks/slo/gate-preview/slide-01.png, decks/slo/gate-preview/slide-02.png, decks/slo/gate-preview/slide-03.png, decks/slo/gate-preview/slide-04.png, decks/slo/gate-preview/slide-05.png, decks/slo/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: 26d933bcc16801db5b2f40a9b5aac7f59a6a162aca84351e3da2774d455eae81, slide-02.html: 07ddb617a9d7d54f24e4c7950d400da13260496c2a4d6c02b90c960acb2f6a11, slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e, slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5, slide-05.html: 10f4b701cbc112bf1f1784504b894a1d4cbb479ec28f113be07dcef41939d982, slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
+Slide fingerprints: slide-01.html: 4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9, slide-02.html: 408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20, slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081, slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5, slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d, slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf
 Unresolved Critical: 0
 Blocking findings: None
 
@@ -68,15 +69,16 @@ Method: all six PNGs from this render were opened individually as full-size imag
 | slide-03 | The two column bodies run to four lines each and leave about 24pt of unused height above the closing band | Note | Accepted — the columns carry a top hairline and the band carries its own, so the gap reads as the block's internal padding, not as a hole. Filling it would have meant inventing a third claim. Carried to design-debt.md | tracked |
 | all | 프레임 하단 여백을 올려 최하단 텍스트가 아래 가장자리에서 38pt 위에 오게 했다. 파워포인트 text 엔진이 0.5in(36pt) 안전 여백을 요구한다 | Note | 편집 가능한 PPTX를 위한 변경. 넘침 0(실측), 컨택트 시트 재확인 결과 레이아웃 변화 없음 | fixed |
 | slide-01/02/05 | 리스트 구분선과 카드 하단선을 `li`·`p`에서 래퍼 `<div>`로 옮겼다. text 엔진은 텍스트 요소의 border를 거부한다 | Note | `.ln`/`.cap` 래퍼 신설, 시각 결과 동일 | fixed |
+| all | `<header>`·`<footer>` 를 `<div>`로, `<p>` 밖 `<span>`을 `<p>`로 바꿨다. 파워포인트 text 엔진은 두 경우 모두 글자를 **경고 없이 버린다** | Major | 실제 PPTX를 열어 HTML과 텍스트를 대조해 발견. 렌더 픽셀 차이 0 | fixed |
 ## Template Fidelity Report
 
 Status: not-applicable
 
 ## Slide Fingerprints
 
-- slide-01.html: 26d933bcc16801db5b2f40a9b5aac7f59a6a162aca84351e3da2774d455eae81
-- slide-02.html: 07ddb617a9d7d54f24e4c7950d400da13260496c2a4d6c02b90c960acb2f6a11
-- slide-03.html: b22dadc3fbe7f448bc73fd35b1edc2033984370d1d409aa4910ed5654489e65e
-- slide-04.html: d8c50c3afab74b2fe6caa12a99171a3789233d0eba431368a6f78fcc4988d2a5
-- slide-05.html: 10f4b701cbc112bf1f1784504b894a1d4cbb479ec28f113be07dcef41939d982
-- slide-06.html: 0f5ded6aca78ad22f1dce54da9f6244e372afef5a297f9f6bb3f3e4dc2d0b750
+- slide-01.html: 4f89c8c211fff52895dde20bec8933e0e284df486103372cbf0a2206d0724bc9
+- slide-02.html: 408f1a9a49c2533d2b2309ef51e893e95b39d890294c0debfd0e8d086e092c20
+- slide-03.html: add6ce4969ab759ff0e72119b7c800356d4764e1068b98c621ced52465e2a081
+- slide-04.html: 1382d3689f928078ad92188b813b2f6b28d466aeb4112f2fa5ba7580fc5f0ac5
+- slide-05.html: 5ce76b2a4dd7e809fb6529a2751dc310a2220d10f42612266f0b7f33bfbd441d
+- slide-06.html: 73d01d1c6b7ce7a19b316f2afb523986df1973a60b12c5a3bb7077a50d790edf

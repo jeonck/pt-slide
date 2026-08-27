@@ -21,7 +21,7 @@
      sheets, so the rule lands at the same y everywhere. h1 is nowrap because every
      title was measured to fit 640pt — if one ever did not, it would overflow the
      frame and validate would catch it rather than silently dropping the rule. */
-  header { flex:none; margin-bottom:16pt; }
+  .sg-header { flex:none; margin-bottom:16pt; }
   .kick { display:flex; justify-content:space-between; align-items:baseline; gap:24pt; margin-bottom:6pt; }
   .mono { font-family:'GeistMono','IBM Plex Mono',monospace; }
   .kick p { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:11pt; font-weight:500;
@@ -38,9 +38,9 @@
   .mark > .bar { background:#000000; }
   .band { flex:none; border-top:1px solid #000000; padding-top:12pt; }
   .band p { font-size:15pt; font-weight:600; letter-spacing:-0.01em; line-height:1.45; }
-  footer { flex:none; margin-top:12pt; display:flex; justify-content:space-between;
+  .sg-footer { flex:none; margin-top:12pt; display:flex; justify-content:space-between;
            align-items:baseline; gap:24pt; }
-  footer p { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:10pt; font-weight:400;
+  .sg-footer p { font-family:'GeistMono','IBM Plex Mono',monospace; font-size:10pt; font-weight:400;
              letter-spacing:0.04em; line-height:1.4; color:#666666; white-space:nowrap; }
   /* Two panels. Emphasis on the right one is the 3pt bar plus a black label against
      the muted label opposite — no colour, no box change. */
@@ -60,14 +60,14 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <div class="kick">
     <p>02 &middot; THE SWITCH</p>
     <p>SHEET 02 / 06</p>
   </div>
   <h1>An SLO is not a quality metric. It is a switch.</h1>
   <div class="hrule"></div>
-</header>
+</div>
 <main>
   <div class="panels">
     <section class="panel">
@@ -93,9 +93,9 @@
     <p>A target that has never stopped anything is a dashboard with a threshold drawn on it.</p>
   </div>
 </main>
-<footer>
+<div class="sg-footer">
   <p>SLO &middot; OPERATING NOTE</p>
   <p>Source: none &mdash; no figures appear in this deck.</p>
-</footer>
+</div>
 </body>
 </html>

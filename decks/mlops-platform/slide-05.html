@@ -15,7 +15,7 @@
     display:flex; flex-direction:column;
   }
   /* Header band: kicker + one-line action title, fixed height so the rule never moves. */
-  header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
+  .sg-header { height:54pt; flex:none; display:flex; flex-direction:column; justify-content:flex-end; }
   .kicker { font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280; margin-bottom:7pt; }
   h1 { font-size:20pt; font-weight:700; letter-spacing:-0.01em; line-height:1.25; }
   .rule { height:1px; background:#D1D5DB; flex:none; margin-bottom:16pt; }
@@ -27,8 +27,8 @@
   .cell { border:1px solid #D1D5DB; padding:14pt 15pt; display:flex; flex-direction:column; }
   .cell.active { border-left:4px solid #0B5FFF; background:#F4F5F7; }
   /* Source caption: fixed bottom-right on every sheet, per the style signature. */
-  footer { flex:none; margin-top:12pt; text-align:right; }
-  footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
+  .sg-footer { flex:none; margin-top:12pt; text-align:right; }
+  .sg-footer p { font-size:10pt; font-weight:400; color:#6B7280; letter-spacing:0.04em; }
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
@@ -36,14 +36,14 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <p class="kicker">POSTURE</p>
   <h1>Buy the undifferentiated layers; build only your differentiator</h1>
-</header>
+</div>
 <div class="rule"></div>
 <main>
 <div style="flex:1; min-height:0; border:1px solid #D1D5DB; display:flex; flex-direction:column;"><div style="display:flex; background:#F4F5F7; border-bottom:1px solid #D1D5DB;"><div style="width:30%; padding:9pt 14pt;"><p style="font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280;">CAPABILITY</p></div><div style="width:32%; padding:9pt 14pt;"><p style="font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280;">DEFAULT POSTURE</p></div><div style="width:38%; padding:9pt 14pt;"><p style="font-size:11pt; font-weight:700; letter-spacing:0.08em; color:#6B7280;">BUILD ONLY IF</p></div></div><div style="flex:1; display:flex; align-items:center; "><div style="width:30%; padding:0 14pt;"><p style="font-weight:700;">Data &amp; features</p></div><div style="width:32%; padding:0 14pt;"><p>Buy or adopt</p></div><div style="width:38%; padding:0 14pt;"><p class="muted">Your features are the product</p></div></div><div style="flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;"><div style="width:30%; padding:0 14pt;"><p style="font-weight:700;">Training</p></div><div style="width:32%; padding:0 14pt;"><p>Adopt a standard runner</p></div><div style="width:38%; padding:0 14pt;"><p class="muted">Training itself is your research</p></div></div><div style="flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;"><div style="width:30%; padding:0 14pt;"><p style="font-weight:700;">Registry</p></div><div style="width:32%; padding:0 14pt;"><p>Buy</p></div><div style="width:38%; padding:0 14pt;"><p class="muted">Never</p></div></div><div style="flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;"><div style="width:30%; padding:0 14pt;"><p style="font-weight:700;">Serving</p></div><div style="width:32%; padding:0 14pt;"><p>Buy</p></div><div style="width:38%; padding:0 14pt;"><p class="muted">Latency or hardware is the differentiator</p></div></div><div style="flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;"><div style="width:30%; padding:0 14pt;"><p style="font-weight:700;">Monitoring</p></div><div style="width:32%; padding:0 14pt;"><p>Buy, then extend</p></div><div style="width:38%; padding:0 14pt;"><p class="muted">Your drift definition is domain-specific</p></div></div><div style="flex:1; display:flex; align-items:center; border-top:1px solid #D1D5DB;"><div style="width:30%; padding:0 14pt;"><p style="font-weight:700;">Governance</p></div><div style="width:32%; padding:0 14pt;"><p>Adopt the company standard</p></div><div style="width:38%; padding:0 14pt;"><p class="muted">Never — inherit it</p></div></div></div>
 </main>
-<footer><p>MLOPS PLATFORM ROADMAP · SHEET 05/07 · NO EXTERNAL DATA CITED</p></footer>
+<div class="sg-footer"><p>MLOPS PLATFORM ROADMAP · SHEET 05/07 · NO EXTERNAL DATA CITED</p></div>
 </body>
 </html>

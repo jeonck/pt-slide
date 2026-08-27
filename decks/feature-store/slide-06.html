@@ -18,7 +18,7 @@
   }
   /* Action title band: one declarative line, kicker beneath. Fixed so the body starts
      at the same y on every sheet — a wrapped title would push everything down. */
-  header { height:50pt; flex:none; }
+  .sg-header { height:50pt; flex:none; }
   h1 { font-size:20pt; font-weight:600; letter-spacing:-0.01em; line-height:1.3; }
   .kicker { font-size:11pt; font-weight:500; letter-spacing:0.04em; color:#7A828F; margin-top:6pt; }
   main { flex:1; min-height:0; margin-top:14pt; display:flex; flex-direction:column; }
@@ -33,8 +33,8 @@
   .fill h2, .fill p { color:#FFFFFF; }
   .badge { width:22pt; height:22pt; flex:none; background:#1F3A5F; display:flex; align-items:center; justify-content:center; }
   .badge p { font-size:12pt; font-weight:600; color:#FFFFFF; line-height:1.4; }
-  footer { flex:none; margin-top:12pt; text-align:right; }
-  footer p { font-size:10pt; font-weight:400; color:#7A828F; letter-spacing:0.03em; }
+  .sg-footer { flex:none; margin-top:12pt; text-align:right; }
+  .sg-footer p { font-size:10pt; font-weight:400; color:#7A828F; letter-spacing:0.03em; }
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
@@ -42,10 +42,10 @@
 </style>
 </head>
 <body>
-<header>
+<div class="sg-header">
   <h1>What we need to decide before building or buying</h1>
   <p class="kicker">DISCUSSION</p>
-</header>
+</div>
 <main>
   <ul style="list-style:none; flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center;"><li style="display:flex; gap:16pt; align-items:center; padding:15pt 0; "><div class="badge"><p>01</p></div><p class="lead" style="font-size:17pt; font-weight:500;">How many teams share a feature definition today?</p></li><li style="display:flex; gap:16pt; align-items:center; padding:15pt 0; border-top:1px solid #C9CDD3;"><div class="badge"><p>02</p></div><p class="lead" style="font-size:17pt; font-weight:500;">Do any of our models serve online requests?</p></li><li style="display:flex; gap:16pt; align-items:center; padding:15pt 0; border-top:1px solid #C9CDD3;"><div class="badge"><p>03</p></div><p class="lead" style="font-size:17pt; font-weight:500;">Who would carry the page when the store is down?</p></li></ul>
   <div style="display:flex; justify-content:space-between; align-items:baseline; padding-top:12pt; border-top:1px solid #C9CDD3;">
@@ -53,6 +53,6 @@
     <p class="label">PRESENTER · TEAM</p>
   </div>
 </main>
-<footer><p>FEATURE STORE — ADOPTION REVIEW · SHEET 06/06 · FRAMEWORK ONLY, NO EXTERNAL DATA</p></footer>
+<div class="sg-footer"><p>FEATURE STORE — ADOPTION REVIEW · SHEET 06/06 · FRAMEWORK ONLY, NO EXTERNAL DATA</p></div>
 </body>
 </html>

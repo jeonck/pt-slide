@@ -23,8 +23,8 @@
   .rule { height:1px; background:#A8893E; }
   .lede { font-size:14pt; line-height:1.55; }
   .note { font-style:italic; font-size:14pt; line-height:1.55; color:#3A2E1F; }
-  footer { margin-top:14pt; text-align:right; }
-  footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
+  .sg-footer { margin-top:14pt; text-align:right; }
+  .sg-footer p { font-style:italic; font-size:10pt; line-height:1.5; color:#6B5D46; }
 
   /* 파워포인트 안전 여백: text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상
      떨어지기를 요구하고, 엔진이 재는 값은 DOM 여백보다 약 8pt 크게 나온다. */
@@ -33,11 +33,11 @@
 </head>
 <body>
 <main>
-  <header style="text-align:center;">
+  <div class="sg-header" style="text-align:center;">
     <p class="kicker">THE SHAPE OF THE DATA</p>
     <h2 style="font-size:26pt; line-height:1.35; margin-top:8pt;">A drill proves nothing against a toy dataset</h2>
     <div class="rule" style="width:34pt; margin:12pt auto 0;"></div>
-  </header>
+  </div>
   <div style="flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; margin-top:18pt;">
   <div style="display:flex; align-items:stretch;">
     <section style="flex:1; min-width:0; text-align:center; padding-right:30pt;">
@@ -57,6 +57,6 @@
   </div>
   <p class="note" style="text-align:center; margin-top:18pt;">Everything that breaks at real size is invisible at sample size.</p>
 </main>
-<footer><p>No RPO or RTO figures are asserted in this deck &mdash; those numbers are yours to set and to measure.</p></footer>
+<div class="sg-footer"><p>No RPO or RTO figures are asserted in this deck &mdash; those numbers are yours to set and to measure.</p></div>
 </body>
 </html>
