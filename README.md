@@ -5,6 +5,8 @@
 
 **🔗 <https://jeonck.github.io/pt-slide/>** — 덱을 브라우저에서 바로 볼 수 있다.
 
+덱을 만드는 방법은 [덱 만들기 — 프롬프트 사용법](#덱-만들기--프롬프트-사용법)에 있다. Claude Code에서 `decks/<name> 에 '<주제>' <N>장 덱 만들어줘` 한 줄이면 시작된다.
+
 ## 덱
 
 | 덱 | 내용 | 장수 | 스타일 |
@@ -93,11 +95,104 @@
    npx playwright install chromium
    ```
 5. Claude Code에서 한 줄이면 된다 — `decks/<name> 에 '<주제>' <N>장 덱 만들어줘`.
+   더 많은 예시는 아래 [덱 만들기 — 프롬프트 사용법](#덱-만들기--프롬프트-사용법) 참고.
 
 **알아둘 환경 전제.** 이 저장소는 *한글 폰트가 없고 CDN이 막힌* 컨테이너에서 만들어졌다. 그래서 폰트를
 덱마다 로컬 임베드하고 npm에서 받는다. 폰트가 갖춰진 환경에서는 불필요한 수고지만 해롭지는 않고,
 결과물이 어디서든 같게 렌더된다는 이점은 남는다. `references/troubleshooting.md`의 Playwright 빌드
 번호 심링크 항목은 그 컨테이너 전용 우회이니, 같은 증상이 아니면 무시해도 된다.
+
+## 덱 만들기 — 프롬프트 사용법
+
+새 덱은 **`deck` 스킬**([`.claude/skills/deck/`](.claude/skills/deck/))이 처음부터 끝까지 끌고 간다.
+스캐폴딩 → 스타일 선택 → 아웃라인 → 슬라이드 → validate → 디자인 게이트 → viewer·PDF·PPTX →
+README → 푸시까지 정해진 순서로 간다. Claude Code에서 평범한 문장으로 말하면 된다.
+
+아래는 **이 저장소의 덱 20종을 실제로 만들 때 쓴 프롬프트**다.
+
+### 새 덱 만들기
+
+가장 짧은 형태. 위치와 주제, 장수만 준다.
+
+```
+decks/ai-roadmap 에 '제조 현장의 AI 품질검사' 8장 덱 만들어줘
+```
+
+영문 덱이면 그렇게 말한다. 스타일·서체·구성은 스킬이 정하고, **왜 그 스타일을 골랐는지 알려준다.**
+
+```
+decks/feature-store 에 'Feature Store 도입 검토' 6장 영문 덱 만들어줘
+```
+
+첫 장과 마지막 장을 지정할 수도 있다.
+
+```
+decks/test-deck 에 '인공지능의 미래와 업무 자동화' 5장 덱 만들어줘.
+첫 번째 슬라이드는 커버, 마지막은 Q&A로 해줘.
+```
+
+### 장별 내용을 직접 주기
+
+주제만 주면 내용은 스킬이 구성한다. **장별 문구를 직접 주면 그 텍스트가 원문이 되고,
+다듬거나 늘리거나 줄이지 않는다.** 레이아웃이 안 맞으면 문구 대신 레이아웃을 고친다.
+
+```
+decks/lean-software-development 에 아래의 내용으로 덱 만들어줘
+---
+슬라이드 1: 타이틀 및 개요
+* 제목: Lean Software Development
+* 핵심 내용: …
+슬라이드 2: 7대 원칙 (1~4)
+* 1. 낭비 제거: …
+```
+
+### 여러 덱을 한 번에
+
+```
+병렬 에이전트로 아래 것 모두 만들어줘.
+--- Alert design — 무엇이 페이지를 받을 자격이 있나
+/ Incident response — 온콜의 첫 30분
+/ Deployment strategies — rolling / blue-green / canary
+```
+
+스타일이 겹치지 않게 배정되고, 끝나면 각 덱의 렌더를 확인한 뒤 한 커밋으로 올라간다.
+
+### 기존 덱 고치기
+
+```
+decks/slo 3번 슬라이드의 표가 너무 빽빽해. 여백 좀 늘려줘
+```
+
+고친 뒤에는 validate → 렌더 재확인 → 게이트 재통과 → 재내보내기가 자동으로 따라온다.
+슬라이드를 건드리면 게이트 영수증이 무효가 되므로 이 순서는 건너뛸 수 없다.
+
+### 스타일 고르기
+
+```
+이 주제에 어울리는 스타일 뭐가 있어?
+decks/slo 를 다른 스타일로 다시 만들어줘
+```
+
+번들 스타일 92종은 [견본 덱](decks/style-showcase/)에서 한 장씩 볼 수 있다.
+
+### 막혔을 때
+
+증상만 말해도 된다. 이 환경에서 실제로 났던 오류와 해법이 스킬에 들어 있다.
+
+```
+한글이 두부(□)로 나와
+validate는 통과인데 렌더가 이상해
+PPTX를 파워포인트에서 열었더니 제목이 다음 줄로 내려가
+```
+
+### 알아두면 좋은 것
+
+| | |
+|---|---|
+| 수치·차트 | **출처를 댈 수 없으면 만들지 않는다.** 이 저장소의 덱에 수치가 없는 이유다. 실제 데이터를 주면 그때 쓴다 |
+| 발표자 | `발표자 · 소속`은 자리표시자다. 발표 전에 채울 것 |
+| 산출물 | 뷰어·PDF·PPTX·preview 이미지가 함께 나온다. PPTX는 **파워포인트에서 글자와 도형을 편집할 수 있다** |
+| 배포 | `main`에 푸시하면 GitHub Pages로 자동 배포되고, 그 덱의 뷰어 URL을 알려준다 |
 
 ## 시작하기
 
@@ -149,20 +244,6 @@ node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview         
 node scripts/build-contact-sheets.mjs decks/style-showcase/gate-preview --web    # README용 preview/
 ```
 
-## 덱 만들기
-
-새 덱은 **`deck` 스킬**([`.claude/skills/deck/`](.claude/skills/deck/))이 처음부터 끝까지 안내한다.
-Claude Code에서 그냥 이렇게 말하면 된다:
-
-```
-decks/ai-roadmap 에 '제조 현장의 AI 품질검사' 8장 덱 만들어줘
-```
-
-스킬이 스캐폴딩 → 스타일 선택 → 아웃라인 → 슬라이드 → validate → 디자인 게이트 → export → 푸시까지
-정해진 순서로 끌고 간다. 슬라이드 작성 규칙(`references/slide-html.md`), 게이트 절차
-(`references/design-gate.md`), 이 환경에서 실제로 났던 오류와 해법(`references/troubleshooting.md`)이
-같이 들어 있다.
-
 ## 라이선스
 
 이 저장소의 코드·스크립트·스킬·슬라이드는 [MIT](LICENSE)다.
@@ -181,6 +262,7 @@ JetBrains Mono, Noto Serif, Playfair Display, Pretendard, Source Serif 4, Space 
 
 - **폰트는 로컬 임베드.** 한글 폰트가 없는 환경에서도 그대로 렌더되도록 Pretendard(와 견본 덱의 Latin 서체 4종)를 각 덱의 `assets/fonts/`에 넣고 상대경로로 참조한다. 저장된 슬라이드 HTML에 원격 URL은 없다 — slides-grab 규칙이기도 하다.
 - **한국어 줄바꿈.** 모든 슬라이드에 `word-break: keep-all`을 걸어 어절이 줄 중간에서 쪼개지지 않게 했다.
-- **test-deck에는 수치·차트가 없다.** 출처를 댈 수 있는 실측 데이터가 없어서 만들지 않았다.
+- **어느 덱에도 수치·차트가 없다.** 출처를 댈 수 있는 실측 데이터가 없어서 만들지 않았다. 실제 데이터를 주면 그때 쓴다.
 - **커버와 Q&A의 `발표자 · 소속`은 자리표시자다.** 발표 전에 채울 것.
-- **PPTX(`convert`)·Figma(`figma`) 내보내기는 slides-grab에서 experimental / unstable로 표시돼 있다.** 손보정이 필요할 수 있다.
+- **PPTX는 파워포인트에서 편집된다.** 글자도 도형도 실제 개체다(이미지가 아니다). 다만 서체 파일은 담기지 않으므로, 그 서체가 없는 컴퓨터에서는 대체 서체로 다시 흐른다. 각 덱의 `assets/fonts/`에 있는 파일을 설치하면 원본과 같아진다.
+- **Figma(`figma`) 내보내기는 slides-grab에서 experimental / unstable로 표시돼 있다.** 손보정이 필요할 수 있다.
