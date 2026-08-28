@@ -4,8 +4,8 @@
 
 ![6장](preview/slides-01-06.png)
 
-**[뷰어 열기](https://jeonck.github.io/pt-slide/decks/ai-roadmap/viewer.html)** ·
-[PDF](ai-roadmap.pdf) · [PPTX](ai-roadmap.pptx) · [이미지](preview/)
+**[뷰어 열기](https://jeonck.github.io/pt-slide/decks/architecture-styles/viewer.html)** ·
+[PDF](architecture-styles.pdf) · [PPTX](architecture-styles.pptx) · [이미지](preview/)
 
 ## 구성
 
@@ -33,8 +33,6 @@
 "One / A few / Many"처럼 **세는 말이 아니라 구분하는 말**이다. 스타일이 가진 차트 3색과 kpi 토큰은
 선언만 되어 있고 쓰지 않았다.
 
-**폴더 이름이 주제와 맞지 않는다.** 사용자가 `decks/ai-roadmap`을 지정했고 경로는 그대로 따랐다.
-
 **렌더에서만 보인 결함 둘.** 슬라이드 4의 마무리 문장이 표 마지막 행 위에 겹쳐 그려졌다 —
 자식이 `main`을 넘친 것이라 `validate`는 6/6 통과를 찍었다. 표 행 패딩을 8→3pt로 줄여 해결했다.
 커버 제목은 leading 1.2에서 디센더가 잘려 1.3으로 올렸다(이건 validate가 잡았다).
@@ -46,12 +44,12 @@
 ## 다시 만들기
 
 ```bash
-npx slides-grab validate     --slides-dir decks/ai-roadmap
-npx slides-grab png          --slides-dir decks/ai-roadmap --output-dir decks/ai-roadmap/gate-preview --resolution 1080p
-npx slides-grab build-viewer --slides-dir decks/ai-roadmap
-node scripts/patch-viewer.mjs decks/ai-roadmap
-npx slides-grab pdf          --slides-dir decks/ai-roadmap --output decks/ai-roadmap/ai-roadmap.pdf --resolution 1080p
-node scripts/build-pptx.mjs  decks/ai-roadmap
+npx slides-grab validate     --slides-dir decks/architecture-styles
+npx slides-grab png          --slides-dir decks/architecture-styles --output-dir decks/architecture-styles/gate-preview --resolution 1080p
+npx slides-grab build-viewer --slides-dir decks/architecture-styles
+node scripts/patch-viewer.mjs decks/architecture-styles
+npx slides-grab pdf          --slides-dir decks/architecture-styles --output decks/architecture-styles/architecture-styles.pdf --resolution 1080p
+node scripts/build-pptx.mjs  decks/architecture-styles
 ```
 
 슬라이드를 고치면 게이트 영수증이 무효가 된다. 지문을 갱신하고 `design-gate --verdict proceed`를

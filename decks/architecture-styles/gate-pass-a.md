@@ -2,8 +2,8 @@
 
 VERDICT: PASS
 Confidence: High
-Evidence: decks/ai-roadmap/gate-preview/slide-01.png,decks/ai-roadmap/gate-preview/slide-02.png decks/ai-roadmap/gate-preview/slide-03.png,decks/ai-roadmap/gate-preview/slide-04.png decks/ai-roadmap/gate-preview/slide-05.png,decks/ai-roadmap/gate-preview/slide-06.png
-Slide fingerprints: slide-01.html: dfff3efb59270b104bf2dff6d3dbf9169772c957c678611497ad1d3574827931,slide-02.html: ba0de98fc0f5f770112a1ccbce92474be19d2b2994c9c8916c91a04fda8d1398 slide-03.html: c6fa2cfdd7a1f17512d33caff6856c56337c87c3b48f4061fca4cf5e0482850d,slide-04.html: 166f1e55cb5d2b8e2dc04dd2b3054f0d5c06a8fac4041e5bd4d1b153b446a2b1 slide-05.html: 9e59dc7c9f58bf959a0b591d28b7c18c0ae38ba3205f8ba68232c2638fe34489,slide-06.html: a06ac963c36a91407291c61d48e145c6e411aae345e17d84704dda7e94dc0d80
+Evidence: decks/architecture-styles/gate-preview/slide-01.png, decks/architecture-styles/gate-preview/slide-02.png, decks/architecture-styles/gate-preview/slide-03.png, decks/architecture-styles/gate-preview/slide-04.png, decks/architecture-styles/gate-preview/slide-05.png, decks/architecture-styles/gate-preview/slide-06.png
+Slide fingerprints: slide-01.html: dfff3efb59270b104bf2dff6d3dbf9169772c957c678611497ad1d3574827931, slide-02.html: ba0de98fc0f5f770112a1ccbce92474be19d2b2994c9c8916c91a04fda8d1398, slide-03.html: c6fa2cfdd7a1f17512d33caff6856c56337c87c3b48f4061fca4cf5e0482850d, slide-04.html: 166f1e55cb5d2b8e2dc04dd2b3054f0d5c06a8fac4041e5bd4d1b153b446a2b1, slide-05.html: 9e59dc7c9f58bf959a0b591d28b7c18c0ae38ba3205f8ba68232c2638fe34489, slide-06.html: a06ac963c36a91407291c61d48e145c6e411aae345e17d84704dda7e94dc0d80
 Unresolved Critical: 0
 Blocking findings: None
 

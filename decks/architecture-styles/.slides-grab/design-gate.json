@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
   "verdict": "proceed",
-  "generatedAt": "2026-08-28T14:46:04.944Z",
+  "generatedAt": "2026-08-28T14:53:20.657Z",
   "slideMode": "presentation",
   "resolution": "2160p",
   "previewDir": ".slides-grab/gate-preview",
   "reportPath": ".slides-grab/design-gate-report.md",
   "passA": {
-    "reportPath": "/home/user/pt-slide/decks/ai-roadmap/gate-pass-a.md",
+    "reportPath": "/home/user/pt-slide/decks/architecture-styles/gate-pass-a.md",
     "summary": "# Pass A: System Contract / Constraint Integrity",
     "verdict": "PASS",
     "unresolvedCritical": 0,
@@ -66,7 +66,7 @@
     ]
   },
   "passB": {
-    "reportPath": "/home/user/pt-slide/decks/ai-roadmap/gate-pass-b.md",
+    "reportPath": "/home/user/pt-slide/decks/architecture-styles/gate-pass-b.md",
     "summary": "# Pass B: Audience Impact / Expressive Readability",
     "verdict": "PASS",
     "unresolvedCritical": 0,
@@ -301,11 +301,11 @@
   "passReportFingerprints": [
     {
       "file": "gate-pass-a.md",
-      "sha256": "87e2b049c3e1c894db1f63e9c32f7ee4d834aceb61fa079b45914d03c396db68"
+      "sha256": "14f4c36c8365083a5dcd5d2594817b81a9703e0fe03538ca038090547fa78ce9"
     },
     {
       "file": "gate-pass-b.md",
-      "sha256": "9421b0003de773cd83c44477013a8b33b70602b9617825eddceeae4c91dc2e40"
+      "sha256": "be00f458f75e0bc2acff630c07ee94f2dc9df6bddb6e1038826cc1a1d5c1f003"
     }
   ],
   "previewFingerprints": [

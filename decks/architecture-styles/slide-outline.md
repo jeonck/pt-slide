@@ -1,7 +1,7 @@
 # Architecture styles: what actually tells them apart — 슬라이드 아웃라인
 
 ## meta
-- deck: decks/ai-roadmap
+- deck: decks/architecture-styles
 - mode: html
 - style: `ppt-strategy-navy-deck` (bundled)
 - slide-size: 720pt × 405pt
@@ -11,11 +11,6 @@
 - slides: 6 (첫 장 커버, 마지막 장 마무리)
 - charts: **없음.** 출처를 댈 수 있는 수치가 없다. 비교는 표로 하고 숫자는 쓰지 않는다
 - fonts: PT Serif 400/700 + Inter 400/500/600/700 로컬 임베드
-
-## 폴더 이름에 대하여
-
-사용자가 `decks/ai-roadmap`을 지정했다. 주제(아키텍처 스타일 구분 기준)와 이름이 맞지 않지만
-경로는 지정받은 그대로 쓴다.
 
 ## 디자인 토큰 (show-design)
 

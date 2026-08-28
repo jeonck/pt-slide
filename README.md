@@ -30,7 +30,7 @@
 | [`decks/observability-cost`](decks/observability-cost/) | **Logs cost the most and get read the least** — 영어 에디토리얼 프로덕트 덱. 세 신호가 답하는 서로 다른 질문 → 용량은 곱이고 독자 수는 상수 → 샘플링과 보존은 절약이 아니라 베팅 → 결정 | 6 | `ppt-editorial-product-deck` |
 | [`decks/prod-access`](decks/prod-access/) | **Who gets into production** — 영어 IR 네이비+골드 덱. 상시 권한이 쌓이는 이유 → 최소 권한의 실제 비용 → 승격 기록이 담아야 하는 것 → 아무도 읽지 않는 기록 → 결정 | 6 | `ppt-goldman-ir-deck` |
 | [`decks/lean-software-development`](decks/lean-software-development/) | **Lean Software Development** — 한국어 통합보고서 톤 덱. TPS 낭비 제거 철학 → 7가지 원칙 → 7가지 낭비(Muda) → 기대 효과. 본문은 발표자가 장별로 지정한 원문 | 5 | `ppt-naver-integrated-report-award` |
-| [`decks/ai-roadmap`](decks/ai-roadmap/) | **Architecture styles: what actually tells them apart** — 영어 전략 컨설팅 익스히빗. 라벨은 결정이 아니다 → 구분하는 네 질문 → 다섯 스타일 비교표 → 라벨과 답이 어긋날 때 → 결정 | 6 | `ppt-strategy-navy-deck` |
+| [`decks/architecture-styles`](decks/architecture-styles/) | **Architecture styles: what actually tells them apart** — 영어 전략 컨설팅 익스히빗. 라벨은 결정이 아니다 → 구분하는 네 질문 → 다섯 스타일 비교표 → 라벨과 답이 어긋날 때 → 결정 | 6 | `ppt-strategy-navy-deck` |
 | [`decks/style-showcase`](decks/style-showcase/) | **번들 스타일 92종 견본** — `slides-grab list-styles`가 출력하는 스타일마다 한 장씩. 스타일 고를 때 보는 카탈로그 | 92 | 92종 전부 |
 
 각 덱 폴더의 `README.md`에 그 덱의 구성·판단·재생성 방법이 있다.
@@ -59,7 +59,7 @@
 | observability-cost | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/observability-cost/viewer.html)** · [PDF](decks/observability-cost/observability-cost.pdf) · [PPTX](decks/observability-cost/observability-cost.pptx) · [이미지](decks/observability-cost/preview/) | [`viewer.html`](decks/observability-cost/viewer.html) |
 | prod-access | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/prod-access/viewer.html)** · [PDF](decks/prod-access/prod-access.pdf) · [PPTX](decks/prod-access/prod-access.pptx) · [이미지](decks/prod-access/preview/) | [`viewer.html`](decks/prod-access/viewer.html) |
 | lean-software-development | `slide-01.html` … `slide-05.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/lean-software-development/viewer.html)** · [PDF](decks/lean-software-development/lean-software-development.pdf) · [PPTX](decks/lean-software-development/lean-software-development.pptx) · [이미지](decks/lean-software-development/preview/) | [`viewer.html`](decks/lean-software-development/viewer.html) |
-| ai-roadmap | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/ai-roadmap/viewer.html)** · [PDF](decks/ai-roadmap/ai-roadmap.pdf) · [PPTX](decks/ai-roadmap/ai-roadmap.pptx) · [이미지](decks/ai-roadmap/preview/) | [`viewer.html`](decks/ai-roadmap/viewer.html) |
+| architecture-styles | `slide-01.html` … `slide-06.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/architecture-styles/viewer.html)** · [PDF](decks/architecture-styles/architecture-styles.pdf) · [PPTX](decks/architecture-styles/architecture-styles.pptx) · [이미지](decks/architecture-styles/preview/) | [`viewer.html`](decks/architecture-styles/viewer.html) |
 | style-showcase | `slide-01.html` … `slide-92.html` | **[뷰어](https://jeonck.github.io/pt-slide/decks/style-showcase/viewer.html)** · [PDF](decks/style-showcase/slides-grab-style-showcase.pdf) · [PPTX](decks/style-showcase/slides-grab-style-showcase.pptx) · [이미지](decks/style-showcase/README.md#브라우저에서-바로-보기) | [`viewer.html`](decks/style-showcase/viewer.html) |
 
 > **저장소 안의 `.html`을 GitHub에서 클릭하면 페이지가 아니라 소스 코드가 보인다.** GitHub은 저장소 트리의
@@ -117,7 +117,7 @@ README → 푸시까지 정해진 순서로 간다. Claude Code에서 평범한 
 가장 짧은 형태. 위치와 주제, 장수만 준다.
 
 ```
-decks/ai-roadmap 에 '제조 현장의 AI 품질검사' 8장 덱 만들어줘
+decks/architecture-styles 에 '제조 현장의 AI 품질검사' 8장 덱 만들어줘
 ```
 
 영문 덱이면 그렇게 말한다. 스타일·서체·구성은 스킬이 정하고, **왜 그 스타일을 골랐는지 알려준다.**
