@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide Viewer</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .viewer-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-bar {
+      height: 48px;
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-shrink: 0;
+      z-index: 100;
+    }
+
+    .nav-bar button {
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .nav-bar button:hover {
+      background: #555;
+    }
+
+    .nav-bar button:disabled {
+      opacity: 0.3;
+      cursor: default;
+    }
+
+    .slide-counter {
+      color: #aaa;
+      font-size: 14px;
+      font-weight: 500;
+      min-width: 60px;
+      text-align: center;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .btn-fullscreen {
+      position: absolute;
+      right: 16px;
+      background: transparent !important;
+      font-size: 18px;
+      padding: 6px 10px !important;
+    }
+
+    .slide-viewport {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide-scaler {
+      width: 720pt;
+      height: 405pt;
+      position: relative;
+      transform-origin: center center;
+    }
+
+    .slide-frame {
+      position: absolute;
+      inset: 0;
+      width: 720pt;
+      height: 405pt;
+      border: none;
+      overflow: hidden;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .slide-frame.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="viewer-container">
+    <div class="nav-bar">
+      <button id="btn-prev" title="Previous (\u2190)">Prev</button>
+      <span class="slide-counter" id="counter">1 / 6</span>
+      <button id="btn-next" title="Next (\u2192)">Next</button>
+      <button class="btn-fullscreen" id="btn-fs" title="Fullscreen (F)">&#x26F6;</button>
+    </div>
+
+    <div class="slide-viewport" id="viewport">
+      <div class="slide-scaler" id="scaler">
+        <iframe class="slide-frame active" data-slide="1" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-01.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Architecture styles — 01</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .cover{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+  .cover h2{font-family:PTSerif,Georgia,serif;font-weight:700;font-size:38pt;letter-spacing:-0.02em;line-height:1.3;max-width:560pt}
+  .rule{width:96pt;height:3px;background:#2563EB;margin-top:20pt}
+  .cover .lede{font-size:15pt;line-height:1.5;color:#5B6472;max-width:520pt;margin-top:20pt}
+  .meta{flex:none;display:flex;gap:52pt;margin-top:26pt}
+  .meta p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .meta p.v{font-size:13pt;font-weight:600;letter-spacing:0;color:#14213D;margin-top:5pt}
+</style>
+</head>
+<body>
+  <div class=&quot;top&quot;><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 01 / 06</p></div>
+  <div class=&quot;cover&quot;>
+    <h2>Architecture styles:<br>what actually tells them apart</h2>
+    <div class=&quot;rule&quot;></div>
+    <p class=&quot;lede&quot;>The names describe how something is deployed. What separates the styles is the answer to four questions, and a codebase can answer them in ways its name does not admit.</p>
+    <div class=&quot;meta&quot;>
+      <div><p>PREPARED BY</p><p class=&quot;v&quot;>PRESENTER · TEAM</p></div>
+      <div><p>DATE</p><p class=&quot;v&quot;>2026.08</p></div>
+      <div><p>AUDIENCE</p><p class=&quot;v&quot;>ENGINEERING LEADS</p></div>
+    </div>
+  </div>
+  <div class=&quot;src&quot;><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="2" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-02.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Architecture styles — 02</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+</style>
+</head>
+<body>
+  <div class=&quot;top&quot;><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 02 / 06</p></div>
+  <h1>The label names a deployment, not a design decision</h1>
+  <div class=&quot;hair&quot;></div>
+  <main>
+    <div class=&quot;mods&quot;>
+      <div class=&quot;mod key&quot;><h2>One name, two systems</h2><p>“Microservices” covers a shop with one shared database and a shop with none. The word does not say which.</p></div>
+      <div class=&quot;mod &quot;><h2>Two names, one system</h2><p>A modular monolith and a service-based system can answer every question identically and differ only in where the process boundary falls.</p></div>
+      <div class=&quot;mod &quot;><h2>The name is an outcome</h2><p>Deployment shape is what the decisions produced. Reading it backwards tells you nothing about what was decided.</p></div>
+    </div>
+  </main>
+  <p style=&quot;font-size:14pt;font-weight:600;line-height:1.4;margin-top:12pt;flex:none;&quot;>Every one of these is a naming problem, and none of them is a design problem.</p>
+  <div class=&quot;src&quot;><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="3" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-03.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Architecture styles — 03</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .q{display:flex;gap:10pt}
+  .qc{flex:1 1 0;min-width:0;border-top:3px solid #C7D0DD;padding-top:11pt}
+  .qc.key{border-top-color:#2563EB}
+  .qc h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3;margin-top:6pt}
+  .qc p{font-size:14pt;line-height:1.4;color:#5B6472;margin-top:7pt}
+</style>
+</head>
+<body>
+  <div class=&quot;top&quot;><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 03 / 06</p></div>
+  <h1>Four questions separate the styles you will meet</h1>
+  <div class=&quot;hair&quot;></div>
+  <main>
+    <div class=&quot;q&quot;>
+      <div class=&quot;qc key&quot;><p class=&quot;lbl&quot;>01</p><h2>Deployment unit</h2><p>What has to ship together for a change to take effect?</p></div>
+      <div class=&quot;qc &quot;><p class=&quot;lbl&quot;>02</p><h2>Data ownership</h2><p>Who may write this table, and who may read it directly?</p></div>
+      <div class=&quot;qc &quot;><p class=&quot;lbl&quot;>03</p><h2>Call direction</h2><p>Does the caller wait for the answer, or learn about it later?</p></div>
+      <div class=&quot;qc &quot;><p class=&quot;lbl&quot;>04</p><h2>Failure radius</h2><p>When this part stops, what else stops with it?</p></div>
+    </div>
+  </main>
+  <p style=&quot;font-size:14pt;font-weight:600;line-height:1.4;margin-top:12pt;flex:none;&quot;>Answer all four and the style is already chosen; answer none and the name is a guess.</p>
+  <div class=&quot;src&quot;><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="4" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-04.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Architecture styles — 04</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .tbl{display:flex;flex-direction:column;border:1px solid #C7D0DD}
+  .row{display:flex;align-items:stretch;border-top:1px solid #C7D0DD}
+  .row:first-child{border-top:none;background:#F1F4F9}
+  .row > div{padding:3pt 11pt;border-left:1px solid #C7D0DD;display:flex;align-items:center}
+  .row > div:first-child{border-left:none;width:118pt;flex:none}
+  .row > div:not(:first-child){flex:1 1 0;min-width:0}
+  .row p{font-size:14pt;line-height:1.35}
+  .row:first-child p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .row .nm p{font-weight:600}
+  .row .key{background:#F1F4F9;border-left:1px solid #C7D0DD}
+  .row .key p{color:#2563EB;font-weight:600}
+</style>
+</head>
+<body>
+  <div class=&quot;top&quot;><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 04 / 06</p></div>
+  <h1>The same four answers place any codebase on the map</h1>
+  <div class=&quot;hair&quot;></div>
+  <main>
+    <div class=&quot;tbl&quot;>
+    <div class=&quot;row&quot;>
+      <div class=&quot;nm&quot;><p>STYLE</p></div>
+      <div><p>DEPLOYMENT UNIT</p></div>
+      <div><p>DATA OWNERSHIP</p></div>
+      <div><p>CALL DIRECTION</p></div>
+      <div><p>FAILURE RADIUS</p></div>
+    </div>
+    <div class=&quot;row&quot;>
+      <div class=&quot;nm&quot;><p>Monolith</p></div>
+      <div><p>One</p></div>
+      <div><p>Shared</p></div>
+      <div><p>In-process</p></div>
+      <div><p>Whole app</p></div>
+    </div>
+    <div class=&quot;row&quot;>
+      <div class=&quot;nm&quot;><p>Modular monolith</p></div>
+      <div><p>One</p></div>
+      <div><p>Owned, in one DB</p></div>
+      <div><p>In-process</p></div>
+      <div><p>Whole app</p></div>
+    </div>
+    <div class=&quot;row&quot;>
+      <div class=&quot;nm&quot;><p>Service-based</p></div>
+      <div><p>A few</p></div>
+      <div><p>Shared</p></div>
+      <div><p>Synchronous</p></div>
+      <div><p>A group</p></div>
+    </div>
+    <div class=&quot;row&quot;>
+      <div class=&quot;nm&quot;><p>Microservices</p></div>
+      <div><p>Many</p></div>
+      <div class=&quot;key&quot;><p>Per service</p></div>
+      <div><p>Synchronous</p></div>
+      <div><p>One service</p></div>
+    </div>
+    <div class=&quot;row&quot;>
+      <div class=&quot;nm&quot;><p>Event-driven</p></div>
+      <div><p>Many</p></div>
+      <div><p>Per service</p></div>
+      <div><p>Asynchronous</p></div>
+      <div><p>One consumer</p></div>
+    </div>
+    </div>
+  </main>
+  <p style=&quot;font-size:14pt;font-weight:600;line-height:1.4;margin-top:12pt;flex:none;&quot;>Only one column changes between service-based and microservices — and it is ownership, not count.</p>
+  <div class=&quot;src&quot;><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="5" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-05.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Architecture styles — 05</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+</style>
+</head>
+<body>
+  <div class=&quot;top&quot;><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 05 / 06</p></div>
+  <h1>When the label and the answers disagree, trust the answers</h1>
+  <div class=&quot;hair&quot;></div>
+  <main>
+    <div class=&quot;mods&quot;>
+      <div class=&quot;mod &quot;><h2>Distributed monolith</h2><p>Many deployment units, one release train. Services ship together because they share a schema — the answers say monolith.</p></div>
+      <div class=&quot;mod key&quot;><h2>Microservices, one database</h2><p>Per-service repositories over a shared schema. Ownership is the question that was never answered.</p></div>
+      <div class=&quot;mod &quot;><h2>Modular monolith in name</h2><p>One unit, one database, no owner per module. Calling it modular does not create the boundary.</p></div>
+    </div>
+  </main>
+  <p style=&quot;font-size:14pt;font-weight:600;line-height:1.4;margin-top:12pt;flex:none;&quot;>Each of these ships the cost of the style it is named after, without the property that pays for it.</p>
+  <div class=&quot;src&quot;><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+        <iframe class="slide-frame" data-slide="6" srcdoc="<!DOCTYPE html>
+<html lang=&quot;en&quot;>
+<head>
+<base data-slides-grab-runtime=&quot;base&quot; href=&quot;./&quot;>
+<script data-slides-grab-runtime=&quot;diagnostics&quot;>
+(() => {
+  const slideFile = &quot;slide-06.html&quot;;
+  const localAssetPrefix = &quot;./assets/&quot;;
+  const absolutePathRe = /^(file:\/\/|\/Users\/|\/home\/|\/var\/|\/tmp\/|\/private\/|\/Volumes\/|[A-Za-z]:[\\/]|\\\\)/i;
+  const schemeRe = /^[a-z][a-z0-9+\-.]*:/i;
+  const prefix = '[slides-grab:image]';
+
+  function describeElement(element) {
+    if (!element || element.nodeType !== Node.ELEMENT_NODE) return '';
+    if (element === document.body) return 'body';
+
+    const parts = [];
+    let current = element;
+    while (current &amp;&amp; current.nodeType === Node.ELEMENT_NODE &amp;&amp; current !== document.body) {
+      let part = current.tagName.toLowerCase();
+      if (current.id) {
+        part += '#' + current.id;
+        parts.unshift(part);
+        break;
+      }
+      if (current.classList.length > 0) {
+        part += '.' + Array.from(current.classList).slice(0, 2).join('.');
+      }
+      parts.unshift(part);
+      current = current.parentElement;
+    }
+    return 'body > ' + parts.join(' > ');
+  }
+
+  function warn(message, detail) {
+    console.warn(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function fail(message, detail) {
+    console.error(prefix + ' ' + slideFile + ': ' + message, detail);
+  }
+
+  function validateAssetSource(kind, source, { allowEmpty = true, onNoncanonical = 'warn' } = {}) {
+    const value = (source || '').trim();
+    if (!value) {
+      return allowEmpty;
+    }
+    if (value.startsWith('data:')) {
+      return true;
+    }
+    if (value.startsWith('https://')) {
+      fail('remote ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (value.startsWith('http://')) {
+      fail('remote http:// ' + kind + ' URL is unsupported in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (absolutePathRe.test(value) || value.startsWith('/')) {
+      fail('non-portable ' + kind + ' path is unsupported', { src: value });
+      return false;
+    }
+    if (schemeRe.test(value)) {
+      fail('unsupported ' + kind + ' URL scheme in saved slides; download it into ./assets/<file>', { src: value });
+      return false;
+    }
+    if (!value.startsWith(localAssetPrefix)) {
+      const report = onNoncanonical === 'fail' ? fail : warn;
+      report('noncanonical local ' + kind + ' path should use ./assets/<file>', { src: value });
+    }
+    return true;
+  }
+
+  function getVideoSources(video) {
+    const sources = [];
+    const directSrc = (video.getAttribute('src') || '').trim();
+    if (directSrc) {
+      sources.push(directSrc);
+    }
+    for (const source of video.querySelectorAll('source[src]')) {
+      const src = (source.getAttribute('src') || '').trim();
+      if (src) {
+        sources.push(src);
+      }
+    }
+    return sources;
+  }
+
+  window.addEventListener('error', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLImageElement) {
+      const src = (target.getAttribute('src') || target.currentSrc || '').trim();
+      if (!src || src.startsWith('data:')) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local asset', { src });
+        return;
+      }
+      fail('image failed to load', { src });
+      return;
+    }
+
+    if (target instanceof HTMLVideoElement) {
+      const sources = getVideoSources(target);
+      if (sources.some((src) => src.startsWith(localAssetPrefix))) {
+        fail('missing local video asset', { sources });
+        return;
+      }
+      fail('video failed to load', { sources });
+      return;
+    }
+
+    if (target instanceof HTMLSourceElement &amp;&amp; target.parentElement instanceof HTMLVideoElement) {
+      const src = (target.getAttribute('src') || '').trim();
+      if (!src) return;
+      if (src.startsWith(localAssetPrefix)) {
+        fail('missing local video asset', { src });
+        return;
+      }
+      fail('video source failed to load', { src });
+    }
+  }, true);
+
+  window.addEventListener('DOMContentLoaded', () => {
+    for (const image of document.querySelectorAll('img[src]')) {
+      const src = (image.getAttribute('src') || '').trim();
+      validateAssetSource('image', src);
+    }
+
+    for (const video of document.querySelectorAll('video')) {
+      for (const src of getVideoSources(video)) {
+        validateAssetSource('video', src);
+      }
+
+      const poster = (video.getAttribute('poster') || '').trim();
+      if (poster) {
+        validateAssetSource('image', poster);
+      }
+    }
+
+    for (const element of document.body.querySelectorAll('*')) {
+      if (element === document.body) continue;
+      const backgroundImage = window.getComputedStyle(element).backgroundImage;
+      if (!backgroundImage || backgroundImage === 'none' || !backgroundImage.includes('url(')) continue;
+      fail('non-body background-image is not supported for slide content', {
+        element: describeElement(element),
+        backgroundImage,
+      });
+    }
+  });
+})();
+</script>
+<meta charset=&quot;utf-8&quot;>
+<title>Architecture styles — 06</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .dec{display:flex;flex-direction:column;gap:11pt}
+  .drow{display:flex;gap:14pt;align-items:baseline;border-top:1px solid #C7D0DD;padding-top:11pt}
+  .drow:first-child{border-top:none;padding-top:0}
+  .drow > .n{width:26pt;flex:none}
+  .drow .n p{font-family:PTSerif,Georgia,serif;font-size:15pt;font-weight:700;color:#2563EB}
+  .drow > .d{flex:1;min-width:0}
+  .drow h2{font-size:15pt;font-weight:600;line-height:1.35}
+  .drow p.sub{font-size:14pt;line-height:1.4;color:#5B6472;margin-top:5pt}
+</style>
+</head>
+<body>
+  <div class=&quot;top&quot;><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 06 / 06</p></div>
+  <h1>What we need to answer before we name our style</h1>
+  <div class=&quot;hair&quot;></div>
+  <main>
+    <div class=&quot;dec&quot;>
+      <div class=&quot;drow&quot;><div class=&quot;n&quot;><p>01</p></div><div class=&quot;d&quot;><h2>Which table has one writer</h2><p class=&quot;sub&quot;>Name it per module. Where two modules write the same table, the boundary is not there yet.</p></div></div>
+      <div class=&quot;drow&quot;><div class=&quot;n&quot;><p>02</p></div><div class=&quot;d&quot;><h2>What may we deploy alone</h2><p class=&quot;sub&quot;>If nothing may, the count of services is not the thing to change.</p></div></div>
+      <div class=&quot;drow&quot;><div class=&quot;n&quot;><p>03</p></div><div class=&quot;d&quot;><h2>What must survive a failure</h2><p class=&quot;sub&quot;>The parts that must stay up when another stops decide how far the boundary has to go.</p></div></div>
+    </div>
+  </main>
+  <p style=&quot;font-size:14pt;font-weight:600;line-height:1.4;margin-top:12pt;flex:none;&quot;>The name follows the answers. It has never worked in the other direction.</p>
+  <div class=&quot;src&quot;><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
+" sandbox="allow-same-origin"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const TOTAL = 6;
+    let current = 1;
+
+    const frames = document.querySelectorAll('.slide-frame');
+    const counter = document.getElementById('counter');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const scaler = document.getElementById('scaler');
+    const viewport = document.getElementById('viewport');
+
+    function goTo(n) {
+      n = Math.max(1, Math.min(TOTAL, n));
+      if (n === current) return;
+      frames[current - 1].classList.remove('active');
+      current = n;
+      frames[current - 1].classList.add('active');
+      counter.textContent = current + ' / ' + TOTAL;
+      btnPrev.disabled = current === 1;
+      btnNext.disabled = current === TOTAL;
+    }
+
+    function next() { goTo(current + 1); }
+    function prev() { goTo(current - 1); }
+
+    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', next);
+    btnPrev.disabled = true;
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
+      else if (e.key === 'Home') { e.preventDefault(); goTo(1); }
+      else if (e.key === 'End') { e.preventDefault(); goTo(TOTAL); }
+      else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen();
+      }
+    }
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    function rescale() {
+      const vw = viewport.clientWidth;
+      const vh = viewport.clientHeight;
+      const slideW = scaler.offsetWidth;
+      const slideH = scaler.offsetHeight;
+      const scale = Math.min(vw / slideW, vh / slideH) * 0.95;
+      scaler.style.transform = 'scale(' + scale + ')';
+    }
+
+    window.addEventListener('resize', rescale);
+    document.addEventListener('fullscreenchange', () => setTimeout(rescale, 100));
+    rescale();
+  </script>
+
+<script>
+  // slides-grab-patch: key-forwarding
+  // Clicking a slide focuses its iframe; key events there never reach this document.
+  // The frames are same-origin, so bind the parent's handler onto each framed
+  // document from out here. Re-bound on load: srcdoc frames can reparse.
+  (() => {
+    const NAV = ['ArrowRight', 'ArrowLeft', ' ', 'Home', 'End'];
+    const forward = (frame) => {
+      let doc;
+      try { doc = frame.contentDocument; } catch { return; }
+      if (!doc || doc.__sgKeys) return;
+      doc.__sgKeys = true;
+      doc.addEventListener('keydown', (e) => {
+        if (NAV.includes(e.key)) e.preventDefault();
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: e.key, bubbles: true }));
+      });
+    };
+    for (const frame of document.querySelectorAll('iframe')) {
+      forward(frame);
+      frame.addEventListener('load', () => forward(frame));
+    }
+  })();
+</script>
+</body>
+</html>

@@ -23,6 +23,9 @@ from pptx.enum.text import MSO_AUTO_SIZE
 from PIL import ImageFont
 
 _CACHE = {}
+# 서체가 ~/.fonts 에 없으면 폭을 잴 수 없어 이 스크립트가 아무것도 못 한다.
+# 조용히 넘어가면 제목이 파워포인트에서 감기고 아무도 이유를 모른다 — 그래서 이름을 모아 알린다.
+MISSING = set()
 
 
 def _font(name, size):
@@ -41,6 +44,8 @@ def _font(name, size):
         _CACHE[key] = ImageFont.truetype(hit, int(round(size))) if hit else None
     except Exception:
         _CACHE[key] = None
+    if _CACHE[key] is None:
+        MISSING.add(name or '(이름 없음)')
     return _CACHE[key]
 
 
@@ -150,3 +155,6 @@ if __name__ == '__main__':
         x, y, z = fix(p)
         a += x; b += y; c += z
     print(f"줄바꿈 끔 {a}개 · 넘치면 축소 {b}개 · 공백 정리 {c}곳")
+    if MISSING:
+        print(f"  ⚠ 서체를 찾지 못해 폭을 재지 못했다: {', '.join(sorted(MISSING))}")
+        print("    woff2 를 ttf 로 바꿔 ~/.fonts 에 넣고 fc-cache -f 를 돌린 뒤 다시 실행한다.")

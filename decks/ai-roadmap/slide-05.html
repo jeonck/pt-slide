@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Architecture styles — 05</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+</style>
+</head>
+<body>
+  <div class="top"><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 05 / 06</p></div>
+  <h1>When the label and the answers disagree, trust the answers</h1>
+  <div class="hair"></div>
+  <main>
+    <div class="mods">
+      <div class="mod "><h2>Distributed monolith</h2><p>Many deployment units, one release train. Services ship together because they share a schema — the answers say monolith.</p></div>
+      <div class="mod key"><h2>Microservices, one database</h2><p>Per-service repositories over a shared schema. Ownership is the question that was never answered.</p></div>
+      <div class="mod "><h2>Modular monolith in name</h2><p>One unit, one database, no owner per module. Calling it modular does not create the boundary.</p></div>
+    </div>
+  </main>
+  <p style="font-size:14pt;font-weight:600;line-height:1.4;margin-top:12pt;flex:none;">Each of these ships the cost of the style it is named after, without the property that pays for it.</p>
+  <div class="src"><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>

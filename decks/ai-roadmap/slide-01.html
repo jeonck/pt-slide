@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Architecture styles — 01</title>
+<style>
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:PTSerif;src:url('./assets/fonts/PTSerif-700.woff2') format('woff2');font-weight:700;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-400.woff2') format('woff2');font-weight:400;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-500.woff2') format('woff2');font-weight:500;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-600.woff2') format('woff2');font-weight:600;font-display:block}
+  @font-face{font-family:Inter;src:url('./assets/fonts/Inter-700.woff2') format('woff2');font-weight:700;font-display:block}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:720pt;height:405pt}
+  /* 하단 32pt: 파워포인트 text 엔진은 텍스트 상자가 아래 가장자리에서 0.5in 이상 떨어지기를 요구한다 */
+  body{font-family:Inter,Arial,sans-serif;background:#FFFFFF;color:#14213D;
+       padding:26pt 32pt 32pt;display:flex;flex-direction:column;overflow:hidden;
+       -webkit-font-smoothing:antialiased}
+  .top{flex:none;display:flex;justify-content:space-between;align-items:baseline}
+  .top p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  h1{flex:none;font-family:PTSerif,Georgia,serif;font-weight:700;font-size:22pt;
+     letter-spacing:-0.01em;line-height:1.25;margin-top:12pt}
+  .hair{flex:none;height:1px;background:#14213D;margin-top:9pt}
+  main{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:16pt}
+  .src{flex:none;margin-top:auto;padding-top:10pt;display:flex;justify-content:space-between;align-items:baseline}
+  .src p{font-size:10pt;font-weight:400;color:#5B6472}
+  /* 모듈: 테두리·배경은 전부 div 가 갖는다. 텍스트 요소에 걸면 파워포인트가 거부한다 */
+  .mods{display:flex;gap:10pt;align-items:stretch}
+  .mod{flex:1 1 0;min-width:0;background:#F1F4F9;border:1px solid #C7D0DD;border-top:3px solid #C7D0DD;padding:12pt 13pt}
+  .mod.key{border-top-color:#2563EB}
+  .mod h2{font-family:Inter,sans-serif;font-size:14pt;font-weight:600;line-height:1.3}
+  .mod p{font-size:14pt;font-weight:400;line-height:1.4;color:#5B6472;margin-top:7pt}
+  .lbl{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .cover{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center}
+  .cover h2{font-family:PTSerif,Georgia,serif;font-weight:700;font-size:38pt;letter-spacing:-0.02em;line-height:1.3;max-width:560pt}
+  .rule{width:96pt;height:3px;background:#2563EB;margin-top:20pt}
+  .cover .lede{font-size:15pt;line-height:1.5;color:#5B6472;max-width:520pt;margin-top:20pt}
+  .meta{flex:none;display:flex;gap:52pt;margin-top:26pt}
+  .meta p{font-size:10pt;font-weight:600;letter-spacing:0.08em;color:#5B6472}
+  .meta p.v{font-size:13pt;font-weight:600;letter-spacing:0;color:#14213D;margin-top:5pt}
+</style>
+</head>
+<body>
+  <div class="top"><p>ARCHITECTURE STYLES · INTERNAL REVIEW</p><p>EXHIBIT 01 / 06</p></div>
+  <div class="cover">
+    <h2>Architecture styles:<br>what actually tells them apart</h2>
+    <div class="rule"></div>
+    <p class="lede">The names describe how something is deployed. What separates the styles is the answer to four questions, and a codebase can answer them in ways its name does not admit.</p>
+    <div class="meta">
+      <div><p>PREPARED BY</p><p class="v">PRESENTER · TEAM</p></div>
+      <div><p>DATE</p><p class="v">2026.08</p></div>
+      <div><p>AUDIENCE</p><p class="v">ENGINEERING LEADS</p></div>
+    </div>
+  </div>
+  <div class="src"><p>Source — none. No figures appear in this deck; the argument is mechanical.</p><p>ARCHITECTURE STYLES</p></div>
+</body>
+</html>
